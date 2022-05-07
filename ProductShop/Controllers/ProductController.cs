@@ -37,5 +37,40 @@ namespace ProductShop.Controllers
             _db.Save();
             return View();
         }
+        [HttpGet]
+        public IActionResult UpdateProduct(int id)
+        {
+            var product = _db.GetProductById(id);
+            ViewModelProduct viewModelProduct = new ViewModelProduct()
+            {
+                Id=product.Id,
+                Name=product.Name,
+                Description=product.Description,
+                Category = product.Category,
+                Manufacturer = product.Manufacturer,
+                ProductComposition =product.ProductComposition
+            };
+            return View(viewModelProduct);
+        }
+        [HttpPost]
+        public IActionResult UpdateProduct(ViewModelProduct viewModelProduct)
+        {
+            Product product = new Product()
+            {
+                Id = viewModelProduct.Id,
+                Name = viewModelProduct.Name,
+                Category = viewModelProduct.Category,
+                Description = viewModelProduct.Description,
+                Manufacturer = viewModelProduct.Manufacturer,
+                ProductComposition = viewModelProduct.ProductComposition
+            };
+            bool resultOperation = _db.UpateProduct(product);
+            _db.Save();
+            if (resultOperation)
+            {
+                return View();
+            }
+            return RedirectToAction("Index","Error");
+        }
     }
 }
