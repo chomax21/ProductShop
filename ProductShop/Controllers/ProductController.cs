@@ -35,6 +35,7 @@ namespace ProductShop.Controllers
             };
             _db.CreateProduct(product);
             _db.Save();
+            ViewData["Message"] = $"Продукт {viewModelProduct.Name} добавлен!";
             return View();
         }
         [HttpGet]
@@ -66,16 +67,25 @@ namespace ProductShop.Controllers
             };
             bool resultOperation = _db.UpateProduct(product);
             _db.Save();
+            ViewData["Message"] = $"Продукт {viewModelProduct.Name} отредактирован!";
             if (resultOperation)
             {
                 return View();
             }
-            return RedirectToAction("Index","Error");
+            return RedirectToAction("Error","Home");
         }
-        //[HttpPost]
-        //public IActionResult DeleteProduct(int id)
-        //{
-
-        //}
+        [HttpPost]
+        public IActionResult DeleteProduct(int? id)
+        {
+            if (id.HasValue)
+            {
+                _db.DeleteProduct(id.Value);
+                var product = _db.GetProductById(id.Value);
+                _db.Save();
+                ViewData["Message"] = $"Продукт {product.Name} удален!";
+                return RedirectToAction("Index","Home");
+            }
+            return RedirectToAction("Error", "Home");
+        }
     }
 }
