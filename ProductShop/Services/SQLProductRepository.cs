@@ -1,5 +1,6 @@
 ﻿using ProductShop.Data;
 using ProductShop.Models;
+using ProductShop.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -65,7 +66,7 @@ namespace ProductShop.Services
 
         public IEnumerable<Product> GetProducts()
         {
-            return _db.Products.ToList();
+              return _db.Products.ToList();
         }
 
         public void Save()

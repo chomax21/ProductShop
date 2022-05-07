@@ -8,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductShop.Data;
+using ProductShop.Models;
+using ProductShop.Services;
+using ProductShop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +37,9 @@ namespace ProductShop
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped<IRepository<Product>, SQLProductRepository>();
+
             services.AddControllersWithViews();
         }
 
