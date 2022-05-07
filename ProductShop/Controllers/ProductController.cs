@@ -72,5 +72,10 @@ namespace ProductShop.Controllers
             }
             return RedirectToAction("Index","Error");
         }
+        //[HttpPost]
+        //public IActionResult DeleteProduct(int id)
+        //{
+
+        //}
     }
 }
