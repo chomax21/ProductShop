@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ProductShop.Models;
 using ProductShop.Services;
 using ProductShop.ViewModel;
+using System.Collections.Generic;
 
 namespace ProductShop.Controllers
 {
@@ -46,8 +47,8 @@ namespace ProductShop.Controllers
             {
                 Id=product.Id,
                 Name=product.Name,
-                Description=product.Description,
                 Category = product.Category,
+                Description=product.Description,
                 Manufacturer = product.Manufacturer,
                 ProductComposition =product.ProductComposition
             };
@@ -87,5 +88,38 @@ namespace ProductShop.Controllers
             }
             return RedirectToAction("Error", "Home");
         }
+
+        [HttpGet]
+        public IActionResult GetProductByName(string name)
+        {
+            var resultByName = _db.GetProductByName(name);
+            return View(resultByName);
+        }
+        [HttpGet]
+        public IActionResult GetProductById(int id)
+        {
+            var resultById = _db.GetProductById(id);
+            return View(resultById);
+        }
+        [HttpGet]
+        public IActionResult GetProductByManufacturer(string manufacturer)
+        {
+            var resultByManufacturer = _db.GetProductByName(manufacturer);
+            return View(resultByManufacturer);
+        }
+        [HttpGet]
+        public IActionResult GetProductByCategory(string category)
+        {
+            var resultByCategory = _db.GetProductByName(category);
+            return View(resultByCategory);
+        }
+        [HttpGet]
+        public IActionResult GetAllProducts()
+        {
+            IEnumerable<Product> products;
+            products = _db.GetProducts();
+            return View(products); 
+        }
+
     }
 }
