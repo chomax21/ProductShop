@@ -4,6 +4,7 @@ using ProductShop.Models;
 using ProductShop.Services;
 using ProductShop.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProductShop.Controllers
 {
@@ -25,19 +26,26 @@ namespace ProductShop.Controllers
         [HttpPost]
         public IActionResult CreateProduct(ViewModelProduct viewModelProduct)
         {
-            Product product = new Product() 
+            if (ModelState.IsValid)
             {
-                Id = viewModelProduct.Id,
-                Name = viewModelProduct.Name,
-                Category = viewModelProduct.Category,
-                Description = viewModelProduct.Description,
-                Manufacturer = viewModelProduct.Manufacturer,
-                ProductComposition = viewModelProduct.ProductComposition
-            };
-            _db.CreateProduct(product);
-            _db.Save();
-            ViewData["Message"] = $"Продукт {viewModelProduct.Name} добавлен!";
-            return View();
+                Product product = new Product()
+                {
+                    Id = viewModelProduct.Id,
+                    Name = viewModelProduct.Name,
+                    Category = viewModelProduct.Category,
+                    Description = viewModelProduct.Description,
+                    Manufacturer = viewModelProduct.Manufacturer,
+                    ProductComposition = viewModelProduct.ProductComposition
+                };
+
+                _db.CreateProduct(product);
+                _db.Save();
+                ViewData["Message"] = $"Продукт {viewModelProduct.Name} добавлен!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return RedirectToAction("Error", "Home");
+           
         }
         [HttpGet]
         public IActionResult UpdateProduct(int id)

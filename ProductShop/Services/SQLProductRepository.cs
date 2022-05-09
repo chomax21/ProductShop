@@ -72,7 +72,7 @@ namespace ProductShop.Services
 
         public void Save()
         {
-            _db.SaveChangesAsync();
+            _db.SaveChanges();
         }
 
         public bool UpateProduct(Product item)
