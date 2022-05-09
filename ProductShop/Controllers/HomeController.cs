@@ -18,9 +18,10 @@ namespace ProductShop.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(string message)
         {
-            return View();
+            return View(message);
         }
 
         public IActionResult Privacy()

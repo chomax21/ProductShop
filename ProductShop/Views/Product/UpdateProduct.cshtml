@@ -1,0 +1,29 @@
+﻿@model ViewModelProduct
+
+@{
+    ViewData["Title"] = "Редактируем продукт";
+}
+
+<form asp-action="UpdateProduct" asp-controller="Product">
+   <div class="form-group">
+       <label>Название продукта</label>
+       <input type="text" asp-for="Name" class="form-control" placeholder="@Model.Name">
+   </div>
+   <div class="form-group">
+       <label>Категория продукта</label>
+       <input type="text" asp-for="Category" class="form-control" placeholder="@Model.Category">
+   </div>
+   <div class="form-group">
+       <label>Описание продукта</label>
+       <input type="text" asp-for="Description" class="form-control" placeholder="@Model.Description">
+   </div>
+   <div class="form-group">
+       <label>Состав продукта</label>
+       <input type="text" asp-for="ProductComposition" class="form-control" placeholder="@Model.ProductComposition">
+   </div>
+   <div class="form-group">
+       <label>Производитель продукта</label>
+       <input type="text" asp-for="Manufacturer" class="form-control" placeholder="@Model.Manufacturer">
+   </div>
+   <button type="submit" class="btn btn-primary">Отредактировать продукт</button>
+</form>

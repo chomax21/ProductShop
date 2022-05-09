@@ -1,11 +1,12 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Home Page";
 }
 
-@if (ViewData["Message"] != null)
+@if (TempData["SuccesMessage"] != null)
 {
     <div class="alert alert-success" role="alert">
-        @ViewData["Message"]
+        @TempData["SuccesMessage"]
     </div>
 }
 

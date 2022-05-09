@@ -6,14 +6,17 @@
 @foreach (var item in Model)
 {
     <div class="card">
-        <div class="card-header"></div>
+        <div class="card-header text-muted">
+            <small>Информация о продукте</small>
+        </div>
         <div class="card-body">
             <h5 class="card-title">Продукт : @item.Name</h5>
             <p class="card-text">Производитель : @item.Manufacturer</p>
             <p class="card-text"><strong>Категория :</strong> @item.Category</p>
             <p class="card-text">Описание : @item.Description</p>
             <p class="card-text">Состав : @item.ProductComposition</p>
-        </div>
+            <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
+        </div>        
         <div class="card-footer text-muted">
             Количество : ???
         </div>

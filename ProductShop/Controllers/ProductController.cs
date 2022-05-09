@@ -40,7 +40,7 @@ namespace ProductShop.Controllers
 
                 _db.CreateProduct(product);
                 _db.Save();
-                ViewData["Message"] = $"Продукт {viewModelProduct.Name} добавлен!";
+                TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
                 return RedirectToAction("Index", "Home");
             }
 
@@ -48,19 +48,23 @@ namespace ProductShop.Controllers
            
         }
         [HttpGet]
-        public IActionResult UpdateProduct(int id)
+        public IActionResult UpdateProduct(int? id)
         {
-            var product = _db.GetProductById(id);
-            ViewModelProduct viewModelProduct = new ViewModelProduct()
+            if (id.HasValue)
             {
-                Id=product.Id,
-                Name=product.Name,
-                Category = product.Category,
-                Description=product.Description,
-                Manufacturer = product.Manufacturer,
-                ProductComposition =product.ProductComposition
-            };
-            return View(viewModelProduct);
+                var product = _db.GetProductById(id.Value);
+                ViewModelProduct viewModelProduct = new ViewModelProduct()
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Category = product.Category,
+                    Description = product.Description,
+                    Manufacturer = product.Manufacturer,
+                    ProductComposition = product.ProductComposition
+                };
+                return View(viewModelProduct);
+            }
+            return View(null);           
         }
         [HttpPost]
         public IActionResult UpdateProduct(ViewModelProduct viewModelProduct)
@@ -76,10 +80,10 @@ namespace ProductShop.Controllers
             };
             bool resultOperation = _db.UpateProduct(product);
             _db.Save();
-            ViewData["Message"] = $"Продукт {viewModelProduct.Name} отредактирован!";
+            TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
             if (resultOperation)
             {
-                return View();
+                return RedirectToAction("Index","Home");
             }
             return RedirectToAction("Error","Home");
         }
