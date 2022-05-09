@@ -69,35 +69,69 @@ namespace ProductShop.Controllers
         [HttpPost]
         public IActionResult UpdateProduct(ViewModelProduct viewModelProduct)
         {
-            Product product = new Product()
+            if (ModelState.IsValid)
             {
-                Id = viewModelProduct.Id,
-                Name = viewModelProduct.Name,
-                Category = viewModelProduct.Category,
-                Description = viewModelProduct.Description,
-                Manufacturer = viewModelProduct.Manufacturer,
-                ProductComposition = viewModelProduct.ProductComposition
-            };
-            bool resultOperation = _db.UpateProduct(product);
-            _db.Save();
-            TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
-            if (resultOperation)
-            {
-                return RedirectToAction("Index","Home");
-            }
+                Product product = new Product()
+                {
+                    Id = viewModelProduct.Id,
+                    Name = viewModelProduct.Name,
+                    Category = viewModelProduct.Category,
+                    Description = viewModelProduct.Description,
+                    Manufacturer = viewModelProduct.Manufacturer,
+                    ProductComposition = viewModelProduct.ProductComposition
+                };
+                bool resultOperation = _db.UpateProduct(product);
+                _db.Save();
+                TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
+                if (resultOperation)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }           
             return RedirectToAction("Error","Home");
         }
-        [HttpPost]
+        [HttpGet]
         public IActionResult DeleteProduct(int? id)
         {
             if (id.HasValue)
             {
-                _db.DeleteProduct(id.Value);
-                var product = _db.GetProductById(id.Value);
-                _db.Save();
-                ViewData["Message"] = $"Продукт {product.Name} удален!";
-                return RedirectToAction("Index","Home");
+                Product searchProdict = _db.GetProductById(id.Value);
+                ViewModelProduct viewModelProduct = new ViewModelProduct()
+                {
+                    Id= searchProdict.Id,
+                    Name = searchProdict.Name,
+                    Category = searchProdict.Category,
+                    Description=searchProdict.Description,
+                    Manufacturer = searchProdict.Manufacturer,
+                    ProductComposition = searchProdict.ProductComposition                    
+                };
+                return View(viewModelProduct);
             }
+            return RedirectToAction("Error", "Home");
+            
+        }
+
+        [HttpPost]
+        public IActionResult DeleteProduct(int id)
+        {
+            Product searchProdict = _db.GetProductById(id);
+            ViewModelProduct viewModelProduct = new ViewModelProduct()
+            {
+                Id = searchProdict.Id,
+                Name = searchProdict.Name,
+                Category = searchProdict.Category,
+                Description = searchProdict.Description,
+                Manufacturer = searchProdict.Manufacturer,
+                ProductComposition = searchProdict.ProductComposition
+            };
+            string message = viewModelProduct.Name;
+            bool result = _db.DeleteProduct(id);              
+            _db.Save();
+            TempData["SuccesMessage"] = $"Продукт <{message}> удален!";
+            if (result)
+            {
+                return RedirectToAction("Index", "Home");
+            }                
             return RedirectToAction("Error", "Home");
         }
 

@@ -1,0 +1,33 @@
+﻿@model ViewModelProduct
+@{
+    ViewData["Title"] = "Подтверждение удаления продукта";
+}
+
+<form method="post">
+    <div>
+        <p>
+            <strong>
+                Вы точно хотите удалить продукт ?
+            </strong>
+        </p>
+        <div class="card m-2">
+            <div class="card-header text-muted">
+                <small>Информация о продукте</small>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Продукт : @Model.Name</h5>
+                <p class="card-text">Производитель : @Model.Manufacturer</p>
+                <p class="card-text"><strong>Категория :</strong> @Model.Category</p>
+                <p class="card-text">Описание : @Model.Description</p>
+                <p class="card-text">Состав : @Model.ProductComposition</p>
+            </div>
+            <div class="card-footer text-muted">
+                Количество : ???
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Да</button>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-danger">Нет</a>
+    </div>
+</form>
+
+
