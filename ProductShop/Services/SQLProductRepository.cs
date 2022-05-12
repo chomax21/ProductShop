@@ -67,7 +67,10 @@ namespace ProductShop.Services
 
         public IEnumerable<Product> GetProducts()
         {
-              return _db.Products.ToList();
+            var searchResult = from x in _db.Products
+                               where !x.IsDeleted
+                               select x;
+            return searchResult.ToList();
         }
 
         public void Save()
