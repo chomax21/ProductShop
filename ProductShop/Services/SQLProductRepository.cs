@@ -57,12 +57,29 @@ namespace ProductShop.Services
             return (Product)getProduct;
         }
 
-        public Product GetProductByName(string name)
+        public IEnumerable<Product> GetProductByName(string name)
         {
-            var getProduct = from x in _db.Products
-                             where x.Name.Contains(name)
-                             select x;
-            return (Product)getProduct;
+            var searchProduct = from x in _db.Products
+                                    where x.Name.Contains(name)
+                                    select x;
+            return searchProduct;
+            ////if(getProduct != null)
+            //{
+            //    foreach (var item in getProduct)
+            //    {
+            //        Product searhProduct = new Product
+            //        {
+            //            Id = item.Id,
+            //            Name = item.Name,
+            //            Category = item.Category,
+            //            Manufacturer = item.Manufacturer,
+            //            Description = item.Description,
+            //            ProductComposition = item.ProductComposition
+            //        };
+            //        return searhProduct;
+            //    }
+            //}           
+            //return null;
         }
 
         public IEnumerable<Product> GetProducts()

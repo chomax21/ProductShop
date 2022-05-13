@@ -135,11 +135,19 @@ namespace ProductShop.Controllers
             return RedirectToAction("Error", "Home");
         }
 
-        [HttpGet]
-        public IActionResult GetProductByName(string name)
+      
+        public IActionResult GetProductByName(SearchByNameVIewModel search)
         {
-            var resultByName = _db.GetProductByName(name);
-            return View(resultByName);
+            SearchByNameVIewModel model = new SearchByNameVIewModel();
+            model.Products = _db.GetProductByName(search.SearchString);
+            return View(model);
+        }
+
+        [HttpGet]
+        [ActionName("SearchByName")]
+        public IActionResult GetProductByName()
+        {
+            return View("GetProductByName");
         }
         [HttpGet]
         public IActionResult GetProductById(int id)

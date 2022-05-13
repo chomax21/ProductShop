@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ProductShop.Services
 {
@@ -6,7 +7,7 @@ namespace ProductShop.Services
     {
         IEnumerable<T> GetProducts();
         T GetProductById(int id);
-        T GetProductByName(string name);
+        IEnumerable<T> GetProductByName(string name);
         T GetProductByCategory(string category);
         T GetProductByManufacturer(string manufacturer);
         bool CreateProduct(T item);

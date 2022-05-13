@@ -9,5 +9,6 @@
         public string ProductComposition { get; set; }
         public string Manufacturer { get; set; }
         public bool IsDeleted { get; set; }
+
     }
 }
