@@ -136,9 +136,9 @@ namespace ProductShop.Controllers
         }
 
       
-        public IActionResult GetProductByName(SearchByNameVIewModel search)
+        public IActionResult GetProductByName(SearchVIewModel search)
         {
-            SearchByNameVIewModel model = new SearchByNameVIewModel();
+            SearchVIewModel model = new SearchVIewModel();
             model.Products = _db.GetProductByName(search.SearchString);
             return View(model);
         }
@@ -149,11 +149,30 @@ namespace ProductShop.Controllers
         {
             return View("GetProductByName");
         }
-        [HttpGet]
-        public IActionResult GetProductById(int id)
+
+        public IActionResult GetProductById(int id) // Если вдруг такого продукта не окажется, будем пеернаправлять на главную страницу с сообщением об отсуствии данного продукта.
         {
             var resultById = _db.GetProductById(id);
-            return View(resultById);
+            if (resultById != null)
+            {
+                SearchByIdViewModel model = new SearchByIdViewModel()
+                {
+                    Id = resultById.Id,
+                    Name = resultById.Name,
+                    Category = resultById.Category,
+                    Description = resultById.Description,
+                    Manufacturer = resultById.Manufacturer,
+                    ProductComposition = resultById.ProductComposition,
+                };
+                return View(model);
+            }
+            TempData["Error"] = "Продутка с таким идентификатором не существует!";
+            return RedirectToAction("Index","Home");             
+        }
+        [HttpGet]
+        public IActionResult GetProductById()
+        {
+            return View();
         }
         [HttpGet]
         public IActionResult GetProductByManufacturer(string manufacturer)

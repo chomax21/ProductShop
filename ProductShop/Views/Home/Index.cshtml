@@ -10,8 +10,14 @@
     </div>
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["Error"]
+    </div>
+}
+
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Привет</p>
+    <h1 class="display-4">Здраствуйте! :)</h1>
 </div>
