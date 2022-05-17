@@ -4,14 +4,16 @@
 }
 
 <div class="m-2">
-    <a asp-action="SearchByName" asp-controller="Product">Поиск продукта по названию.</a>
-    
+    <a asp-action="SearchByName" asp-controller="Product">Поиск продукта по названию.</a>    
 </div>
 <div class="m-2">
     <a asp-action="GetProductById" asp-controller="Product">Поиск продукта по Идентификатору.</a>
 </div>
 <div class="m-2">
     <a asp-action="GetProductByCategory" asp-controller="Product">Поиск продукта по Категории.</a>
+</div>
+<div class="m-2">
+    <a asp-action="GetProductByManufacturer" asp-controller="Product">Поиск продукта по Производителю.</a>
 </div>
 
 @foreach (var item in Model)

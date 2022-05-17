@@ -9,7 +9,7 @@ namespace ProductShop.Services
         IEnumerable<T> GetProducts();
         IEnumerable<T> GetProductByName(string name);
         IEnumerable<T> GetProductByCategory(string category);
-        T GetProductByManufacturer(string manufacturer);
+        IEnumerable<T> GetProductByManufacturer(string manufacturer);
         bool CreateProduct(T item);
         bool UpateProduct(T item);
         bool DeleteProduct(int? id);

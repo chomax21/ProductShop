@@ -174,12 +174,6 @@ namespace ProductShop.Controllers
         {
             return View();
         }
-        [HttpGet]
-        public IActionResult GetProductByManufacturer(string manufacturer)
-        {
-            var resultByManufacturer = _db.GetProductByCategory(manufacturer);
-            return View(resultByManufacturer);
-        }
 
 
         [HttpGet]
@@ -203,5 +197,17 @@ namespace ProductShop.Controllers
             return View(products); 
         }
 
+        [HttpGet]
+        public IActionResult GetProductByManufacturer()
+        {
+            return  View();
+        }
+
+        public IActionResult GetProductByManufacturer(SearchVIewModel manufacturer)
+        {
+            SearchVIewModel model = new SearchVIewModel();
+            model.Products = _db.GetProductByManufacturer(manufacturer.SearchString);
+            return View(model);
+        }
     }
 }

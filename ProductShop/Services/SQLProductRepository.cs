@@ -50,12 +50,12 @@ namespace ProductShop.Services
             return getProduct;
         }
 
-        public Product GetProductByManufacturer(string manufacturer)
+        public IEnumerable<Product> GetProductByManufacturer(string manufacturer)
         {
             var getProduct = from x in _db.Products
                              where x.Manufacturer.Contains(manufacturer)
                              select x;
-            return (Product)getProduct;
+            return getProduct;
         }
 
         public IEnumerable<Product> GetProductByName(string name)
