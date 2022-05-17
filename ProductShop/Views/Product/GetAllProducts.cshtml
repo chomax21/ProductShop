@@ -10,6 +10,9 @@
 <div class="m-2">
     <a asp-action="GetProductById" asp-controller="Product">Поиск продукта по Идентификатору.</a>
 </div>
+<div class="m-2">
+    <a asp-action="GetProductByCategory" asp-controller="Product">Поиск продукта по Категории.</a>
+</div>
 
 @foreach (var item in Model)
 {
@@ -21,7 +24,7 @@
             <h5 class="card-title"><strong>Продукт :</strong> @item.Name</h5>
             <p class="card-text"><strong>Производитель :</strong> @item.Manufacturer</p>
             <p class="card-text"><strong>Категория :</strong> @item.Category</p>
-            <p class="card-text"><string>Описание :</string> @item.Description</p>
+            <p class="card-text"><strong>Описание :</strong> @item.Description</p>
             <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
             <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
             <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>

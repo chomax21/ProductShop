@@ -1,10 +1,10 @@
 ﻿@model SearchVIewModel
 @{
-    ViewData["Title"] = "Ищем продукт по имени";
+    ViewData["Title"] = "Ищем продукт по категории";
 }
 <h5>@ViewData["Title"]</h5>
 
-<form asp-action="GetProductByName">
+<form asp-action="GetProductByCategory">
     <div class="m-2">
         <input asp-for="@Model.SearchString" type="text" />
         <button type="submit">Найти</button>

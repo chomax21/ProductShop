@@ -36,12 +36,12 @@ namespace ProductShop.Services
             return false;
         }
 
-        public Product GetProductByCategory(string category)
+        public IEnumerable<Product> GetProductByCategory(string category)
         {
-            var getProduct = from x in _db.Products
+            var getProducts = from x in _db.Products
                           where x.Category.Contains(category)
                           select x;
-            return (Product)getProduct;
+            return getProducts;
         }
 
         public Product GetProductById(int id)
@@ -60,27 +60,11 @@ namespace ProductShop.Services
 
         public IEnumerable<Product> GetProductByName(string name)
         {
-            var searchProduct = from x in _db.Products
-                                    where x.Name.Contains(name)
-                                    select x;
+            var searchProduct = _db.Products
+                .Where(x => x.Name.Contains(name))
+                .Select(x => x);
+                
             return searchProduct;
-            ////if(getProduct != null)
-            //{
-            //    foreach (var item in getProduct)
-            //    {
-            //        Product searhProduct = new Product
-            //        {
-            //            Id = item.Id,
-            //            Name = item.Name,
-            //            Category = item.Category,
-            //            Manufacturer = item.Manufacturer,
-            //            Description = item.Description,
-            //            ProductComposition = item.ProductComposition
-            //        };
-            //        return searhProduct;
-            //    }
-            //}           
-            //return null;
         }
 
         public IEnumerable<Product> GetProducts()
@@ -106,5 +90,6 @@ namespace ProductShop.Services
             }
             return false;
         }
+
     }
 }

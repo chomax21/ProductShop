@@ -177,15 +177,24 @@ namespace ProductShop.Controllers
         [HttpGet]
         public IActionResult GetProductByManufacturer(string manufacturer)
         {
-            var resultByManufacturer = _db.GetProductByName(manufacturer);
+            var resultByManufacturer = _db.GetProductByCategory(manufacturer);
             return View(resultByManufacturer);
         }
+
+
         [HttpGet]
-        public IActionResult GetProductByCategory(string category)
+        public IActionResult GetProductByCategory()
         {
-            var resultByCategory = _db.GetProductByName(category);
-            return View(resultByCategory);
+            return View();
         }
+        
+        public IActionResult GetProductByCategory(SearchVIewModel category)
+        {
+            SearchVIewModel model = new SearchVIewModel();
+            model.Products = _db.GetProductByCategory(category.SearchString);
+            return View(model);
+        }
+
         [HttpGet]
         public IActionResult GetAllProducts()
         {

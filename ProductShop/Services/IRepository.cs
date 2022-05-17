@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace ProductShop.Services
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T>
     {
-        IEnumerable<T> GetProducts();
         T GetProductById(int id);
+        IEnumerable<T> GetProducts();
         IEnumerable<T> GetProductByName(string name);
-        T GetProductByCategory(string category);
+        IEnumerable<T> GetProductByCategory(string category);
         T GetProductByManufacturer(string manufacturer);
         bool CreateProduct(T item);
         bool UpateProduct(T item);
