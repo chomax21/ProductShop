@@ -4,6 +4,7 @@ using ProductShop.Models;
 using ProductShop.Services;
 using ProductShop.ViewModel;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProductShop.Controllers
@@ -192,9 +193,20 @@ namespace ProductShop.Controllers
         [HttpGet]
         public IActionResult GetAllProducts()
         {
-            IEnumerable<Product> products;
-            products = _db.GetProducts();
-            return View(products); 
+            List<ViewModelProduct> viewProducts = new List<ViewModelProduct>();
+            var newProducts = _db.GetProducts().ToList();
+            foreach (var item in newProducts)
+            {
+                ViewModelProduct viewModel = new ViewModelProduct();
+                viewModel.Id = item.Id;
+                viewModel.Name = item.Name;
+                viewModel.Category = item.Category;
+                viewModel.Description = item.Description;
+                viewModel.Manufacturer = item.Manufacturer;
+                viewModel.ProductComposition = item.ProductComposition;
+                viewProducts.Add(viewModel);
+            }
+            return View(viewProducts); 
         }
 
         [HttpGet]
