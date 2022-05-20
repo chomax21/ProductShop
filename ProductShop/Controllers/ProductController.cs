@@ -156,7 +156,7 @@ namespace ProductShop.Controllers
             var resultById = _db.GetProductById(id);
             if (resultById != null)
             {
-                SearchByIdViewModel model = new SearchByIdViewModel()
+                ViewModelProduct model = new ViewModelProduct()
                 {
                     Id = resultById.Id,
                     Name = resultById.Name,
