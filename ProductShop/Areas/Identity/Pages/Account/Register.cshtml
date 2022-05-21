@@ -1,5 +1,8 @@
 ﻿@page
+@using ProductShop.Data
+@using ProductShop.Services
 @model RegisterModel
+@inject ApplicationDbContext _db
 @{
     ViewData["Title"] = "Регистрация";
 }
@@ -27,6 +30,15 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            @if (_db.Users.FirstOrDefault(x => x.UserName == "Admin") == null)
+            {
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="Input.IsAdmin">Вы администратор?</label>
+                        <input asp-for="Input.IsAdmin" />
+                    </div>
+                </div>
+            }
             <button type="submit" class="btn btn-primary">Регистрация</button>
         </form>
     </div>
@@ -63,5 +75,5 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+<partial name="_ValidationScriptsPartial" />
 }

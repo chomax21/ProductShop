@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProductShop.Models;
 using ProductShop.Services;
@@ -19,12 +20,14 @@ namespace ProductShop.Controllers
             _db = (SQLProductRepository)repository;
         }
         [HttpGet]
+        [Authorize("AdminRights")]
         public IActionResult CreateProduct()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize("AdminRights")]
         public IActionResult CreateProduct(ViewModelProduct viewModelProduct)
         {
             if (ModelState.IsValid)

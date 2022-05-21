@@ -30,6 +30,16 @@ namespace ProductShop
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+            // Ќастраиваем авторизацию. —оздаем политику по которой и будет проходить авторизаци€. »щем утверждение у
+            // пользовател€ ("IsAdmin", "true").
+            // ≈сли находим, даем выполнить метод контроллера к которому привзан атрибут [Authorize("AdminRights")].
+            // ¬ случаее если аутенфикаци€ и последующа€ авторизаци€ не прошла, нас перенаправл€ют на страницу входа/регистрации.
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminRights", policyBuilder => policyBuilder.RequireClaim("IsAdmin", "true"));
+            });
+
             services.AddScoped<IRepository<Product>, SQLProductRepository>(); // —ервис репозитори€.
 
             services.AddControllersWithViews();

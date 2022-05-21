@@ -30,6 +30,7 @@ namespace ProductShop.Services
             if (id.HasValue)
             {
                 var product = _db.Products.Find(id.Value);
+                
                 product.IsDeleted = true;
                 return true;
             }
