@@ -68,10 +68,17 @@ namespace ProductShop.Services
             return searchProduct;
         }
 
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<Product> GetProducts() // Отобразить все продукты, кроме тех которые помеченны как удаленные.
         {
             var searchResult = from x in _db.Products
                                where !x.IsDeleted
+                               select x;
+            return searchResult.ToList();
+        }
+
+        public IEnumerable<Product> GetProductsIsDeleted() // Отобразить все продукты, как имеющиеся так и удаленные.
+        {
+            var searchResult = from x in _db.Products                              
                                select x;
             return searchResult.ToList();
         }

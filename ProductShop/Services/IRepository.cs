@@ -7,6 +7,7 @@ namespace ProductShop.Services
     {
         T GetProductById(int id);
         IEnumerable<T> GetProducts();
+        IEnumerable<T> GetProductsIsDeleted();
         IEnumerable<T> GetProductByName(string name);
         IEnumerable<T> GetProductByCategory(string category);
         IEnumerable<T> GetProductByManufacturer(string manufacturer);

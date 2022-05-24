@@ -4,7 +4,10 @@
 }
 
 <div class="m-2">
-    <a asp-action="SearchByName" asp-controller="Product">Поиск продукта по названию.</a>    
+    <a asp-action="GetAllProductsIsDeleted" asp-controller="Product">Отобразить все продукты, в том числе и удаленные.</a>
+</div>
+<div class="m-2">
+    <a asp-action="SearchByName" asp-controller="Product">Поиск продукта по названию.</a>
 </div>
 <div class="m-2">
     <a asp-action="GetProductById" asp-controller="Product">Поиск продукта по Идентификатору.</a>
@@ -28,8 +31,14 @@
             <p class="card-text"><strong>Категория :</strong> @item.Category</p>
             <p class="card-text"><strong>Описание :</strong> @item.Description</p>
             <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
+            @if (item.IsDeleted)
+            {
+                <p class="card-text"><strong class="text-danger">Этот продукт помечен как удаленный!</strong></p>
+                <a asp-action="RestoreProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-success">Восстановить</a>
+            }
             <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
             <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+            
         </div>
         <div class="card-footer text-muted">
             Количество : ???
