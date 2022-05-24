@@ -28,7 +28,7 @@ namespace ProductShop
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => { // Настройка Identity.
-                options.User.RequireUniqueEmail = true; // Уникальный Email.
+                options.User.RequireUniqueEmail = true; // Проверка на уникальность Email.
                 options.SignIn.RequireConfirmedAccount = false; // Доступ к функциональности без подтверждения почты.
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();

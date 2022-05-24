@@ -80,23 +80,9 @@ namespace ProductShop.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
-            {
-                IdentityResult result;
-                IdentityUser user;
-
-                if (_userManager.FindByEmailAsync("Admin@mail.ru") == null)
-                {
-                    user = new IdentityUser { UserName = Input.Email, Email = Input.Email,};
-                    result = await _userManager.CreateAsync(user, Input.Password);
-
-                    var claim = new Claim("Admin","true");
-                    await _userManager.AddClaimAsync(user,claim);
-                }
-                else
-                {
-                    user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
-                    result = await _userManager.CreateAsync(user, Input.Password);
-                }
+            {                              
+                 var  user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                 var   result = await _userManager.CreateAsync(user, Input.Password);      
                 
                 if (result.Succeeded)
                 {
