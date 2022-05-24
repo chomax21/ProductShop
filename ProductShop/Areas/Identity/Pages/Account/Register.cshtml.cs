@@ -64,9 +64,7 @@ namespace ProductShop.Areas.Identity.Pages.Account
             [Display(Name = "Подтверждение пароля")]
             [Compare("Password", ErrorMessage = "Пароли не совпадают.")]
             public string ConfirmPassword { get; set; }
-            [Required]
-            [Display(Name ="Вы являетесь администратором?")]
-            public bool IsAdmin { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)

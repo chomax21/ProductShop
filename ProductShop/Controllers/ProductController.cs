@@ -19,12 +19,18 @@ namespace ProductShop.Controllers
             _logger = logger;
             _db = (SQLProductRepository)repository;
         }
+
+
+
         [HttpGet]
         [Authorize("AdminRights")]
         public IActionResult CreateProduct()
         {
             return View();
         }
+
+
+
 
         [HttpPost]
         [Authorize("AdminRights")]
@@ -51,25 +57,20 @@ namespace ProductShop.Controllers
             return RedirectToAction("Error", "Home");
            
         }
+
+
         [HttpGet]
         public IActionResult UpdateProduct(int? id)
         {
             if (id.HasValue)
             {
-                var product = _db.GetProductById(id.Value);
-                ViewModelProduct viewModelProduct = new ViewModelProduct()
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Category = product.Category,
-                    Description = product.Description,
-                    Manufacturer = product.Manufacturer,
-                    ProductComposition = product.ProductComposition
-                };
-                return View(viewModelProduct);
+                var product = _db.GetProductById(id.Value);               
+                return View(MapProductToViewModel(product));
             }
             return View(null);           
         }
+
+
         [HttpPost]
         public IActionResult UpdateProduct(ViewModelProduct viewModelProduct)
         {
@@ -94,41 +95,27 @@ namespace ProductShop.Controllers
             }           
             return RedirectToAction("Error","Home");
         }
+
+
         [HttpGet]
         public IActionResult DeleteProduct(int? id)
         {
             if (id.HasValue)
             {
                 Product searchProdict = _db.GetProductById(id.Value);
-                ViewModelProduct viewModelProduct = new ViewModelProduct()
-                {
-                    Id= searchProdict.Id,
-                    Name = searchProdict.Name,
-                    Category = searchProdict.Category,
-                    Description=searchProdict.Description,
-                    Manufacturer = searchProdict.Manufacturer,
-                    ProductComposition = searchProdict.ProductComposition                    
-                };
-                return View(viewModelProduct);
+                
+                return View(MapProductToViewModel(searchProdict));
             }
             return RedirectToAction("Error", "Home");
             
         }
 
+
         [HttpPost]
         public IActionResult DeleteProduct(int id)
         {
-            Product searchProdict = _db.GetProductById(id);
-            ViewModelProduct viewModelProduct = new ViewModelProduct()
-            {
-                Id = searchProdict.Id,
-                Name = searchProdict.Name,
-                Category = searchProdict.Category,
-                Description = searchProdict.Description,
-                Manufacturer = searchProdict.Manufacturer,
-                ProductComposition = searchProdict.ProductComposition
-            };
-            string message = viewModelProduct.Name;
+            Product searchProdict = _db.GetProductById(id);            
+            string message = MapProductToViewModel(searchProdict).Name;
             bool result = _db.DeleteProduct(id);              
             _db.Save();
             TempData["SuccesMessage"] = $"Продукт <{message}> удален!";
@@ -158,17 +145,8 @@ namespace ProductShop.Controllers
         {
             var resultById = _db.GetProductById(id);
             if (resultById != null)
-            {
-                ViewModelProduct model = new ViewModelProduct()
-                {
-                    Id = resultById.Id,
-                    Name = resultById.Name,
-                    Category = resultById.Category,
-                    Description = resultById.Description,
-                    Manufacturer = resultById.Manufacturer,
-                    ProductComposition = resultById.ProductComposition,
-                };
-                return View(model);
+            {              
+                return View(MapProductToViewModel(resultById));
             }
             TempData["Error"] = "Продутка с таким идентификатором не существует!";
             return RedirectToAction("Index","Home");             
@@ -223,6 +201,22 @@ namespace ProductShop.Controllers
             SearchVIewModel model = new SearchVIewModel();
             model.Products = _db.GetProductByManufacturer(manufacturer.SearchString);
             return View(model);
+        }
+
+        private ViewModelProduct MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
+        {
+            ViewModelProduct model = new ViewModelProduct()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Category = product.Category,
+                Description = product.Description,
+                Manufacturer = product.Manufacturer,
+                ProductComposition = product.ProductComposition,
+                IsDeleted = product.IsDeleted
+            };
+
+            return model;
         }
     }
 }
