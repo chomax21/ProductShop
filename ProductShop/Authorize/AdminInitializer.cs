@@ -7,16 +7,12 @@ namespace ProductShop.Authorize
     public class AdminInitializer       
     {
         // Класс для инициализации первого пользователя Администратора. Будет вызываться в классе Program.
-        // Планировалось использование этого пользователя для,
-        // дальнейшей Аутентификации и Авторизации.
-        // на 19 строке не проходит условие, не работает пока =(
-        // Оставим пока это ненужный код. Будем искать альтернативы.
-        // Надеюсь с опытом вернуться и разобраться.
+        // Заработало. Был пропущен оператор await в условии проверки наличии такого юзера в БД.
         public static async Task InnitializeAsync(UserManager<IdentityUser> userManager)
         {
-            string AdminEmail = "Admin21@mail.ru";
+            string AdminEmail = "MainAdmin21@mail.ru";
             string AdminPassword = "_adminPass21";
-            if (userManager.FindByEmailAsync(AdminEmail) == null)
+            if (await userManager.FindByEmailAsync(AdminEmail) == null)
             {
                 var user = new IdentityUser { UserName = AdminEmail, Email = AdminEmail };
                 var result = await userManager.CreateAsync(user,AdminPassword);

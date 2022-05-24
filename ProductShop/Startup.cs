@@ -18,17 +18,22 @@ namespace ProductShop
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; } // Свойство через которое происходит получение конфигурации приложения.
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options => // Настройка и регистрация DbContexta EFCore.
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<IdentityUser>(options => { // Настройка Identity.
+                options.User.RequireUniqueEmail = true; // Уникальный Email.
+                options.SignIn.RequireConfirmedAccount = false; // Доступ к функциональности без подтверждения почты.
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+            
+            
 
 
             // Настраиваем авторизацию. Создаем политику по которой и будет проходить авторизация. Ищем утверждение у
