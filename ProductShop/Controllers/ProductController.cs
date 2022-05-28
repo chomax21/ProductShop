@@ -14,7 +14,7 @@ namespace ProductShop.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly SQLProductRepository _db;
-        public ProductController(ILogger<ProductController> logger, IRepository<Product> repository)
+        public ProductController(ILogger<ProductController> logger, IRepository<Product, Orders> repository)
         {
             _logger = logger;
             _db = (SQLProductRepository)repository;
@@ -42,6 +42,7 @@ namespace ProductShop.Controllers
                 {
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
+                    Price = viewModelProduct.Price,
                     Category = viewModelProduct.Category,
                     Description = viewModelProduct.Description,
                     Manufacturer = viewModelProduct.Manufacturer,
@@ -80,6 +81,7 @@ namespace ProductShop.Controllers
                 {
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
+                    Price= viewModelProduct.Price,
                     Category = viewModelProduct.Category,
                     Description = viewModelProduct.Description,
                     Manufacturer = viewModelProduct.Manufacturer,
@@ -186,6 +188,7 @@ namespace ProductShop.Controllers
                 ViewModelProduct viewModel = new ViewModelProduct();
                 viewModel.Id = item.Id;
                 viewModel.Name = item.Name;
+                viewModel.Price = item.Price;
                 viewModel.Category = item.Category;
                 viewModel.Description = item.Description;
                 viewModel.Manufacturer = item.Manufacturer;
@@ -207,6 +210,7 @@ namespace ProductShop.Controllers
                 ViewModelProduct viewModel = new ViewModelProduct();
                 viewModel.Id = item.Id;
                 viewModel.Name = item.Name;
+                viewModel.Price= item.Price;
                 viewModel.Category = item.Category;
                 viewModel.Description = item.Description;
                 viewModel.Manufacturer = item.Manufacturer;

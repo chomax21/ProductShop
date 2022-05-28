@@ -7,13 +7,19 @@ using System.Linq;
 
 namespace ProductShop.Services
 {
-    public class SQLProductRepository : IRepository<Product>
+    public class SQLProductRepository : IRepository<Product,Orders>
     {
         private ApplicationDbContext _db;
         public SQLProductRepository(ApplicationDbContext context)
         {
             _db = context;
         }
+
+        public bool CreateOrder(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CreateProduct(Product item)
         {
             if (item != null)
@@ -23,6 +29,11 @@ namespace ProductShop.Services
             }
             return false;
            
+        }
+
+        public bool DeleteOrder(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public bool DeleteProduct(int? id)
@@ -35,6 +46,11 @@ namespace ProductShop.Services
                 return true;
             }
             return false;
+        }
+
+        public IEnumerable<Orders> GetOrders(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Product> GetProductByCategory(string category)

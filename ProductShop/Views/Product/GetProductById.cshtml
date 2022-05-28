@@ -23,6 +23,7 @@
                 <p class="card-text"><strong>Категория :</strong> @Model?.Category</p>
                 <p class="card-text"><strong>Описание :</strong> @Model?.Description</p>
                 <p class="card-text"><strong>Состав :</strong> @Model?.ProductComposition</p>
+                <p class="card-text"><strong>Цена :</strong> @Model?.Price</p>
                 <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@Model?.Id" class="btn btn-warning">Редактировать</a>
                 <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@Model?.Id" class="btn btn-danger">Удалить</a>
             </div>
