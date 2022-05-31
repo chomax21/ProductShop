@@ -46,7 +46,8 @@ namespace ProductShop
                 options.AddPolicy("AdminRights", policyBuilder => policyBuilder.RequireClaim("IsAdmin", "true"));
             });
 
-            services.AddScoped<IRepository<Product,Orders>, SQLProductRepository>(); // Сервис репозитория.
+            services.AddScoped<IProductRepository<Product>, SQLProductRepository>(); // Регистрируем сервис репозитория. Интерфейс для работы с Product.
+            services.AddScoped<IOrderRepository<Order>, SQLProductRepository>(); // Регистрируем сервис репозитория. Интерфейс для работы с Orders.
 
             services.AddControllersWithViews();
         }

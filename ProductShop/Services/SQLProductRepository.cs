@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProductShop.Services
 {
-    public class SQLProductRepository : IRepository<Product,Orders>
+    public class SQLProductRepository : IProductRepository<Product>, IOrderRepository<Order>
     {
         private ApplicationDbContext _db;
         public SQLProductRepository(ApplicationDbContext context)
@@ -15,25 +15,34 @@ namespace ProductShop.Services
             _db = context;
         }
 
-        public bool CreateOrder(string id)
+        public bool CreateOrder(Order orders)
         {
-            throw new NotImplementedException();
+            if (orders != null)
+            {
+                _db.Orders.Add(orders);
+                return true;
+            }
+            return false;
         }
 
         public bool CreateProduct(Product item)
         {
             if (item != null)
             {
-                _db.Add(item);
+                _db.Products.Add(item);
                 return true;
             }
             return false;
            
         }
 
-        public bool DeleteOrder(string id)
+        public bool DeleteOrder(string id) // Метод не готов. Нужно продумать реализацию и саму суть. Нужно ли?
         {
-            throw new NotImplementedException();
+            var order = from x in _db.Orders
+                        where x.UserId == id
+                        select x;
+            _db.Users.FirstOrDefault(x=> x.)
+            return true;
         }
 
         public bool DeleteProduct(int? id)
@@ -48,9 +57,12 @@ namespace ProductShop.Services
             return false;
         }
 
-        public IEnumerable<Orders> GetOrders(string id)
+        public IEnumerable<Order> GetOrders(string id) // Ищем все заказы конкретного юзера.
         {
-            throw new NotImplementedException();
+            var orders = from x in _db.Orders
+                         where x.UserId == id
+                         select x;
+            return orders;
         }
 
         public IEnumerable<Product> GetProductByCategory(string category)

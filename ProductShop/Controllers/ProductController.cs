@@ -14,7 +14,7 @@ namespace ProductShop.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly SQLProductRepository _db;
-        public ProductController(ILogger<ProductController> logger, IRepository<Product, Orders> repository)
+        public ProductController(ILogger<ProductController> logger, IProductRepository<Product> repository)
         {
             _logger = logger;
             _db = (SQLProductRepository)repository;
@@ -26,7 +26,7 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public IActionResult CreateProduct()
         {
-            return View();
+            return View();            
         }
 
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductShop.Models
 {
-    public class Orders
+    public class Order
     {
         public int Id { get; set; }
         public string UserId { get; set; }
