@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductShop.Data;
+using ProductShop.Interfaces;
 using ProductShop.Models;
 using ProductShop.Services;
 
@@ -47,7 +48,8 @@ namespace ProductShop
             });
 
             services.AddScoped<IProductRepository<Product>, SQLProductRepository>(); // Регистрируем сервис репозитория. Интерфейс для работы с Product.
-            services.AddScoped<IOrderRepository<Order>, SQLProductRepository>(); // Регистрируем сервис репозитория. Интерфейс для работы с Orders.
+            services.AddScoped<IOrderRepository<Order>, ShoppingCartService>(); // Регистрируем сервис репозитория. Интерфейс для работы с Orders.
+            services.AddScoped<IShoppingCart<ShopingCart>, ShoppingCartService>(); // Регистрируем сервис репозитория. Интерфейс для работы с ShoppingCart.
 
             services.AddControllersWithViews();
         }

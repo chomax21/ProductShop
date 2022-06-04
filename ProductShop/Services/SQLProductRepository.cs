@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ProductShop.Services
 {
-    public class SQLProductRepository : IProductRepository<Product>, IOrderRepository<Order>
+    public class SQLProductRepository : IProductRepository<Product>
     {
         private ApplicationDbContext _db;
         public SQLProductRepository(ApplicationDbContext context)
@@ -15,15 +15,6 @@ namespace ProductShop.Services
             _db = context;
         }
 
-        public bool CreateOrder(Order orders)
-        {
-            if (orders != null)
-            {
-                _db.Orders.Add(orders);
-                return true;
-            }
-            return false;
-        }
 
         public bool CreateProduct(Product item)
         {
@@ -36,14 +27,6 @@ namespace ProductShop.Services
            
         }
 
-        public bool DeleteOrder(string id) // Метод не готов. Нужно продумать реализацию и саму суть. Нужно ли?
-        {
-            var order = from x in _db.Orders
-                        where x.UserId == id
-                        select x;
-            _db.Users.FirstOrDefault(x=> x.)
-            return true;
-        }
 
         public bool DeleteProduct(int? id)
         {
@@ -57,13 +40,6 @@ namespace ProductShop.Services
             return false;
         }
 
-        public IEnumerable<Order> GetOrders(string id) // Ищем все заказы конкретного юзера.
-        {
-            var orders = from x in _db.Orders
-                         where x.UserId == id
-                         select x;
-            return orders;
-        }
 
         public IEnumerable<Product> GetProductByCategory(string category)
         {

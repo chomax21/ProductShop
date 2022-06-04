@@ -25,7 +25,7 @@ namespace ProductShop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string message)
+        public IActionResult Index(string message)
         {            
             return View(message);
         }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductShop.Data;
 
 namespace ProductShop.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220604084849_AddShoppingCartAndChangeOrderTotalSummInDecimal2")]
+    partial class AddShoppingCartAndChangeOrderTotalSummInDecimal2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,9 +255,6 @@ namespace ProductShop.Data.Migrations
                     b.Property<bool>("isDone")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("isPayed")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.ToTable("Orders");
@@ -289,7 +288,12 @@ namespace ProductShop.Data.Migrations
                     b.Property<string>("ProductComposition")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ShopingCartId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ShopingCartId");
 
                     b.ToTable("Products");
                 });
@@ -306,9 +310,6 @@ namespace ProductShop.Data.Migrations
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -383,6 +384,13 @@ namespace ProductShop.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProductShop.Models.Product", b =>
+                {
+                    b.HasOne("ProductShop.Models.ShopingCart", null)
+                        .WithMany("Products")
+                        .HasForeignKey("ShopingCartId");
+                });
+
             modelBuilder.Entity("ProductShop.Models.ShopingCart", b =>
                 {
                     b.HasOne("ProductShop.Models.Order", "Order")
@@ -390,6 +398,11 @@ namespace ProductShop.Data.Migrations
                         .HasForeignKey("OrderId");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("ProductShop.Models.ShopingCart", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
