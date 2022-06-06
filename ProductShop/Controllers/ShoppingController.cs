@@ -4,6 +4,8 @@ using ProductShop.Services;
 using Microsoft.AspNetCore.Identity;
 using ProductShop.Interfaces;
 using ProductShop.ViewModel;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProductShop.Controllers
 {
@@ -17,7 +19,7 @@ namespace ProductShop.Controllers
         public ShoppingController(IProductRepository<Product> repository,
             UserManager<IdentityUser> userManager,
             IOrderRepository<Order> orderRepository,
-            IShoppingCart<ShopingCart> shoppingCartService) 
+            IShoppingCart<ShopingCart> shoppingCartService)
         {
             _db = (SQLProductRepository)repository;
             _userManager = userManager;
@@ -25,32 +27,70 @@ namespace ProductShop.Controllers
             _shoppingCart = shoppingCartService;
         }
 
+        [Authorize]
         public IActionResult GetShoppingCart()
         {
-            string UserId = _userManager.GetUserId(User);
-            ShopingCart shopingCart = _shoppingCart.GetShoppingCart(UserId);
-            Order order = _order.GetOrderForShoppingCart(UserId);
-            shopingCart.Order.Products = order.Products;
+            string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
+            var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
             if (shopingCart != null)
             {
-                return View(shopingCart);
+                Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
+                if (order != null)
+                {
+                    shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
+                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                    _db.Save();
+                    return View(shopingCart);
+                }
+                else
+                {
+                    return View();
+                }
             }
             return BadRequest();            
         }
 
-        public IActionResult AddProductInCart(ShoppingCartViewModel shoppingCart, int id)
+        [Authorize]
+        public IActionResult AddProductInCart(int ProductId)
         {
-            var addedProduct = _db.GetProductById(id);
-            if (addedProduct != null)
+            string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
+            var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
+            if (shopingCart != null)
             {
-                shoppingCart.Order.Products.Add(addedProduct);
+                Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
+                if (order != null)
+                {
+                    shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
+                    var newProduct = _db.GetProductById(ProductId);
+                    shopingCart.Order.Products.Add(newProduct);
+                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                    _order.UpdateOrder(shopingCart.Order);
+                    _db.Save();
+                    return View("GetShoppingCart", shopingCart);
+                }
+                else
+                {
+                    Order newOrder = new Order();
+                    newOrder.UserId = UserId;
+                    _order.CreateOrder(newOrder);
+                    _db.Save();
+                    var findOrder = _order.GetOrderForShoppingCart(UserId);
+                    var newProduct = _db.GetProductById(ProductId);
+                    shopingCart.Order = findOrder;
+                    shopingCart.Order.Products.Add(newProduct);                    
+                    _order.UpdateOrder(shopingCart.Order);
+                    _shoppingCart.AddShoppingCartInDb(shopingCart);
+                    _db.Save();
+                    return View("GetShoppingCart",shopingCart);
+                }
             }
-            return View(shoppingCart);
+            return View("GetShoppingCart", shopingCart);
         }
 
-        public IActionResult DeleteProductInCart(ShoppingCartViewModel shoppingCart, int id)
+        [Authorize]
+        public IActionResult DeleteProductInCart(ShopingCart shoppingCart)
         {
-            var addedProduct = _db.GetProductById(id);
+            var addedProduct = _db.GetProductById(shoppingCart.ProductId);
             if (addedProduct != null)
             {
                 shoppingCart.Order.Products.Remove(addedProduct);

@@ -6,6 +6,7 @@ namespace ProductShop.Services
     {
         IEnumerable<T> GetOrders(string id);
         T GetOrderForShoppingCart(string id);
+        bool UpdateOrder(T t);
         bool CreateOrder(T v);
         bool DeleteOrder(string id);
     }

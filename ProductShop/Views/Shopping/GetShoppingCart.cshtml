@@ -1,0 +1,20 @@
+﻿@model ShopingCart
+
+@{
+    ViewData["Title"] = $"Корзина {User.Identity.Name}";
+}
+<h4>Корзина покупок</h4>
+@if (Model != null)
+{
+    @foreach (var item in Model.Order.Products)
+    {
+        <div class="m-2">
+            <h3>Продукт:</h3><h3>@item.Name</h3>
+            <h3>Цена:</h3><h3>@item.Price</h3>
+            <h3>Описание:</h3><h3>@item.Description</h3>
+            <a asp-action="GetAllProducts" asp-controller="Product" class="btn btn-success">Вернуться к списку продуктов</a>
+        </div>
+    }
+
+}
+

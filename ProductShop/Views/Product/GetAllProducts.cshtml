@@ -1,6 +1,7 @@
-﻿@model List<ViewModelProduct>
+﻿@using Microsoft.AspNetCore.Identity
+@model List<ViewModelProduct>
 @{
-    ViewData["Title"] = "Отображаем все продукты";
+    ViewData["Title"] = "Отображаем все продукты";    
 }
 
 <div class="m-2">
@@ -39,6 +40,7 @@
             }
             <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
             <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+            <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-warning">Купить</a>
             
         </div>
         <div class="card-footer text-muted">

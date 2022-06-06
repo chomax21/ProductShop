@@ -44,6 +44,27 @@ namespace ProductShop.Services
             return _db.Orders.FirstOrDefault(x => x.UserId == id && x.isDone == false);
         }
 
+        public bool AddShoppingCartInDb(ShopingCart shopingCart)
+        {
+            if (shopingCart != null)
+            {
+                _db.ShopingCarts.Add(shopingCart);
+                return true;
+            }
+            return false;
+        }
+
+        public bool UpdateShoppingCartInDb(ShopingCart shopingCart)
+        {
+            if (shopingCart != null)
+            {
+                _db.ShopingCarts.Update(shopingCart);
+                _db.Entry(shopingCart).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                return true;
+            }
+            return false;
+        }
+
         public IEnumerable<Order> GetOrders(string id)
         {
             return _db.Orders.Where(x => x.UserId == id);
@@ -51,12 +72,26 @@ namespace ProductShop.Services
 
         public ShopingCart GetShoppingCart(string id)
         {
-            var newCart = _db.ShopingCarts.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
-            if (newCart != null)
+            var oldCart = _db.ShopingCarts.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
+            if (oldCart != null)
             {
-                return newCart;
+                return oldCart;
             }
-            return new ShopingCart(id);
-        }       
+            ShopingCart newCart = new ShopingCart(id);
+            _db.ShopingCarts.Add(newCart);
+            _db.SaveChanges();
+            return newCart;
+        }
+
+        public bool UpdateOrder(Order t)
+        {
+            if(t != null)
+            {
+                _db.Orders.Update(t);
+                _db.Entry(t).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                return true;
+            }
+            return false;
+        }
     }
 }

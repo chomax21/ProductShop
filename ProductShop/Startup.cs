@@ -33,10 +33,7 @@ namespace ProductShop
                 options.SignIn.RequireConfirmedAccount = false; // Доступ к функциональности без подтверждения почты.
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
-            
-            
-
-
+                       
             // Настраиваем авторизацию. Создаем политику по которой и будет проходить авторизация. Ищем утверждение у
             // пользователя ("IsAdmin", "true").
             // Если находим, даем выполнить метод контроллера к которому привзан атрибут [Authorize("AdminRights")].

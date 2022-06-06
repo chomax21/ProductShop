@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProductShop.Models;
@@ -14,12 +15,12 @@ namespace ProductShop.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly SQLProductRepository _db;
+
         public ProductController(ILogger<ProductController> logger, IProductRepository<Product> repository)
         {
             _logger = logger;
             _db = (SQLProductRepository)repository;
         }
-
 
 
         [HttpGet]
@@ -28,7 +29,6 @@ namespace ProductShop.Controllers
         {
             return View();            
         }
-
 
 
 
