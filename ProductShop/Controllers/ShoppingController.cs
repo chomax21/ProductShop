@@ -34,21 +34,26 @@ namespace ProductShop.Controllers
             var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
             if (shopingCart != null)
             {
-                ///* Order order = _order.GetOrderForShoppingCart(UserId);*/ // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
-                // if (order != null)
-                // {
-                //     shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
-                //     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                //     _db.Save();
-                //     return View(shopingCart);
-                // }
-                // else
-                // {
-                //     return View();
-                // }
-                return View(shopingCart);
+                Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
+                if (order == null)
+                {
+                    Order nOrder = new Order();
+                    nOrder.UserId = UserId;
+                    _order.CreateOrder(nOrder);
+                    shopingCart.Order = nOrder;
+                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                    _db.Save();
+                    return View(shopingCart);
+                }
+                else
+                {
+                    shopingCart.Order = order;
+                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                    return View(shopingCart);
+                }
+
             }
-            return BadRequest();            
+            return BadRequest();
         }
 
         [Authorize]
@@ -78,7 +83,7 @@ namespace ProductShop.Controllers
                     var findOrder = _order.GetOrderForShoppingCart(UserId);
                     var newProduct = _db.GetProductById(ProductId);
                     shopingCart.Order = findOrder;
-                    shopingCart.Order.Products.Add(newProduct);                    
+                    shopingCart.Order.Products.Add(newProduct);
                     _order.UpdateOrder(shopingCart.Order);
                     _shoppingCart.AddShoppingCartInDb(shopingCart);
                     _db.Save();
@@ -108,7 +113,7 @@ namespace ProductShop.Controllers
                 var UserId = _userManager.GetUserId(User);
             }
 
-            
+
         }
     }
 }
