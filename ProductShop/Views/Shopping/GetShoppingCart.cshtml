@@ -8,13 +8,27 @@
 {
     @foreach (var item in Model.Order.Products)
     {
-        <div class="m-2">
-            <h3>Продукт:</h3><h3>@item.Name</h3>
-            <h3>Цена:</h3><h3>@item.Price</h3>
-            <h3>Описание:</h3><h3>@item.Description</h3>
-            <a asp-action="GetAllProducts" asp-controller="Product" class="btn btn-success">Вернуться к списку продуктов</a>
+
+        <div class="card m-2">
+            <div class="card-header text-muted">
+                <small>Информация о продукте</small>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"><strong>Продукт :</strong> @item.Name</h5>
+                <p class="card-text"><strong>Производитель :</strong> @item.Manufacturer</p>
+                <p class="card-text"><strong>Категория :</strong> @item.Category</p>
+                <p class="card-text"><strong>Описание :</strong> @item.Description</p>
+                <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
+                <p class="card-text"><strong>Цена :</strong> @item.Price</p>                
+                <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+            </div>
+            <div class="card-footer text-muted">
+                Количество : ???
+            </div>
         </div>
     }
-
+    <div class="m-2">
+        <a asp-action="GetAllProducts" asp-controller="Product" class="btn btn-success">Вернуться к списку продуктов</a>
+    </div>
 }
 

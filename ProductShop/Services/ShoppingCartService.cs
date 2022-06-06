@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using ProductShop.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductShop.Services
 {
@@ -72,15 +73,17 @@ namespace ProductShop.Services
 
         public ShopingCart GetShoppingCart(string id)
         {
-            var oldCart = _db.ShopingCarts.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
-            if (oldCart != null)
+            var oldCart = _db.ShopingCarts.Include(x => x.Order).ThenInclude(x => x.Products);
+            //var oldCart = _db.ShopingCarts.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
+            var newCard = oldCart.FirstOrDefault(x => x.UserId == id);
+            if (newCard != null)
             {
-                return oldCart;
+                return newCard;
             }
-            ShopingCart newCart = new ShopingCart(id);
-            _db.ShopingCarts.Add(newCart);
+            ShopingCart newEmptyCart = new ShopingCart(id);
+            _db.ShopingCarts.Add(newEmptyCart);
             _db.SaveChanges();
-            return newCart;
+            return newEmptyCart;
         }
 
         public bool UpdateOrder(Order t)

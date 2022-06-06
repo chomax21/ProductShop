@@ -31,21 +31,22 @@ namespace ProductShop.Controllers
         public IActionResult GetShoppingCart()
         {
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
-            var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
+            var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
             if (shopingCart != null)
             {
-                Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
-                if (order != null)
-                {
-                    shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
-                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    _db.Save();
-                    return View(shopingCart);
-                }
-                else
-                {
-                    return View();
-                }
+                ///* Order order = _order.GetOrderForShoppingCart(UserId);*/ // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
+                // if (order != null)
+                // {
+                //     shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
+                //     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                //     _db.Save();
+                //     return View(shopingCart);
+                // }
+                // else
+                // {
+                //     return View();
+                // }
+                return View(shopingCart);
             }
             return BadRequest();            
         }
@@ -81,21 +82,24 @@ namespace ProductShop.Controllers
                     _order.UpdateOrder(shopingCart.Order);
                     _shoppingCart.AddShoppingCartInDb(shopingCart);
                     _db.Save();
-                    return View("GetShoppingCart",shopingCart);
+                    return View("GetShoppingCart", shopingCart);
                 }
             }
             return View("GetShoppingCart", shopingCart);
         }
 
         [Authorize]
-        public IActionResult DeleteProductInCart(ShopingCart shoppingCart)
+        public IActionResult DeleteProductInCart(int id)
         {
-            var addedProduct = _db.GetProductById(shoppingCart.ProductId);
+            string UserId = _userManager.GetUserId(User);
+            var shopingCart = _shoppingCart.GetShoppingCart(UserId);
+            var addedProduct = _db.GetProductById(id);
             if (addedProduct != null)
             {
-                shoppingCart.Order.Products.Remove(addedProduct);
+                shopingCart.Order.Products.Remove(addedProduct);
+                _db.Save();
             }
-            return View(shoppingCart);
+            return View("GetShoppingCart", shopingCart);
         }
         public void CreateOrder(Order orders)
         {
