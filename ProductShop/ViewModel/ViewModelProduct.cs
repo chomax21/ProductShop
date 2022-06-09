@@ -17,6 +17,7 @@ namespace ProductShop.ViewModel
         public string Manufacturer { get; set; }
         [Required]
         public decimal Price { get; set; }
+        public int Count { get; set; }
 
         public bool IsDeleted { get; set; } = false;
     }

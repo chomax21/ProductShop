@@ -43,6 +43,7 @@ namespace ProductShop.Controllers
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
                     Price = viewModelProduct.Price,
+                    Count = viewModelProduct.Count,
                     Category = viewModelProduct.Category,
                     Description = viewModelProduct.Description,
                     Manufacturer = viewModelProduct.Manufacturer,
@@ -82,6 +83,7 @@ namespace ProductShop.Controllers
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
                     Price= viewModelProduct.Price,
+                    Count = viewModelProduct.Count,
                     Category = viewModelProduct.Category,
                     Description = viewModelProduct.Description,
                     Manufacturer = viewModelProduct.Manufacturer,
@@ -194,6 +196,7 @@ namespace ProductShop.Controllers
                 viewModel.Manufacturer = item.Manufacturer;
                 viewModel.ProductComposition = item.ProductComposition;
                 viewModel.IsDeleted = item.IsDeleted;
+                viewModel.Count = item.Count;
                 viewProducts.Add(viewModel);
             }
             return View(viewProducts); 
@@ -216,6 +219,7 @@ namespace ProductShop.Controllers
                 viewModel.Manufacturer = item.Manufacturer;
                 viewModel.ProductComposition = item.ProductComposition;
                 viewModel.IsDeleted= item.IsDeleted;
+                viewModel.Count = item.Count;
                 viewProducts.Add(viewModel);
             }
             return View("GetAllProducts", viewProducts);
@@ -253,7 +257,9 @@ namespace ProductShop.Controllers
                 Description = product.Description,
                 Manufacturer = product.Manufacturer,
                 ProductComposition = product.ProductComposition,
-                IsDeleted = product.IsDeleted
+                IsDeleted = product.IsDeleted,
+                Price = product.Price,
+                Count = product.Count
             };
 
             return model;

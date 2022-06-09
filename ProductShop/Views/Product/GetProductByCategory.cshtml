@@ -31,7 +31,7 @@
                 <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item?.Id" class="btn btn-danger">Удалить</a>
             </div>
             <div class="card-footer text-muted">
-                Количество : ???
+                Количество : @item.Count
             </div>
         </div>
     }
