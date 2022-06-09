@@ -6,6 +6,11 @@ namespace ProductShop.Models
 {
     public class Order
     {
+        public Order() { }
+        public Order(string Id)
+        {
+            UserId = Id;
+        }
         public int Id { get; set; }
         public string UserId { get; set; }
         public DateTime OrderDateTime { get; set; } = DateTime.Now;
