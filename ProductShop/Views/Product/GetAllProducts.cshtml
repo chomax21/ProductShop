@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model List<ViewModelProduct>
 @{
-    ViewData["Title"] = "Отображаем все продукты";    
+    ViewData["Title"] = "Отображаем все продукты";
 }
 
 <div class="m-2">
@@ -38,10 +38,13 @@
                 <p class="card-text"><strong class="text-danger">Этот продукт помечен как удаленный!</strong></p>
                 <a asp-action="RestoreProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-success">Восстановить</a>
             }
-            <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
-            <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+            @if (User.HasClaim("IsAdmin", "true"))
+            {
+                <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning">Редактировать</a>
+                <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+            }
             <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-warning">Купить</a>
-            
+
         </div>
         <div class="card-footer text-muted">
             Количество : ???

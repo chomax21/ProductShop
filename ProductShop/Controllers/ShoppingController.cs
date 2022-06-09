@@ -37,13 +37,13 @@ namespace ProductShop.Controllers
                 Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
                 if (order == null)
                 {
-                    Order nOrder = new Order();
-                    nOrder.UserId = UserId;
-                    _order.CreateOrder(nOrder);
-                    shopingCart.Order = nOrder;
-                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    _db.Save();
-                    return View(shopingCart);
+                    Order nOrder = new Order(); // Если у пользователя нет заказа, создаем новый.
+                    nOrder.UserId = UserId; // Присваиваем заказу ID пользователя.
+                    _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
+                    shopingCart.Order = nOrder; // Помещяем созданный заказ в корзину покупателя(пользователя).
+                    _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
+                    _db.Save(); // Сохраняем все изменения.
+                    return View(shopingCart); // Возвращаем корзину на страницу.
                 }
                 else
                 {
