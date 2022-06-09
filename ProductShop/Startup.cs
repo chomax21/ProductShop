@@ -45,7 +45,7 @@ namespace ProductShop
             });
 
             services.AddScoped<IProductRepository<Product>, SQLProductRepository>(); // Регистрируем сервис репозитория. Интерфейс для работы с Product.
-            services.AddScoped<IOrderRepository<Order>, ShoppingCartService>(); // Регистрируем сервис репозитория. Интерфейс для работы с Orders.
+            services.AddScoped<IOrderRepository<Order>, OrderService>(); // Регистрируем сервис репозитория. Интерфейс для работы с Orders.
             services.AddScoped<IShoppingCart<ShopingCart>, ShoppingCartService>(); // Регистрируем сервис репозитория. Интерфейс для работы с ShoppingCart.
 
             services.AddControllersWithViews();

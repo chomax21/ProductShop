@@ -16,6 +16,7 @@ namespace ProductShop.Models
         public decimal Price { get; set; }
         public bool IsDeleted { get; set; }
         public int Count { get; set; }
+        public int CountInShoppingcart { get; set; }
         public List<Order> Orders { get; set; } = new List<Order>();
 
     }

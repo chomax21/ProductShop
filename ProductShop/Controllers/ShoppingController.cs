@@ -113,7 +113,6 @@ namespace ProductShop.Controllers
                 var UserId = _userManager.GetUserId(User);
             }
 
-
         }
     }
 }

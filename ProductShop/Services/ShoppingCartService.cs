@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProductShop.Services
 {
-    public class ShoppingCartService : IOrderRepository<Order>, IShoppingCart<ShopingCart>
+    public class ShoppingCartService : IShoppingCart<ShopingCart>
     {
         private readonly ApplicationDbContext _db;
 
@@ -17,19 +17,7 @@ namespace ProductShop.Services
         {
             _db = context;
         }
-
-        public bool CreateOrder(Order v)
-        {
-            var newOrder = _db.Orders.Add(v);
-            return true;
-        }
-
-        public bool DeleteOrder(string id)
-        {
-            var deleteOrder = _db.Orders.FirstOrDefault(x => x.UserId == id);
-            _db.Remove(deleteOrder);
-            return true;
-        }
+      
 
         public void DeleteSgoppingCart(string id)
         {
@@ -39,12 +27,7 @@ namespace ProductShop.Services
                 _db.Remove(deleteCart);
             }
         }
-
-        public Order GetOrderForShoppingCart(string id)
-        {
-            return _db.Orders.FirstOrDefault(x => x.UserId == id && x.isDone == false);
-        }
-
+       
         public bool AddShoppingCartInDb(ShopingCart shopingCart)
         {
             if (shopingCart != null)
@@ -64,12 +47,7 @@ namespace ProductShop.Services
                 return true;
             }
             return false;
-        }
-
-        public IEnumerable<Order> GetOrders(string id)
-        {
-            return _db.Orders.Where(x => x.UserId == id);
-        }
+        }      
 
         public ShopingCart GetShoppingCart(string id)
         {
@@ -84,17 +62,6 @@ namespace ProductShop.Services
             _db.ShopingCarts.Add(newEmptyCart);
             _db.SaveChanges();
             return newEmptyCart;
-        }
-
-        public bool UpdateOrder(Order t)
-        {
-            if(t != null)
-            {
-                _db.Orders.Update(t);
-                _db.Entry(t).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                return true;
-            }
-            return false;
-        }
+        }       
     }
 }
