@@ -20,6 +20,7 @@
                 <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
                 <p class="card-text"><strong>Цена :</strong> @item.Price</p>
                 <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+                <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-primary">Добавить</a>
             </div>
             <div class="card-footer text-muted">
                 Количество : @item.CountInShoppingcart
