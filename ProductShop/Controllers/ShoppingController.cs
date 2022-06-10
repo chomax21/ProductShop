@@ -79,6 +79,7 @@ namespace ProductShop.Controllers
                     if (!checkProduct.Item1)
                     {
                         newProduct.CountInShoppingcart++;
+                        shopingCart.Order.TotalSum += newProduct.Price;
                         shopingCart.Order.Products.Add(newProduct);
                     }
                     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
@@ -118,7 +119,7 @@ namespace ProductShop.Controllers
             string UserId = _userManager.GetUserId(User);
             var shopingCart = _shoppingCart.GetShoppingCart(UserId);
             var addedProduct = _db.GetProductById(id);
-            var checkProduct = CheckingQuantityProduct(id, shopingCart);            
+            var checkProduct = CheckingQuantityProduct(id, shopingCart);
             var oldProduct = shopingCart.Order.Products.Find(x => x.Id == checkProduct.Item2);
             if (checkProduct.Item1 && oldProduct.CountInShoppingcart > 0)
             {
@@ -130,6 +131,10 @@ namespace ProductShop.Controllers
             if (addedProduct != null && oldProduct.CountInShoppingcart == 0)
             {
                 shopingCart.Order.Products.Remove(addedProduct);
+                if (shopingCart.Order.Products.Count == 0)
+                {
+                    shopingCart.Order.TotalSum = default;
+                }
                 _db.Save();
             }
 
