@@ -16,16 +16,19 @@ namespace ProductShop.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IOrderRepository<Order> _order;
         private readonly IShoppingCart<ShopingCart> _shoppingCart;
+        private readonly IQuantityProduct<ProductQuantityInCart> _quantity;
 
         public ShoppingController(IProductRepository<Product> repository,
             UserManager<IdentityUser> userManager,
             IOrderRepository<Order> orderRepository,
-            IShoppingCart<ShopingCart> shoppingCartService)
+            IShoppingCart<ShopingCart> shoppingCartService,
+            IQuantityProduct<ProductQuantityInCart> quantity)
         {
             _db = (SQLProductRepository)repository;
             _userManager = userManager;
             _order = orderRepository;
             _shoppingCart = shoppingCartService;
+            _quantity = quantity;
         }
 
         [Authorize]
@@ -73,18 +76,28 @@ namespace ProductShop.Controllers
                     if (checkProduct.Item1)
                     {
                         var oldProduct = shopingCart.Order.Products.Find(x => x.Id == checkProduct.Item2);
-                        oldProduct.CountInShoppingcart++;
+                        var quantity = _quantity.GetQuantity(oldProduct.Id, shopingCart.Id);
+                        _quantity.SetQuantity(oldProduct.Id,shopingCart.Id, quantity++);
                         shopingCart.Order.TotalSum += oldProduct.Price;
                     }
                     if (!checkProduct.Item1)
                     {
-                        newProduct.CountInShoppingcart++;
+                        var quantity = _quantity.GetQuantity(newProduct.Id, shopingCart.Id);
+                        _quantity.SetQuantity(newProduct.Id, shopingCart.Id, quantity++);
                         shopingCart.Order.TotalSum += newProduct.Price;
                         shopingCart.Order.Products.Add(newProduct);
                     }
                     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     _order.UpdateOrder(shopingCart.Order);
                     _db.Save();
+                    ShoppingCartViewModel cartViewModel = new ShoppingCartViewModel()
+                    {
+                        Id = shopingCart.Id,
+                        UserId = shopingCart.UserId,
+                        IsDone = shopingCart.IsDone
+                        
+                    };
+                    //cartViewModel.Order = shopingCart.Order
                     return View("GetShoppingCart", shopingCart);
                 }
                 else

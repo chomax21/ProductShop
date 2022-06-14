@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ProductShop.ViewModel;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductShop.Models
@@ -18,6 +19,23 @@ namespace ProductShop.Models
         public int Count { get; set; }
         public int CountInShoppingcart { get; set; }
         public List<Order> Orders { get; set; } = new List<Order>();
+
+        public static implicit operator ViewModelProduct(Product product)
+        {
+            return new ViewModelProduct
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Category = product.Category,
+                Description = product.Description,
+                ProductComposition = product.ProductComposition,
+                Manufacturer = product.Manufacturer,
+                Price = product.Price,
+                IsDeleted = product.IsDeleted,
+                Count = product.Count
+                
+            };
+        }
 
     }
 }

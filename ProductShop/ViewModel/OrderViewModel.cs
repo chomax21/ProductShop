@@ -1,14 +1,14 @@
-﻿using ProductShop.ViewModel;
+﻿using ProductShop.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProductShop.Models
+namespace ProductShop.ViewModel
 {
-    public class Order
+    public class OrderViewModel
     {
-        public Order() { }
-        public Order(string Id)
+        public OrderViewModel() { }
+        public OrderViewModel(string Id)
         {
             UserId = Id;
         }
@@ -20,7 +20,11 @@ namespace ProductShop.Models
         public decimal TotalSum { get; set; }
         public bool isDone { get; set; }
         public bool isPayed { get; set; }
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<ViewModelProduct> Products { get; set; } = new List<ViewModelProduct>();
 
+        public static explicit operator OrderViewModel(List<Product> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

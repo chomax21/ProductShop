@@ -6,7 +6,8 @@ namespace ProductShop.ViewModel
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        public Order Order { get; set; }
+        public OrderViewModel Order { get; set; }
         public bool IsDone { get; set; }
+
     }
 }
