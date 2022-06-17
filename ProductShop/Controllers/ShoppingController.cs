@@ -29,7 +29,7 @@ namespace ProductShop.Controllers
         }
 
         [Authorize]
-        public IActionResult GetShoppingCart()
+        public IActionResult GetShoppingCartAction()
         {
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
             var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
@@ -44,13 +44,13 @@ namespace ProductShop.Controllers
                     shopingCart.Order = nOrder; // Помещяем созданный заказ в корзину покупателя(пользователя).
                     _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
                     _db.Save(); // Сохраняем все изменения.
-                    return View(shopingCart); // Возвращаем корзину на страницу.
+                    return View("GetShoppingCart",shopingCart); // Возвращаем корзину на страницу.
                 }
                 else
                 {
                     shopingCart.Order = order;
                     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    return View(shopingCart);
+                    return View("GetShoppingCart",shopingCart);
                 }
 
             }
@@ -68,19 +68,22 @@ namespace ProductShop.Controllers
                 if (shopingCart.Order != null)
                 {
                     //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
-                    var newProduct = _db.GetProductById(ProductId);
-                    var checkProduct = CheckingQuantityProduct(ProductId, shopingCart);
-                    if (checkProduct.Item1)
+                    Product originProduct = _db.GetProductById(ProductId);
+                    
+                    ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart);
+                    if (checkProduct != null)
                     {
-                        var oldProduct = shopingCart.Order.Products.Find(x => x.Id == checkProduct.Item2);
-                        oldProduct.CountInShoppingcart++;
-                        shopingCart.Order.TotalSum += oldProduct.Price;
+                        checkProduct.ProductCount++;
+                        shopingCart.Order.TotalSum += checkProduct.Price;
                     }
-                    if (!checkProduct.Item1)
+                    else
                     {
-                        newProduct.CountInShoppingcart++;
+                        ProductViewModel newProduct = MapProduct(originProduct);
                         shopingCart.Order.TotalSum += newProduct.Price;
-                        shopingCart.Order.Products.Add(newProduct);
+                        newProduct.ShoppingCartId = shopingCart.Id;
+                        newProduct.OrderId = shopingCart.Order.Id;
+                        newProduct.ProductCount++;
+                        shopingCart.Order.VMProducts.Add(newProduct);
                     }
                     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     _order.UpdateOrder(shopingCart.Order);
@@ -89,49 +92,63 @@ namespace ProductShop.Controllers
                 }
                 else
                 {
-                    Order newOrder = new Order(UserId);
-                    var newProduct = _db.GetProductById(ProductId);
-                    shopingCart.Order = newOrder;
-                    shopingCart.Order.Products.Add(newProduct);
-                    _order.UpdateOrder(shopingCart.Order);
-                    _shoppingCart.AddShoppingCartInDb(shopingCart);
-                    _db.Save();
-                    return View("GetShoppingCart", shopingCart);
+                    //Order newOrder = new Order(UserId);
+                    //var newProduct = _db.GetProductById(ProductId);
+                    //shopingCart.Order = newOrder;
+                    //_order.UpdateOrder(shopingCart.Order);
+                    //_shoppingCart.AddShoppingCartInDb(shopingCart);
+                    //_db.Save();
+                    return RedirectToAction("Error","Home");
                 }
             }
             return View("GetShoppingCart", shopingCart);
         }
 
-        private (bool, int) CheckingQuantityProduct(int id, ShopingCart shopingCart) // Метод проверки наличия данного товара в корзине.
+        private ProductViewModel MapProduct(Product product)
         {
-            var result = shopingCart.Order.Products.FirstOrDefault(x => x.Id == id); // Ищем есть ли в корзине продукт с таким же ID.
+            var productViewModel = new ProductViewModel
+            {
+                Category = product.Category,
+                Count = product.Count,
+                Description = product.Description,
+                IsDeleted = product.IsDeleted,
+                Manufacturer = product.Manufacturer,
+                Name = product.Name,
+                Price = product.Price,
+                ProductComposition = product.ProductComposition,                
+            };
+
+            return productViewModel;
+        }
+        private ProductViewModel CheckingQuantityProduct(int id, ShopingCart shopingCart) // Метод проверки наличия данного товара в корзине.
+        {
+            var result = shopingCart.Order.VMProducts.FirstOrDefault(x => x.Id == id); // Ищем есть ли в корзине продукт с таким же ID.
 
             if (result != null)
             {
-                return (true, result.Id); // Если есть, то возвращаем кортеж из булевого значения(true) и ID этого продукта. 
+                return result; 
             }
-            return (false, 0);
+            return null;
         }
 
         [Authorize]
         public IActionResult DeleteProductInCart(int id)
         {
             string UserId = _userManager.GetUserId(User);
-            var shopingCart = _shoppingCart.GetShoppingCart(UserId);
-            var addedProduct = _db.GetProductById(id);
-            var checkProduct = CheckingQuantityProduct(id, shopingCart);
-            var oldProduct = shopingCart.Order.Products.Find(x => x.Id == checkProduct.Item2);
-            if (checkProduct.Item1 && oldProduct.CountInShoppingcart > 0)
+            ShopingCart shopingCart = _shoppingCart.GetShoppingCart(UserId);
+            ProductViewModel checkProduct = CheckingQuantityProduct(id, shopingCart);
+            ProductViewModel oldProduct = shopingCart.Order.VMProducts.Find(x => x.Id == id);
+            if (checkProduct!=null && oldProduct.ProductCount > 0)
             {
-                oldProduct.CountInShoppingcart--;
+                oldProduct.ProductCount--;
                 shopingCart.Order.TotalSum -= oldProduct.Price;
                 _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                 _db.Save();
             }
-            if (addedProduct != null && oldProduct.CountInShoppingcart == 0)
+            if (checkProduct != null && oldProduct.ProductCount == 0)
             {
-                shopingCart.Order.Products.Remove(addedProduct);
-                if (shopingCart.Order.Products.Count == 0)
+                shopingCart.Order.VMProducts.Remove(checkProduct);
+                if (shopingCart.Order.VMProducts.Count == 0)
                 {
                     shopingCart.Order.TotalSum = default;
                 }

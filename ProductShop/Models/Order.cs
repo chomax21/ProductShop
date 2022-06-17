@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProductShop.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,7 +20,7 @@ namespace ProductShop.Models
         public decimal TotalSum { get; set; }
         public bool isDone { get; set; }
         public bool isPayed { get; set; }
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<ProductViewModel> VMProducts { get; set; } = new List<ProductViewModel>();
 
     }
 }

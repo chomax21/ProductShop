@@ -34,7 +34,7 @@ namespace ProductShop.Controllers
 
         [HttpPost]
         [Authorize("AdminRights")]
-        public IActionResult CreateProduct(ViewModelProduct viewModelProduct)
+        public IActionResult CreateProduct(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
             {
@@ -74,7 +74,7 @@ namespace ProductShop.Controllers
 
         [HttpPost]
         [Authorize("AdminRights")]
-        public IActionResult UpdateProduct(ViewModelProduct viewModelProduct)
+        public IActionResult UpdateProduct(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
             {
@@ -183,11 +183,11 @@ namespace ProductShop.Controllers
         [HttpGet]
         public IActionResult GetAllProducts()
         {
-            List<ViewModelProduct> viewProducts = new List<ViewModelProduct>();
+            List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = _db.GetProducts().ToList();
             foreach (var item in newProducts)
             {
-                ViewModelProduct viewModel = new ViewModelProduct();
+                ProductViewModel viewModel = new ProductViewModel();
                 viewModel.Id = item.Id;
                 viewModel.Name = item.Name;
                 viewModel.Price = item.Price;
@@ -206,11 +206,11 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public IActionResult GetAllProductsIsDeleted()
         {
-            List<ViewModelProduct> viewProducts = new List<ViewModelProduct>();
+            List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = _db.GetProductsIsDeleted().ToList();
             foreach (var item in newProducts)
             {
-                ViewModelProduct viewModel = new ViewModelProduct();
+                ProductViewModel viewModel = new ProductViewModel();
                 viewModel.Id = item.Id;
                 viewModel.Name = item.Name;
                 viewModel.Price= item.Price;
@@ -247,9 +247,9 @@ namespace ProductShop.Controllers
             return RedirectToAction("GetAllProducts","Product");
         }
 
-        private ViewModelProduct MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
+        private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
         {
-            ViewModelProduct model = new ViewModelProduct()
+            ProductViewModel model = new ProductViewModel()
             {
                 Id = product.Id,
                 Name = product.Name,

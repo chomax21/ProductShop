@@ -6,7 +6,7 @@
 <h4>Корзина покупок</h4>
 @if (Model != null)
 {
-    @foreach (var item in Model.Order.Products)
+    @foreach (var item in Model.Order.VMProducts)
     {
         <div class="card m-2">
             <div class="card-header text-muted">
@@ -23,7 +23,7 @@
                 <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-primary">Добавить</a>
             </div>
             <div class="card-footer text-muted">
-                Количество : @item.CountInShoppingcart
+                Количество : @item.ProductCount
             </div>
         </div>
     }
