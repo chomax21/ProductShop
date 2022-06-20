@@ -60,6 +60,7 @@ namespace ProductShop.Controllers
         [Authorize]
         public IActionResult AddProductInCart(int ProductId)
         {
+            GetShoppingCartAction();
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
             var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
             if (shopingCart != null)
@@ -109,7 +110,6 @@ namespace ProductShop.Controllers
             var productViewModel = new ProductViewModel
             {
                 Category = product.Category,
-                Count = product.Count,
                 Description = product.Description,
                 IsDeleted = product.IsDeleted,
                 Manufacturer = product.Manufacturer,
