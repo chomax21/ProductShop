@@ -52,7 +52,6 @@ namespace ProductShop.Services
         public ShopingCart GetShoppingCart(string id)
         {
             var oldCart = _db.ShopingCarts.Include(x => x.Order).ThenInclude(x => x.VMProducts);
-            //var oldCart = _db.ShopingCarts.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
             var newCard = oldCart.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
             if (newCard != null)
             {
