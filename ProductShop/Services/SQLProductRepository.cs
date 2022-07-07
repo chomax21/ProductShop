@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductShop.Services
 {
@@ -26,7 +26,7 @@ namespace ProductShop.Services
                 return true;
             }
             return false;
-           
+
         }
 
 
@@ -35,7 +35,7 @@ namespace ProductShop.Services
             if (id.HasValue)
             {
                 var product = await _db.Products.FindAsync(id.Value);
-                
+
                 product.IsDeleted = true;
                 return true;
             }
@@ -52,7 +52,7 @@ namespace ProductShop.Services
 
             return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Category.Contains(category)));
         }
-        
+
         public async Task<Product> GetProductById(int id)
         {
             Product getProduct = await _db.Products.FindAsync(id);
@@ -88,7 +88,7 @@ namespace ProductShop.Services
         {
             //var searchResult = from x in _db.Products                              
             //                   select x;
-            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Select(x=>x));
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Select(x => x));
         }
 
         public async Task Save()
@@ -100,9 +100,21 @@ namespace ProductShop.Services
         {
             if (item != null)
             {
-                _db.Products.Update(item);
-                _db.Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                return true;
+                var product = await _db.Products.FindAsync(item.Id);
+                if (product != null)
+                {
+                    product.Name = item.Name;
+                    product.Price = item.Price;
+                    product.Count = item.Count;
+                    product.IsDeleted = item.IsDeleted;
+                    product.Description = item.Description;
+                    product.Category = item.Category;
+                    product.Manufacturer = item.Manufacturer;
+                    product.ProductComposition = item.ProductComposition;
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+                return false;
             }
             return false;
         }

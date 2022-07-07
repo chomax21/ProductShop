@@ -30,10 +30,10 @@ namespace ProductShop.Controllers
         }
 
         [Authorize]
-        public IActionResult GetShoppingCartAction()
+        public async Task<IActionResult> GetShoppingCartAction()
         {
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
-            var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
+            var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
             if (shopingCart != null)
             {
                 Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
@@ -43,14 +43,14 @@ namespace ProductShop.Controllers
                     nOrder.UserId = UserId; // Присваиваем заказу ID пользователя.
                     _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
                     shopingCart.Order = nOrder; // Помещяем созданный заказ в корзину покупателя(пользователя).
-                    _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
-                    _db.Save(); // Сохраняем все изменения.
+                    await _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
+                    await _db.Save(); // Сохраняем все изменения.
                     return View("GetShoppingCart",shopingCart); // Возвращаем корзину на страницу.
                 }
                 else
                 {
                     shopingCart.Order = order;
-                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                    await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     return View("GetShoppingCart",shopingCart);
                 }
 
@@ -61,9 +61,9 @@ namespace ProductShop.Controllers
         [Authorize]
         public async Task<IActionResult> AddProductInCart(int ProductId)
         {
-            GetShoppingCartAction();
+            await GetShoppingCartAction();
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
-            var shopingCart = _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
+            var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
             if (shopingCart != null)
             {
                 //Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
@@ -87,7 +87,7 @@ namespace ProductShop.Controllers
                         newProduct.ProductCount++;
                         shopingCart.Order.VMProducts.Add(newProduct);
                     }
-                    _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                    await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     _order.UpdateOrder(shopingCart.Order);
                     await _db.Save();
                     return View("GetShoppingCart", shopingCart);
@@ -127,18 +127,18 @@ namespace ProductShop.Controllers
         }
 
         [Authorize]
-        public IActionResult DeleteProductInCart(int id)
+        public async Task<IActionResult> DeleteProductInCart(int id)
         {
             string UserId = _userManager.GetUserId(User);
-            ShopingCart shopingCart = _shoppingCart.GetShoppingCart(UserId);
+            ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(UserId);
             ProductViewModel checkProduct = CheckingQuantityProduct(id, shopingCart);
             ProductViewModel oldProduct = shopingCart.Order.VMProducts.Find(x => x.Id == id);
             if (checkProduct!=null && oldProduct.ProductCount > 0)
             {
                 oldProduct.ProductCount--;
                 shopingCart.Order.TotalSum -= oldProduct.Price;
-                _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                _db.Save();
+                await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                await _db.Save();
             }
             if (checkProduct != null && oldProduct.ProductCount == 0)
             {
@@ -147,7 +147,7 @@ namespace ProductShop.Controllers
                 {
                     shopingCart.Order.TotalSum = default;
                 }
-                _db.Save();
+                await _db.Save();
             }
 
             return View("GetShoppingCart", shopingCart);

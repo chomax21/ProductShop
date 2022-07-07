@@ -25,7 +25,7 @@ namespace ProductShop.Controllers
 
         [HttpGet]
         [Authorize("AdminRights")]
-        public async Task<IActionResult> CreateProduct()
+        public IActionResult CreateProduct()
         {
             return View();            
         }

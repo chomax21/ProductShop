@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ProductShop.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ProductShop.Services
 {
@@ -17,50 +18,54 @@ namespace ProductShop.Services
         {
             _db = context;
         }
-      
 
-        public void DeleteSgoppingCart(string id)
+
+        public async Task DeleteSgoppingCart(string id)
         {
-            var deleteCart = _db.ShopingCarts.FirstOrDefault(x => x.UserId == id);
+            var deleteCart = await _db.ShopingCarts.FirstOrDefaultAsync(x => x.UserId == id);
             if (deleteCart != null)
             {
-                _db.Remove(deleteCart);
+                await Task.Run(() => _db.ShopingCarts.Remove(deleteCart));
             }
         }
-       
-        public bool AddShoppingCartInDb(ShopingCart shopingCart)
+
+        public async Task<bool> AddShoppingCartInDb(ShopingCart shopingCart)
         {
             if (shopingCart != null)
             {
-                _db.ShopingCarts.Add(shopingCart);
+                await _db.ShopingCarts.AddAsync(shopingCart);
                 return true;
             }
             return false;
         }
 
-        public bool UpdateShoppingCartInDb(ShopingCart shopingCart)
+        public async Task<bool> UpdateShoppingCartInDb(ShopingCart shopingCart)
         {
             if (shopingCart != null)
             {
-                _db.ShopingCarts.Update(shopingCart);
-                _db.Entry(shopingCart).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                return true;
+                var findShoppingCart = await _db.ShopingCarts.FindAsync(shopingCart.Id);
+                if (findShoppingCart != null)
+                {
+                    findShoppingCart = shopingCart;
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
             }
             return false;
-        }      
+        }
 
-        public ShopingCart GetShoppingCart(string id)
+        public async Task<ShopingCart> GetShoppingCart(string userId)
         {
-            var oldCart = _db.ShopingCarts.Include(x => x.Order).ThenInclude(x => x.VMProducts);
-            var newCard = oldCart.FirstOrDefault(x => x.UserId == id && x.IsDone == false);
+            var oldCart = _db.ShopingCarts.Include(x => x.Order).ThenInclude(x => x.VMProducts); // В начале подгружаем ВСЕ корзины и их связанные данные.
+            var newCard = await Task<ShopingCart>.Factory.StartNew(() => oldCart.FirstOrDefault(x => x.UserId == userId && x.IsDone == false)); // Потом в списке корзин ищем корзину по Id и не законченную(т.е не закрытую).
             if (newCard != null)
             {
                 return newCard;
             }
-            ShopingCart newEmptyCart = new ShopingCart(id);
-            _db.ShopingCarts.Add(newEmptyCart);
-            _db.SaveChanges();
+            ShopingCart newEmptyCart = new ShopingCart(userId); // Если по Id пользователя корзина не находится, создаем новую присваивая ей Id этого польхователя.
+            await _db.ShopingCarts.AddAsync(newEmptyCart);
+            await _db.SaveChangesAsync();
             return newEmptyCart;
-        }       
+        }
     }
 }
