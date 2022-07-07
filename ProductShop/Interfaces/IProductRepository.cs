@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProductShop.Services
 {
     public interface IProductRepository<T>
     {
-        T GetProductById(int id);
-        IEnumerable<T> GetProducts();
-        IEnumerable<T> GetProductsIsDeleted();
-        IEnumerable<T> GetProductByName(string name);
-        IEnumerable<T> GetProductByCategory(string category);
-        IEnumerable<T> GetProductByManufacturer(string manufacturer);
-        bool CreateProduct(T item);
-        bool UpateProduct(T item);
-        bool DeleteProduct(int? id);
-        void Save();
+        Task<T> GetProductById(int id);
+        Task<IEnumerable<T>> GetProducts();
+        Task<IEnumerable<T>> GetProductsIsDeleted();
+        Task<IEnumerable<T>> GetProductByName(string name);
+        Task<IEnumerable<T>> GetProductByCategory(string category);
+        Task<IEnumerable<T>> GetProductByManufacturer(string manufacturer);
+        Task<bool> CreateProduct(T item);
+        Task<bool> UpateProduct(T item);
+        Task<bool> DeleteProduct(int? id);
+        Task Save();
     }
 }

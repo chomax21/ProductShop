@@ -7,6 +7,7 @@ using ProductShop.ViewModel;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProductShop.Controllers
 {
@@ -58,7 +59,7 @@ namespace ProductShop.Controllers
         }
 
         [Authorize]
-        public IActionResult AddProductInCart(int ProductId)
+        public async Task<IActionResult> AddProductInCart(int ProductId)
         {
             GetShoppingCartAction();
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
@@ -69,7 +70,7 @@ namespace ProductShop.Controllers
                 if (shopingCart.Order != null)
                 {
                     //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
-                    Product originProduct = _db.GetProductById(ProductId);
+                    Product originProduct = await _db.GetProductById(ProductId);
                     
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart);
                     if (checkProduct != null)
@@ -88,17 +89,11 @@ namespace ProductShop.Controllers
                     }
                     _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     _order.UpdateOrder(shopingCart.Order);
-                    _db.Save();
+                    await _db.Save();
                     return View("GetShoppingCart", shopingCart);
                 }
                 else
                 {
-                    //Order newOrder = new Order(UserId);
-                    //var newProduct = _db.GetProductById(ProductId);
-                    //shopingCart.Order = newOrder;
-                    //_order.UpdateOrder(shopingCart.Order);
-                    //_shoppingCart.AddShoppingCartInDb(shopingCart);
-                    //_db.Save();
                     return RedirectToAction("Error","Home");
                 }
             }

@@ -4,6 +4,8 @@ using ProductShop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore; 
 
 namespace ProductShop.Services
 {
@@ -16,11 +18,11 @@ namespace ProductShop.Services
         }
 
 
-        public bool CreateProduct(Product item)
+        public async Task<bool> CreateProduct(Product item)
         {
             if (item != null)
             {
-                _db.Products.Add(item);
+                await _db.Products.AddAsync(item);
                 return true;
             }
             return false;
@@ -28,11 +30,11 @@ namespace ProductShop.Services
         }
 
 
-        public bool DeleteProduct(int? id)
+        public async Task<bool> DeleteProduct(int? id)
         {
             if (id.HasValue)
             {
-                var product = _db.Products.Find(id.Value);
+                var product = await _db.Products.FindAsync(id.Value);
                 
                 product.IsDeleted = true;
                 return true;
@@ -41,58 +43,60 @@ namespace ProductShop.Services
         }
 
 
-        public IEnumerable<Product> GetProductByCategory(string category)
+        public async Task<IEnumerable<Product>> GetProductByCategory(string category)
         {
-            var getProducts = from x in _db.Products
-                          where x.Category.Contains(category)
-                          select x;
-            return getProducts;
-        }
+            //var getProducts = from x in _db.Products
+            //                  where x.Category.Contains(category)
+            //                  select x;
+            //return getProducts;
 
-        public Product GetProductById(int id)
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Category.Contains(category)));
+        }
+        
+        public async Task<Product> GetProductById(int id)
         {
-            Product getProduct = _db.Products.Find(id);
+            Product getProduct = await _db.Products.FindAsync(id);
             return getProduct;
         }
 
-        public IEnumerable<Product> GetProductByManufacturer(string manufacturer)
+        public async Task<IEnumerable<Product>> GetProductByManufacturer(string manufacturer)
         {
-            var getProduct = from x in _db.Products
-                             where x.Manufacturer.Contains(manufacturer)
-                             select x;
-            return getProduct;
+            //var getProduct = from x in _db.Products
+            //                 where x.Manufacturer.Contains(manufacturer)
+            //                 select x;
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Category.Contains(manufacturer)));
         }
 
-        public IEnumerable<Product> GetProductByName(string name)
+        public async Task<IEnumerable<Product>> GetProductByName(string name)
         {
-            var searchProduct = _db.Products
-                .Where(x => x.Name.Contains(name))
-                .Select(x => x);
-                
-            return searchProduct;
+            //var searchProduct = _db.Products
+            //    .Where(x => x.Name.Contains(name))
+            //    .Select(x => x);
+
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Category.Contains(name)));
         }
 
-        public IEnumerable<Product> GetProducts() // Отобразить все продукты, кроме тех которые помеченны как удаленные.
+        public async Task<IEnumerable<Product>> GetProducts() // Отобразить все продукты, кроме тех которые помеченны как удаленные.
         {
-            var searchResult = from x in _db.Products
-                               where !x.IsDeleted
-                               select x;
-            return searchResult.ToList();
+            //var searchResult = from x in _db.Products
+            //                   where !x.IsDeleted
+            //                   select x;
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.IsDeleted == false));
         }
 
-        public IEnumerable<Product> GetProductsIsDeleted() // Отобразить все продукты, как имеющиеся так и удаленные.
+        public async Task<IEnumerable<Product>> GetProductsIsDeleted() // Отобразить все продукты, как имеющиеся так и удаленные.
         {
-            var searchResult = from x in _db.Products                              
-                               select x;
-            return searchResult.ToList();
+            //var searchResult = from x in _db.Products                              
+            //                   select x;
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Select(x=>x));
         }
 
-        public void Save()
+        public async Task Save()
         {
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-        public bool UpateProduct(Product item)
+        public async Task<bool> UpateProduct(Product item)
         {
             if (item != null)
             {

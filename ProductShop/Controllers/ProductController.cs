@@ -25,7 +25,7 @@ namespace ProductShop.Controllers
 
         [HttpGet]
         [Authorize("AdminRights")]
-        public IActionResult CreateProduct()
+        public async Task<IActionResult> CreateProduct()
         {
             return View();            
         }
@@ -34,7 +34,7 @@ namespace ProductShop.Controllers
 
         [HttpPost]
         [Authorize("AdminRights")]
-        public IActionResult CreateProduct(ProductViewModel viewModelProduct)
+        public async Task<IActionResult> CreateProduct(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
             {
@@ -50,8 +50,8 @@ namespace ProductShop.Controllers
                     ProductComposition = viewModelProduct.ProductComposition
                 };
 
-                _db.CreateProduct(product);
-                _db.Save();
+                await _db.CreateProduct(product);
+                await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
                 return RedirectToAction("Index", "Home");
             }
@@ -61,11 +61,11 @@ namespace ProductShop.Controllers
 
         [HttpGet]
         [Authorize("AdminRights")]
-        public IActionResult UpdateProduct(int? id)
+        public async Task<IActionResult> UpdateProduct(int? id)
         {
             if (id.HasValue)
             {
-                var product = _db.GetProductById(id.Value);               
+                var product = await _db.GetProductById(id.Value);               
                 return View(MapProductToViewModel(product));
             }
             return View(null);           
@@ -74,7 +74,7 @@ namespace ProductShop.Controllers
 
         [HttpPost]
         [Authorize("AdminRights")]
-        public IActionResult UpdateProduct(ProductViewModel viewModelProduct)
+        public async Task<IActionResult> UpdateProduct(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
             {
@@ -89,8 +89,8 @@ namespace ProductShop.Controllers
                     Manufacturer = viewModelProduct.Manufacturer,
                     ProductComposition = viewModelProduct.ProductComposition
                 };
-                bool resultOperation = _db.UpateProduct(product);
-                _db.Save();
+                bool resultOperation = await _db.UpateProduct(product);
+                await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
                 if (resultOperation)
                 {
@@ -103,11 +103,11 @@ namespace ProductShop.Controllers
 
         [HttpGet]
         [Authorize("AdminRights")]
-        public IActionResult DeleteProduct(int? id)
+        public async Task<IActionResult> DeleteProduct(int? id)
         {
             if (id.HasValue)
             {
-                Product searchProdict = _db.GetProductById(id.Value);
+                Product searchProdict = await _db.GetProductById(id.Value);
                 
                 return View(MapProductToViewModel(searchProdict));
             }
@@ -118,12 +118,12 @@ namespace ProductShop.Controllers
 
         [HttpPost]
         [Authorize("AdminRights")]
-        public IActionResult DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            Product searchProdict = _db.GetProductById(id);            
+            Product searchProdict = await _db.GetProductById(id);            
             string message = MapProductToViewModel(searchProdict).Name;
-            bool result = _db.DeleteProduct(id);              
-            _db.Save();
+            bool result = await _db.DeleteProduct(id);              
+            await _db.Save();
             TempData["SuccesMessage"] = $"Продукт <{message}> удален!";
             if (result)
             {
@@ -134,10 +134,10 @@ namespace ProductShop.Controllers
 
 
         [Authorize("AdminRights")]
-        public IActionResult GetProductByName(SearchVIewModel search)
+        public async Task<IActionResult> GetProductByName(SearchVIewModel search)
         {
             SearchVIewModel model = new SearchVIewModel();
-            model.Products = _db.GetProductByName(search.SearchString);
+            model.Products = await _db.GetProductByName(search.SearchString);
             return View(model);
         }
 
@@ -149,9 +149,9 @@ namespace ProductShop.Controllers
         }
 
         [Authorize("AdminRights")]
-        public IActionResult GetProductById(int id) // Если вдруг такого продукта не окажется, будем пеернаправлять на главную страницу с сообщением об отсуствии данного продукта.
+        public async Task<IActionResult> GetProductById(int id) // Если вдруг такого продукта не окажется, будем пеернаправлять на главную страницу с сообщением об отсуствии данного продукта.
         {
-            var resultById = _db.GetProductById(id);
+            var resultById = await _db.GetProductById(id);
             if (resultById != null)
             {              
                 return View(MapProductToViewModel(resultById));
@@ -173,18 +173,18 @@ namespace ProductShop.Controllers
             return View();
         }
         
-        public IActionResult GetProductByCategory(SearchVIewModel category)
+        public async Task<IActionResult> GetProductByCategory(SearchVIewModel category)
         {
             SearchVIewModel model = new SearchVIewModel();
-            model.Products = _db.GetProductByCategory(category.SearchString);
+            model.Products = await _db.GetProductByCategory(category.SearchString);
             return View(model);
         }
 
         [HttpGet]
-        public IActionResult GetAllProducts()
+        public async Task<IActionResult> GetAllProducts()
         {
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
-            var newProducts = _db.GetProducts().ToList();
+            var newProducts = await _db.GetProducts();
             foreach (var item in newProducts)
             {
                 ProductViewModel viewModel = new ProductViewModel();
@@ -204,10 +204,10 @@ namespace ProductShop.Controllers
 
         [HttpGet]
         [Authorize("AdminRights")]
-        public IActionResult GetAllProductsIsDeleted()
+        public async Task<IActionResult> GetAllProductsIsDeleted()
         {
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
-            var newProducts = _db.GetProductsIsDeleted().ToList();
+            var newProducts = await _db.GetProductsIsDeleted();
             foreach (var item in newProducts)
             {
                 ProductViewModel viewModel = new ProductViewModel();
@@ -231,19 +231,19 @@ namespace ProductShop.Controllers
             return  View();
         }
 
-        public IActionResult GetProductByManufacturer(SearchVIewModel manufacturer)
+        public async Task<IActionResult> GetProductByManufacturer(SearchVIewModel manufacturer)
         {
             SearchVIewModel model = new SearchVIewModel();
-            model.Products = _db.GetProductByManufacturer(manufacturer.SearchString);
+            model.Products =  await _db.GetProductByManufacturer(manufacturer.SearchString);
             return View(model);
         }
 
         [Authorize("AdminRights")]
-        public IActionResult RestoreProduct(int id)
+        public async Task<IActionResult> RestoreProduct(int id)
         {
-            var restoreProduct = _db.GetProductById(id);
+            var restoreProduct = await _db.GetProductById(id);
             restoreProduct.IsDeleted = false;
-            _db.Save();
+            await _db.Save();
             return RedirectToAction("GetAllProducts","Product");
         }
 
