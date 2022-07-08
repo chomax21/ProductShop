@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProductShop.Services
 {
     public interface IOrderRepository<T>
     {
-        IEnumerable<T> GetOrders(string id);
-        T GetOrderForShoppingCart(string id);
-        bool UpdateOrder(T t);
-        bool CreateOrder(T v);
-        bool DeleteOrder(string id);
+        Task<IEnumerable<T>> GetOrders(string id);
+        Task<T> GetOrderForShoppingCart(string id);
+        Task<bool> UpdateOrder(T t);
+        Task<bool> CreateOrder(T v);
+        Task<bool> DeleteOrder(string id);
     }
 }

@@ -36,12 +36,12 @@ namespace ProductShop.Controllers
             var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
             if (shopingCart != null)
             {
-                Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
+                Order order = await _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
                 if (order == null)
                 {
                     Order nOrder = new Order(); // Если у пользователя нет заказа, создаем новый.
                     nOrder.UserId = UserId; // Присваиваем заказу ID пользователя.
-                    _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
+                    await _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
                     shopingCart.Order = nOrder; // Помещяем созданный заказ в корзину покупателя(пользователя).
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
                     await _db.Save(); // Сохраняем все изменения.
@@ -88,7 +88,7 @@ namespace ProductShop.Controllers
                         shopingCart.Order.VMProducts.Add(newProduct);
                     }
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    _order.UpdateOrder(shopingCart.Order);
+                    await _order.UpdateOrder(shopingCart.Order);
                     await _db.Save();
                     return View("GetShoppingCart", shopingCart);
                 }
@@ -151,14 +151,15 @@ namespace ProductShop.Controllers
             }
 
             return View("GetShoppingCart", shopingCart);
-        }
-        public void CreateOrder(Order orders)
-        {
-            if (ModelState.IsValid)
-            {
-                var UserId = _userManager.GetUserId(User);
-            }
+        }        
 
+        public async Task<IActionResult> MakePurchase()
+        {
+            string userId = _userManager.GetUserId(User);
+            ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(userId);
+            shopingCart.Order.isDone = true;
+            shopingCart.IsDone = true;
+            return View();
         }
     }
 }

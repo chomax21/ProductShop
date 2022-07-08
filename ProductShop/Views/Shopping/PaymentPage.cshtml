@@ -1,0 +1,14 @@
+﻿@model ShopingCart
+
+<div class="m-2">
+    <ul>Ваш заказ на общую сумму : @Model.Order.TotalSum</ul>
+    <ul>Общее количество товаров : @Model.Order.VMProducts.Count</ul>
+    <ul>Списко товаров :</ul>
+    @if (Model != null)
+{
+    @foreach (var item in Model.Order.VMProducts)
+    {
+        <ul>Наименование : @item.Name , Количество : @item.ProductCount</ul>
+    }   
+}
+</div>
