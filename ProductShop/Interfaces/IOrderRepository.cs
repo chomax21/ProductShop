@@ -5,10 +5,10 @@ namespace ProductShop.Services
 {
     public interface IOrderRepository<T>
     {
-        Task<IEnumerable<T>> GetOrders(string id);
-        Task<T> GetOrderForShoppingCart(string id);
-        Task<bool> UpdateOrder(T t);
+        IEnumerable<T> GetOrders(string id);
+        T GetOrderForShoppingCart(string id);
+        bool UpdateOrder(T t);
         Task<bool> CreateOrder(T v);
-        Task<bool> DeleteOrder(string id);
+        bool DeleteOrder(string id);
     }
 }

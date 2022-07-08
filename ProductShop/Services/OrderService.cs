@@ -1,7 +1,9 @@
-﻿using ProductShop.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductShop.Data;
 using ProductShop.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProductShop.Services
 {
@@ -13,16 +15,19 @@ namespace ProductShop.Services
         {
             _db = context;
         }
-        public bool CreateOrder(Order v)
+        public async Task<bool> CreateOrder(Order v)
         {
-            var newOrder = _db.Orders.Add(v);
-            return true;
+            if (v != null)
+            {
+                await Task.Run(() => _db.Orders.AddAsync(v));
+                return true;
+            }
+            return false;
         }
 
         public bool DeleteOrder(string id)
         {
-            var deleteOrder = _db.Orders.FirstOrDefault(x => x.UserId == id);
-            _db.Remove(deleteOrder);
+              var deleteOrder = _db.Orders.FirstOrDefaultAsync(x => x.UserId == id);           
             return true;
         }
 
