@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model List<IdentityUser>
+<div class="container m-2">
+    @if (Model != null)
+    {
+        <div class="border-dark m-2">
+            @foreach (var item in Model)
+            {
+                <ul>
+                    <li>@item.Id</li>
+                    <li>@item.UserName</li>
+                    <li>@item.Email</li>
+                </ul>
+            }
+        </div>
+    }
+</div>
