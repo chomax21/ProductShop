@@ -2,13 +2,23 @@
 
 <div class="m-2">
     <ul>Ваш заказ на общую сумму : @Model.Order.TotalSum</ul>
-    <ul>Общее количество товаров : @Model.Order.VMProducts.Count</ul>
-    <ul>Списко товаров :</ul>
-    @if (Model != null)
-{
-    @foreach (var item in Model.Order.VMProducts)
-    {
-        <ul>Наименование : @item.Name , Количество : @item.ProductCount</ul>
-    }   
-}
+    <ul>Общее количество видов товара : @Model.Order.VMProducts.Count</ul>
+    <ul>
+        Списко товаров :
+        @if (Model != null)
+        {
+            @foreach (var item in Model.Order.VMProducts)
+            {
+                <li>Наименование : @item.Name , Количество : @item.ProductCount, Цена : @{var totalPrice = item.ProductCount * item.Price;} @totalPrice </li>
+            }
+        }
+    </ul>
+    <div class="m-2">
+        <form method="post">
+@*            <input type="number" placeholder="Введите номер карты">
+            <input type="number" placeholder="Срок действия карты">
+            <input type="number" placeholder="CVT">*@
+            <a class="btn btn-primary" asp-action="MakePurchase" asp-controller="Shopping">Совершить покупку</a>
+        </form>
+    </div>
 </div>

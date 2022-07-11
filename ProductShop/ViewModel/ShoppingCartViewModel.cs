@@ -8,5 +8,6 @@ namespace ProductShop.ViewModel
         public string UserId { get; set; }
         public Order Order { get; set; }
         public bool IsDone { get; set; }
+        public CreditCartViewModel creditCartViewModel { get; set; }
     }
 }

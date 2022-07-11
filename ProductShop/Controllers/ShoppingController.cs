@@ -71,7 +71,6 @@ namespace ProductShop.Controllers
                 {
                     //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
                     Product originProduct = await _db.GetProductById(ProductId);
-
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart);
                     if (checkProduct != null)
                     {
@@ -153,21 +152,23 @@ namespace ProductShop.Controllers
             return View("GetShoppingCart", shopingCart);
         }
 
+        [Authorize]
         public async Task<IActionResult> MakePurchase()
         {
-            string userId = _userManager.GetUserId(User);
-            ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(userId);
+            ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)); // Метод в метод, так тоже работает, но читается ли?
             shopingCart.Order.isDone = true;
             shopingCart.IsDone = true;
-            return View();
+            await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+            await _db.Save();
+            TempData["SuccesMessage"] = $"Спасибо за покупку!";
+            return RedirectToAction("Index","Home");
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetPaymentPage()
         {
-            var userId = _userManager.GetUserId(User);
-            var shopingCart = await _shoppingCart.GetShoppingCart(userId);
+            var shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
             return View("PaymentPage", shopingCart);
         }
     }

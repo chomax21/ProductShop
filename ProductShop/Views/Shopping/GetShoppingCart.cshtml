@@ -34,7 +34,10 @@
         <p>
             Общая суммка заказа: @Model.Order.TotalSum
         </p>
-        <a asp-action="GetPaymentPage" asp-controller="Shopping" class="btn btn-success">Купить</a>
+        @if (Model.Order.VMProducts.Count>0)
+        {
+             <a asp-action="GetPaymentPage" asp-controller="Shopping" class="btn btn-success">Купить</a>
+        }       
     </div>
 }
 
