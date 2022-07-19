@@ -1,16 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@model List<IdentityUser>
+@model List<ApplicationUser>
 <div class="container m-2">
     @if (Model != null)
     {
         <div class="border-dark m-2">
             @foreach (var item in Model)
             {
-                <ul>
-                    <li>@item.Id</li>
-                    <li>@item.UserName</li>
-                    <li>@item.Email</li>
-                </ul>
+               <h5>@item.MiddleName</h5>
+               <h5>@item.FirstName</h5>
+               <h5>@item.LastName</h5>
+               <h5>@item.UserName</h5>
+               <h5>@item.Id</h5>
+               <a asp-action="#ref" asp-controller=""#ref asp-route-UserId="@item.Id">Информация</a>
             }
         </div>
     }

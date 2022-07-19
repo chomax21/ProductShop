@@ -21,6 +21,19 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Input.FirstName">Имя</label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div><div class="form-group">
+                <label asp-for="Input.MiddleName">Фамилия</label>
+                <input asp-for="Input.MiddleName" class="form-control" />
+                <span asp-validation-for="Input.MiddleName" class="text-danger"></span>
+            </div><div class="form-group">
+                <label asp-for="Input.LastName">Отчество</label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Input.Password">Пароль</label>
                 <input asp-for="Input.Password" class="form-control" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
@@ -29,7 +42,8 @@
                 <label asp-for="Input.ConfirmPassword">Подтверждение пароля</label>
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>           
+            </div>
+            
             <button type="submit" class="btn btn-primary">Регистрация</button>
         </form>
     </div>

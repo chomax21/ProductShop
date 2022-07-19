@@ -14,12 +14,12 @@ namespace ProductShop.Controllers
     public class ShoppingController : Controller
     {
         private readonly SQLProductRepository _db;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOrderRepository<Order> _order;
         private readonly IShoppingCart<ShopingCart> _shoppingCart;
 
         public ShoppingController(IProductRepository<Product> repository,
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             IOrderRepository<Order> orderRepository,
             IShoppingCart<ShopingCart> shoppingCartService)
         {

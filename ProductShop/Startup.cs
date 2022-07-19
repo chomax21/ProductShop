@@ -28,9 +28,9 @@ namespace ProductShop
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => { // Настройка Identity.
+            services.AddDefaultIdentity<ApplicationUser>(options => { // Настройка Identity.
                 options.User.RequireUniqueEmail = true; // Проверка на уникальность Email.
-                options.SignIn.RequireConfirmedAccount = false; // Доступ к функциональности без подтверждения почты.
+                options.SignIn.RequireConfirmedAccount = false; // Доступ к функциональности без подтверждения почты.                
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
                        
