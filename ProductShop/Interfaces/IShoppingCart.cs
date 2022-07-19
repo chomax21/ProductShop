@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProductShop.Interfaces
 {
@@ -8,6 +9,7 @@ namespace ProductShop.Interfaces
         public Task DeleteSgoppingCart(string id);
         public Task<bool> AddShoppingCartInDb(T t);
         public Task<bool> UpdateShoppingCartInDb(T t);
+        public Task<List<T>> GetUserAllShoppingCarts(string id);
 
 
     }

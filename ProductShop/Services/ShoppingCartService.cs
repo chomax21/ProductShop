@@ -67,5 +67,10 @@ namespace ProductShop.Services
             await _db.SaveChangesAsync();
             return newEmptyCart;
         }
+
+        public async Task<List<ShopingCart>> GetUserAllShoppingCarts(string userId)
+        {
+            return await _db.ShopingCarts.Where(x => x.UserId == userId).ToListAsync();
+        }
     }
 }
