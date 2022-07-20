@@ -36,17 +36,13 @@ namespace ProductShop.Controllers
             return View(null);
         }
 
+        [Authorize("AdminRights")]
         public async Task<IActionResult> GetUserInfo(string userId)
-        {
-            UserInfoViewModel userInfo = new();
+        {            
             var orders = await Task.Run(() => _order.GetOrders(userId));
-            var shoppingCarts = await Task.Run(() => _shoppingCart.GetUserAllShoppingCarts(userId));
             if (orders != null)
-            {
-                userInfo.Order = orders.ToList();
-                userInfo.ShopingCart = shoppingCarts;
-
-                return View(userInfo);
+            {              
+                return View(orders);
             }
 
             return RedirectToAction("Error");

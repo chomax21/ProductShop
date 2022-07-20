@@ -1,1 +1,35 @@
-﻿
+﻿@model IEnumerable<Order>
+@{
+    ViewData["Title"] = $"Все заказы ";
+}
+<h5>@User.Identity.Name</h5>
+<div class="container">
+
+
+    @if (Model is not null)
+    {
+        @foreach (var order in Model)
+        {
+
+            <div class="card card-body m-2">
+                <p>Дата создания заказа : @order?.OrderDateTime</p>
+                <p>Закончен ли заказа : @order?.isDone</p>
+                <p>Оплачен ли заказа : @order?.isPayed</p>          
+                <p>Количество товаров : @order?.VMProducts.Count</p>
+                @foreach(var product in order.VMProducts)
+                {
+                    <p>@product.Name</p>
+                    <p>@product.Price</p>
+                    <p>@product.ProductCount</p>
+                }
+
+            </div>           
+        }
+    }
+    else
+    {
+        <p>Список пуст</p>
+    }
+
+
+</div>

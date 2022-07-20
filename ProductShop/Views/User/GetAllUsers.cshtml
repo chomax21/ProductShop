@@ -6,12 +6,17 @@
         <div class="border-dark m-2">
             @foreach (var item in Model)
             {
-               <h5>@item.MiddleName</h5>
-               <h5>@item.FirstName</h5>
-               <h5>@item.LastName</h5>
-               <h5>@item.UserName</h5>
-               <h5>@item.Id</h5>
-               <a asp-action="#ref" asp-controller=""#ref asp-route-UserId="@item.Id">Информация</a>
+                <div class="card card-body">
+
+                    <h5>@item.MiddleName</h5>
+                    <h5>@item.FirstName</h5>
+                    <h5>@item.LastName</h5>
+                    <h5>@item.UserName</h5>
+                    <h5>@item.Id</h5>
+                    <a class="btn btn-primary" asp-action="GetUserInfo" asp-controller="User" asp-route-UserId="@item.Id">Информация</a>
+                    <span class="border"></span>
+                </div>
+
             }
         </div>
     }
