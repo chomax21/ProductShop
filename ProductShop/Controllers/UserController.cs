@@ -48,5 +48,17 @@ namespace ProductShop.Controllers
             return RedirectToAction("Error");
           
         }
+
+        [Authorize("AdminRights")]
+        public async Task<IActionResult> GetUserByDate(string start, string end)
+        {
+            var orders = await Task.Run(() => _order.GetOrdersByDate(start, end).ToList());
+            if (orders != null)
+            {
+                return View(orders);
+            }
+
+            return RedirectToAction("Error");
+        }
     }
 }

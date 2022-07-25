@@ -2,6 +2,7 @@
 using ProductShop.Data;
 using ProductShop.Models;
 using ProductShop.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,6 +41,11 @@ namespace ProductShop.Services
         public IEnumerable<Order> GetOrders(string id)
         {
             return _db.Orders.Where(x => x.UserId == id).Include(x => x.VMProducts);
+        }
+
+        public IEnumerable<Order> GetOrdersByDate(string start, string end)
+        {
+            return  _db.Orders.Where(x => x.OrderDateTime >= Convert.ToDateTime(start) && x.OrderDateTime <= Convert.ToDateTime(end));
         }
 
         public bool UpdateOrder(Order t)
