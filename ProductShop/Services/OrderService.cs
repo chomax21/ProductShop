@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ProductShop.Data;
 using ProductShop.Models;
 using ProductShop.ViewModel;
@@ -12,10 +13,12 @@ namespace ProductShop.Services
     public class OrderService : IOrderRepository<Order>
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrderService(ApplicationDbContext context)
+        public OrderService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _db = context;
+            _userManager = userManager;
         }
         public async Task<bool> CreateOrder(Order v)
         {
@@ -46,6 +49,24 @@ namespace ProductShop.Services
         public IEnumerable<Order> GetOrdersByDate(string start, string end)
         {
             return  _db.Orders.Where(x => x.OrderDateTime >= Convert.ToDateTime(start) && x.OrderDateTime <= Convert.ToDateTime(end));
+        }
+
+        public IEnumerable<Order> GetOrderByCustomerName(string firstName ="", string middleName = "", string lastName = "")
+        {
+            var users = _db.Users.Where(x => x.FirstName == firstName || x.LastName == lastName || x.MiddleName == middleName);
+            List<string> idUsers = new List<string>();
+            List<Order> orders = new List<Order>();
+            foreach (var user in users)
+            {
+                idUsers.Add(user.Id);
+            }
+            for (int i = 0; i > idUsers.Count; i++)
+            {
+                var userId = idUsers[i];
+                var searchOrders = _db.Orders.FirstOrDefault(x => x.UserId == userId);
+                orders.Add(searchOrders);
+            }
+                return orders.Distinct();        
         }
 
         public bool UpdateOrder(Order t)
