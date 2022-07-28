@@ -11,5 +11,6 @@ namespace ProductShop.Services
         bool UpdateOrder(T t);
         Task<bool> CreateOrder(T v);
         bool DeleteOrder(string id);
+        IEnumerable<T> GetOrderByCustomerName(string firstName = "", string middleName = "", string lastName = "");
     }
 }

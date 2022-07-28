@@ -56,14 +56,13 @@ namespace ProductShop.Services
             var users = _db.Users.Where(x => x.FirstName == firstName || x.LastName == lastName || x.MiddleName == middleName);
             List<string> idUsers = new List<string>();
             List<Order> orders = new List<Order>();
-            foreach (var user in users)
+            foreach (var user in users.Distinct())
             {
                 idUsers.Add(user.Id);
             }
             for (int i = 0; i > idUsers.Count; i++)
             {
-                var userId = idUsers[i];
-                var searchOrders = _db.Orders.FirstOrDefault(x => x.UserId == userId);
+                var searchOrders = _db.Orders.FirstOrDefault(x => x.UserId == idUsers[i]);
                 orders.Add(searchOrders);
             }
                 return orders.Distinct();        

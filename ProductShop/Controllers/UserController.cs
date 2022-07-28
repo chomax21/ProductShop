@@ -24,8 +24,8 @@ namespace ProductShop.Controllers
             _shoppingCart = shoppingCart;
         }
 
-        [Authorize("AdminRights")]
         [HttpGet]
+        [Authorize("AdminRights")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await Task.Run(() => _userManager.Users.ToList()); 
@@ -36,6 +36,7 @@ namespace ProductShop.Controllers
             return View(null);
         }
 
+        [HttpGet]
         [Authorize("AdminRights")]
         public async Task<IActionResult> GetUserInfo(string userId)
         {            
@@ -49,6 +50,7 @@ namespace ProductShop.Controllers
           
         }
 
+        [HttpGet]
         [Authorize("AdminRights")]
         public async Task<IActionResult> GetUserByDate(string start, string end)
         {
@@ -58,6 +60,25 @@ namespace ProductShop.Controllers
                 return View(orders);
             }
 
+            return RedirectToAction("Error");
+        }
+
+        [HttpGet]
+        public  IActionResult GetUserOrderByName()
+        {
+            return View();
+        }
+
+        
+        [Authorize("AdminRights")]
+        public async Task<IActionResult> GetUserOrderByName(string firstName, string middleName, string lastName)
+        {
+            if (ModelState.IsValid)
+            {
+                UserInfoViewModel userInfo = new();
+                userInfo.Order = await Task.Run(() => _order.GetOrderByCustomerName(firstName, middleName, lastName).ToList());
+                return View(userInfo.Order);
+            }
             return RedirectToAction("Error");
         }
     }
