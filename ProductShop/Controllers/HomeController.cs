@@ -27,7 +27,7 @@ namespace ProductShop.Controllers
         [HttpGet]
         public IActionResult Index(string message)
         {            
-            return View(message);
+            return View(message);           
         }
 
         public IActionResult Privacy()

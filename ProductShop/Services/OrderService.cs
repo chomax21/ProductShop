@@ -46,7 +46,7 @@ namespace ProductShop.Services
             return _db.Orders.Where(x => x.UserId == id).Include(x => x.VMProducts);
         }
 
-        public IEnumerable<Order> GetOrdersByDate(string start, string end)
+        public IEnumerable<Order> GetOrdersByDateOfPurchase(string start, string end)
         {
             return  _db.Orders.Where(x => x.OrderDateTime >= Convert.ToDateTime(start) && x.OrderDateTime <= Convert.ToDateTime(end));
         }

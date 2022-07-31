@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ProductShop.Authorize;
+using ProductShop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace ProductShop
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                     await AdminInitializer.InnitializeAsync(userManager);
                 }
                 catch (Exception ex)

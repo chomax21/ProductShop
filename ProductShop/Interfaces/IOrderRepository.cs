@@ -6,7 +6,7 @@ namespace ProductShop.Services
     public interface IOrderRepository<T>
     {
         IEnumerable<T> GetOrders(string id);
-        IEnumerable<T> GetOrdersByDate(string start, string end);
+        IEnumerable<T> GetOrdersByDateOfPurchase(string start, string end);
         T GetOrderForShoppingCart(string id);
         bool UpdateOrder(T t);
         Task<bool> CreateOrder(T v);

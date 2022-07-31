@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ProductShop.Models;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -8,13 +9,13 @@ namespace ProductShop.Authorize
     {
         // Класс для инициализации первого пользователя Администратора. Будет вызываться в классе Program.
         // Заработало. Был пропущен оператор await в условии проверки наличии такого юзера в БД.
-        public static async Task InnitializeAsync(UserManager<IdentityUser> userManager)
+        public static async Task InnitializeAsync(UserManager<ApplicationUser> userManager)
         {
             string AdminEmail = "MainAdmin21@mail.ru";
             string AdminPassword = "_adminPass21";
             if (await userManager.FindByEmailAsync(AdminEmail) == null)
             {
-                var user = new IdentityUser { UserName = AdminEmail, Email = AdminEmail };
+                var user = new ApplicationUser { UserName = AdminEmail, Email = AdminEmail, FirstName = "Администратор" };
                 var result = await userManager.CreateAsync(user,AdminPassword);
                 if (result.Succeeded)
                 {
