@@ -76,8 +76,8 @@ namespace ProductShop.Controllers
             if (ModelState.IsValid)
             {
                 UserInfoViewModel userInfo = new();
-                userInfo.Order = await Task.Run(() => _order.GetOrderByCustomerName(firstName, middleName, lastName).ToList());
-                return View(userInfo.Order);
+                 userInfo.Order = await Task.Run(() => _order.GetOrderByCustomerName(firstName, middleName, lastName).ToList());
+                return View(userInfo);
             }
             return RedirectToAction("Error");
         }

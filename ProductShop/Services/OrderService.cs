@@ -60,10 +60,14 @@ namespace ProductShop.Services
             {
                 idUsers.Add(user.Id);
             }
-            for (int i = 0; i > idUsers.Count; i++)
+            for (int i = 0; i < idUsers.Count - 1; i++)
             {
-                var searchOrders = _db.Orders.FirstOrDefault(x => x.UserId == idUsers[i]);
-                orders.Add(searchOrders);
+                var searchOrders = _db.Orders.Where(x => x.UserId == idUsers[i]).Include(x=> x.VMProducts);
+                foreach (var item in searchOrders)
+                {
+                    orders.Add(item);
+                }
+                
             }
                 return orders.Distinct();        
         }
