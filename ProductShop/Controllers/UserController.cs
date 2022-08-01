@@ -51,6 +51,11 @@ namespace ProductShop.Controllers
         }
 
         [HttpGet]
+        public IActionResult GetUserOrdersByDate()
+        {
+            return View();
+        }
+
         [Authorize("AdminRights")]
         public async Task<IActionResult> GetUserByDate(string start, string end)
         {
@@ -73,13 +78,12 @@ namespace ProductShop.Controllers
 
         
         [Authorize("AdminRights")]
-        public async Task<IActionResult> GetUserOrderByName(string firstName, string middleName, string lastName)
+        public async Task<IActionResult> GetUserOrderByName(UserInfoViewModel userInfoView)
         {
             if (ModelState.IsValid)
-            {
-                UserInfoViewModel userInfo = new();
-                 userInfo.Order = await Task.Run(() => _order.GetOrderByCustomerName(firstName, middleName, lastName).ToList());
-                return View(userInfo);
+            {   
+                var orders = await Task.Run(() => _order.GetOrderByCustomerName(userInfoView.UserFullName.FirstName, userInfoView.UserFullName.MiddleName, userInfoView.UserFullName.LastName));
+                return View(orders);
             }
             return RedirectToAction("Error");
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ProductShop.ViewModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ProductShop.Services
@@ -11,6 +12,6 @@ namespace ProductShop.Services
         bool UpdateOrder(T t);
         Task<bool> CreateOrder(T v);
         bool DeleteOrder(string id);
-        IEnumerable<T> GetOrderByCustomerName(string firstName = "", string middleName = "", string lastName = "");
+        UserInfoViewModel GetOrderByCustomerName(string firstName, string middleName, string lastName);
     }
 }

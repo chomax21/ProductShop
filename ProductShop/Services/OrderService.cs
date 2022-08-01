@@ -51,25 +51,33 @@ namespace ProductShop.Services
             return  _db.Orders.Where(x => x.OrderDateTime >= Convert.ToDateTime(start) && x.OrderDateTime <= Convert.ToDateTime(end));
         }
 
-        public IEnumerable<Order> GetOrderByCustomerName(string firstName ="", string middleName = "", string lastName = "")
+        public UserInfoViewModel GetOrderByCustomerName(string FirstName, string MiddleName, string LastName)
         {
-            var users = _db.Users.Where(x => x.FirstName == firstName || x.LastName == lastName || x.MiddleName == middleName);
+            var users = from x in _db.Users
+                        where x.FirstName.Contains(FirstName) || x.MiddleName.Contains(MiddleName) || x.LastName.Contains(LastName)
+                        //where x.MiddleName.Contains(MiddleName)
+                        //where x.LastName.Contains(LastName)
+                        select x;
+
             List<string> idUsers = new List<string>();
-            List<Order> orders = new List<Order>();
+            UserInfoViewModel userInfoView = new();
             foreach (var user in users.Distinct())
             {
                 idUsers.Add(user.Id);
             }
-            for (int i = 0; i < idUsers.Count - 1; i++)
+            for (int i = 0; i <= idUsers.Count - 1; i++)
             {
                 var searchOrders = _db.Orders.Where(x => x.UserId == idUsers[i]).Include(x=> x.VMProducts);
+                var fullNameUser = _db.Users.FirstOrDefault(x => x.Id == idUsers[i]);
                 foreach (var item in searchOrders)
                 {
-                    orders.Add(item);
+                    userInfoView.Order.Add(item);                    
                 }
-                
+                userInfoView.UserFullName.FirstName = fullNameUser.FirstName;
+                userInfoView.UserFullName.MiddleName = fullNameUser.MiddleName;
+                userInfoView.UserFullName.LastName = fullNameUser.LastName;
             }
-                return orders.Distinct();        
+                return userInfoView;        
         }
 
         public bool UpdateOrder(Order t)
