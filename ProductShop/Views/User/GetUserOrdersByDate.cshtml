@@ -1,9 +1,38 @@
-﻿
-@model UserInfoViewModel
+﻿@model UserInfoViewModel
 
 @{
     TempData["Title"] = "Заказы по дате";
 }
+<div class="col-5 m-2">
+    <form asp-action="GetUserOrdersByDate" asp-controller="User">
+        <input asp-for="OrderDateTime.DateStart" type="datetime-local" />
+        <input asp-for="OrderDateTime.DateEnd" type="datetime-local"/>
+        <button class="m-2 btn btn-primary" type="submit">Найти</button>
+    </form>
+    <div class="align-content-center m-2">
+        @if (Model is not null)
+        {
+            @foreach (var order in Model.Order)
+            {
+
+                <p><strong>Имя: </strong>@Model.UserFullName.FirstName</p>
+                <p><strong>Фамилия: </strong>@Model.UserFullName.MiddleName</p>
+                <p><strong>Отчество: </strong>@Model.UserFullName.LastName</p>
+
+                <p>Дата создания заказа : @order?.OrderDateTime</p>
+                <p>Закончен ли заказа : @order?.isDone</p>
+                <p>Оплачен ли заказа : @order?.isPayed</p>
+                <p>Количество товаров : @order?.VMProducts.Count</p>
+                @foreach (var product in order.VMProducts)
+                {
+                    <p>@product.Name</p>
+                    <p>@product.Price</p>
+                    <p>@product.ProductCount</p>
+                }
+            }
+        }
+    </div>
+</div>
 
 
 

@@ -57,11 +57,11 @@ namespace ProductShop.Controllers
         }
 
         [Authorize("AdminRights")]
-        public async Task<IActionResult> GetUserByDate(string start, string end)
+        public async Task<IActionResult> GetUserOrdersByDate(UserInfoViewModel userInfoView)
         {
             if (ModelState.IsValid)
             {
-                var orders = await Task.Run(() => _order.GetOrdersByDateOfPurchase(start, end).ToList());
+                var orders = await Task.Run(() => _order.GetOrdersByDateOfPurchase(userInfoView.OrderDateTime.DateStart, userInfoView.OrderDateTime.DateEnd));
                 if (orders != null)
                 {
                     return View(orders);

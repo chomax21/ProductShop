@@ -17,7 +17,7 @@ namespace ProductShop.Models
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         public string LastName { get; set; }
-        public DateTime OrderDateTime { get; set; } = DateTime.Now;
+        public DateTime OrderDateTime { get; set; } = DateTime.UtcNow;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalSum { get; set; }
