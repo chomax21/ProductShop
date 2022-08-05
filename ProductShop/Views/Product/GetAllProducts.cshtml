@@ -19,6 +19,9 @@
 <div class="m-2">
     <a asp-action="GetProductByManufacturer" asp-controller="Product">Поиск продукта по Производителю.</a>
 </div>
+<div class="m-2">
+    <a asp-action="GetValuesInCategory" asp-controller="Product">Отобразить категории продуктов</a>
+</div>
 
 @foreach (var item in Model)
 {
@@ -52,5 +55,3 @@
     </div>
 
 }
-
-

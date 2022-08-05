@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ProductShop.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,5 +17,7 @@ namespace ProductShop.Services
         Task<bool> UpateProduct(T item);
         Task<bool> DeleteProduct(int? id);
         Task Save();
+        Task SetValueInCategoryList(string value);
+        Task<IEnumerable<ProductCategory>> GetValuesInCategoryList();
     }
 }

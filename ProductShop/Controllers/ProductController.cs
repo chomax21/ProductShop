@@ -27,7 +27,7 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public IActionResult CreateProduct()
         {
-            return View();            
+            return View();
         }
 
 
@@ -55,7 +55,7 @@ namespace ProductShop.Controllers
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
                 return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Error", "Home");           
+            return RedirectToAction("Error", "Home");
         }
 
 
@@ -65,10 +65,10 @@ namespace ProductShop.Controllers
         {
             if (id.HasValue)
             {
-                var product = await _db.GetProductById(id.Value);               
+                var product = await _db.GetProductById(id.Value);
                 return View(MapProductToViewModel(product));
             }
-            return View(null);           
+            return View(null);
         }
 
 
@@ -82,7 +82,7 @@ namespace ProductShop.Controllers
                 {
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
-                    Price= viewModelProduct.Price,
+                    Price = viewModelProduct.Price,
                     Count = viewModelProduct.Count,
                     Category = viewModelProduct.Category,
                     Description = viewModelProduct.Description,
@@ -96,8 +96,8 @@ namespace ProductShop.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
-            }           
-            return RedirectToAction("Error","Home");
+            }
+            return RedirectToAction("Error", "Home");
         }
 
 
@@ -108,11 +108,11 @@ namespace ProductShop.Controllers
             if (id.HasValue)
             {
                 Product searchProdict = await _db.GetProductById(id.Value);
-                
+
                 return View(MapProductToViewModel(searchProdict));
             }
             return RedirectToAction("Error", "Home");
-            
+
         }
 
 
@@ -120,15 +120,15 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            Product searchProdict = await _db.GetProductById(id);            
+            Product searchProdict = await _db.GetProductById(id);
             string message = MapProductToViewModel(searchProdict).Name;
-            bool result = await _db.DeleteProduct(id);              
+            bool result = await _db.DeleteProduct(id);
             await _db.Save();
             TempData["SuccesMessage"] = $"Продукт <{message}> удален!";
             if (result)
             {
                 return RedirectToAction("Index", "Home");
-            }                
+            }
             return RedirectToAction("Error", "Home");
         }
 
@@ -153,11 +153,11 @@ namespace ProductShop.Controllers
         {
             var resultById = await _db.GetProductById(id);
             if (resultById != null)
-            {              
+            {
                 return View(MapProductToViewModel(resultById));
             }
             TempData["Error"] = "Продутка с таким идентификатором не существует!";
-            return RedirectToAction("Index","Home");             
+            return RedirectToAction("Index", "Home");
         }
         [HttpGet]
         [Authorize("AdminRights")]
@@ -172,7 +172,7 @@ namespace ProductShop.Controllers
         {
             return View();
         }
-        
+
         public async Task<IActionResult> GetProductByCategory(SearchVIewModel category)
         {
             SearchVIewModel model = new SearchVIewModel();
@@ -183,6 +183,7 @@ namespace ProductShop.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
+
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = await _db.GetProducts();
             foreach (var item in newProducts)
@@ -199,7 +200,7 @@ namespace ProductShop.Controllers
                 viewModel.Count = item.Count;
                 viewProducts.Add(viewModel);
             }
-            return View(viewProducts); 
+            return View(viewProducts);
         }
 
         [HttpGet]
@@ -213,12 +214,12 @@ namespace ProductShop.Controllers
                 ProductViewModel viewModel = new ProductViewModel();
                 viewModel.Id = item.Id;
                 viewModel.Name = item.Name;
-                viewModel.Price= item.Price;
+                viewModel.Price = item.Price;
                 viewModel.Category = item.Category;
                 viewModel.Description = item.Description;
                 viewModel.Manufacturer = item.Manufacturer;
                 viewModel.ProductComposition = item.ProductComposition;
-                viewModel.IsDeleted= item.IsDeleted;
+                viewModel.IsDeleted = item.IsDeleted;
                 viewModel.Count = item.Count;
                 viewProducts.Add(viewModel);
             }
@@ -228,13 +229,13 @@ namespace ProductShop.Controllers
         [HttpGet]
         public IActionResult GetProductByManufacturer()
         {
-            return  View();
+            return View();
         }
 
         public async Task<IActionResult> GetProductByManufacturer(SearchVIewModel manufacturer)
         {
             SearchVIewModel model = new SearchVIewModel();
-            model.Products =  await _db.GetProductByManufacturer(manufacturer.SearchString);
+            model.Products = await _db.GetProductByManufacturer(manufacturer.SearchString);
             return View(model);
         }
 
@@ -244,7 +245,7 @@ namespace ProductShop.Controllers
             var restoreProduct = await _db.GetProductById(id);
             restoreProduct.IsDeleted = false;
             await _db.Save();
-            return RedirectToAction("GetAllProducts","Product");
+            return RedirectToAction("GetAllProducts", "Product");
         }
 
         private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
@@ -263,6 +264,36 @@ namespace ProductShop.Controllers
             };
 
             return model;
+        }
+
+        [HttpPost]
+        [Authorize("AdminRights")]
+        public async Task<IActionResult> SetValueInCategory(string setValue)
+        {
+            if (!string.IsNullOrEmpty(setValue))
+            {
+                await _db.SetValueInCategoryList(setValue);
+                await _db.Save();
+                ProductCategoryViewModel categoryViewModel = new();
+                var category = await _db.GetValuesInCategoryList();
+                categoryViewModel.productCategories = category.ToList();
+                return View("SetValueInCategory", categoryViewModel);
+            }
+            return View("Error","Home");
+        }
+
+        [HttpGet]
+        [Authorize("AdminRights")]
+        public async Task<IActionResult> GetValuesInCategory()
+        {
+            ProductCategoryViewModel categoryViewModel = new();
+            var category = await _db.GetValuesInCategoryList();
+            categoryViewModel.productCategories = category.ToList();
+            if (categoryViewModel != null)
+            {
+                return View("SetValueInCategory", categoryViewModel);
+            }
+            return View("SetValueInCategory", Enumerable.Empty<ProductCategory>());
         }
     }
 }

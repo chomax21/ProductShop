@@ -1,0 +1,18 @@
+﻿@model ProductCategoryViewModel
+
+<div class="col-12 container m-2">
+    <form asp-action="SetValueInCategory" asp-controller="Product">
+        <input asp-for="setValue" type="text"/>
+        <button type="submit" class="btn btn-outline-primary">Введите новую категорию</button>
+    </form>
+</div>
+<div class="container col-12 m-2">
+    <ul>
+        @foreach (var item in @Model.productCategories)
+        {
+            <li>
+                @item.Category
+            </li>
+        }
+    </ul>
+</div>

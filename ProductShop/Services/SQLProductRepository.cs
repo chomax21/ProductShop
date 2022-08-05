@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
 namespace ProductShop.Services
 {
@@ -119,5 +120,17 @@ namespace ProductShop.Services
             return false;
         }
 
+        public async Task SetValueInCategoryList(string value)
+        {
+            ProductCategory product = new();
+            product.Category = value;
+            await _db.ProductCategories.AddAsync(product);
+        }
+
+
+        public async Task<IEnumerable<ProductCategory>> GetValuesInCategoryList()
+        {
+            return await Task.Run(() => _db.ProductCategories.Select(x => x));
+        }
     }
 }
