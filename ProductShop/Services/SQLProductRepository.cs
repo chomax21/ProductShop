@@ -30,6 +30,13 @@ namespace ProductShop.Services
 
         }
 
+        public async Task<string> GetOneValueInCategory(int id)
+        {
+            var category =await _db.ProductCategories.FindAsync(id);
+            var result = category.Category;
+            return result;                
+        }
+
 
         public async Task<bool> DeleteProduct(int? id)
         {

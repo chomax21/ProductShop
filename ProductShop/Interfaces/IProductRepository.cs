@@ -19,5 +19,6 @@ namespace ProductShop.Services
         Task Save();
         Task SetValueInCategoryList(string value);
         Task<IEnumerable<ProductCategory>> GetValuesInCategoryList();
+        Task<string> GetOneValueInCategory(int id);
     }
 }

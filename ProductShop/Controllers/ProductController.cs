@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using ProductShop.Models;
 using ProductShop.Services;
@@ -25,8 +26,11 @@ namespace ProductShop.Controllers
 
         [HttpGet]
         [Authorize("AdminRights")]
-        public IActionResult CreateProduct()
+        public async Task<IActionResult> CreateProduct()
         {
+            ProductCategory product = new ProductCategory();
+            var category = await _db.GetValuesInCategoryList();
+            ViewBag.Category = new SelectList(category,"Id","Category",product.Category);
             return View();
         }
 
@@ -38,13 +42,14 @@ namespace ProductShop.Controllers
         {
             if (ModelState.IsValid)
             {
+                var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
                 Product product = new Product()
                 {
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
                     Price = viewModelProduct.Price,
                     Count = viewModelProduct.Count,
-                    Category = viewModelProduct.Category,
+                    Category = category,
                     Description = viewModelProduct.Description,
                     Manufacturer = viewModelProduct.Manufacturer,
                     ProductComposition = viewModelProduct.ProductComposition
@@ -56,6 +61,11 @@ namespace ProductShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return RedirectToAction("Error", "Home");
+        }
+
+        private async Task<string> GetValueInCategory(int id)
+        {
+            return await _db.GetOneValueInCategory(id);
         }
 
 
@@ -78,13 +88,14 @@ namespace ProductShop.Controllers
         {
             if (ModelState.IsValid)
             {
+                var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
                 Product product = new Product()
                 {
                     Id = viewModelProduct.Id,
                     Name = viewModelProduct.Name,
                     Price = viewModelProduct.Price,
                     Count = viewModelProduct.Count,
-                    Category = viewModelProduct.Category,
+                    Category = category,
                     Description = viewModelProduct.Description,
                     Manufacturer = viewModelProduct.Manufacturer,
                     ProductComposition = viewModelProduct.ProductComposition
