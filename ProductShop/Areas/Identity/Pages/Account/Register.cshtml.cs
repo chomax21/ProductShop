@@ -92,8 +92,9 @@ namespace ProductShop.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {                              
-                 var  user = new ApplicationUser { UserName = Input.FirstName +" "+ Input.MiddleName, Email = Input.Email, FirstName = Input.FirstName,
+                 var  user = new ApplicationUser { UserName = Input.FirstName, Email = Input.Email, FirstName = Input.FirstName,
                  MiddleName = Input.MiddleName, LastName = Input.LastName};
+
                  var   result = await _userManager.CreateAsync(user, Input.Password);      
                 
                 if (result.Succeeded)
