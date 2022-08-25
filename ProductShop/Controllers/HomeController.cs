@@ -17,6 +17,7 @@ namespace ProductShop.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
 
+        public HomeController(){}
         public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext db)
         {
             _logger = logger;
@@ -25,9 +26,10 @@ namespace ProductShop.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string message)
-        {            
-            return View(message);           
+        public IActionResult Index()
+        {
+            ViewData["Begin"] = "Терпение и труд, все перетрут!!!";
+            return View("Index");           
         }
 
         public IActionResult Privacy()
