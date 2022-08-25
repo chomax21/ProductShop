@@ -17,7 +17,6 @@ namespace ProductShop.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
 
-        public HomeController(){}
         public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext db)
         {
             _logger = logger;

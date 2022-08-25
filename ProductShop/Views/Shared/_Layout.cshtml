@@ -33,6 +33,7 @@
                                 @if (User.HasClaim("IsAdmin", "true"))
                                 {
                                     <a class="dropdown-item" asp-controller="Product" asp-action="CreateProduct">Создаем продукт</a>
+                                    <a class="dropdown-item" asp-controller="Product" asp-action="GetValuesInCategory">Смотрим все категории продуктов</a>
                                 }
                             </div>
                         </li>                      
