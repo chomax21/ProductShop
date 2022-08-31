@@ -40,7 +40,7 @@ namespace ProductShop.Tests
         }
 
         [Fact]
-        public void IndexViewNameEqualUndex()
+        public void IndexViewNameEqualIndex()
         {
             HomeController controller = new(null, null, null);
 

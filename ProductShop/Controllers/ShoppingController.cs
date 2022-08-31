@@ -17,16 +17,19 @@ namespace ProductShop.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOrderRepository<Order> _order;
         private readonly IShoppingCart<ShopingCart> _shoppingCart;
+        private readonly ISaleService _saleServie;
 
         public ShoppingController(IProductRepository<Product> repository,
             UserManager<ApplicationUser> userManager,
             IOrderRepository<Order> orderRepository,
-            IShoppingCart<ShopingCart> shoppingCartService)
+            IShoppingCart<ShopingCart> shoppingCartService,
+            ISaleService saleService)
         {
             _db = (SQLProductRepository)repository;
             _userManager = userManager;
             _order = orderRepository;
             _shoppingCart = shoppingCartService;
+            _saleServie = saleService;
         }
 
         [Authorize]
@@ -71,11 +74,15 @@ namespace ProductShop.Controllers
                 {
                     //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
                     Product originProduct = await _db.GetProductById(ProductId);
-                    ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart);
-                    if (checkProduct != null)
+                    if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
                     {
-                        checkProduct.ProductCount++;
-                        shopingCart.Order.TotalSum += checkProduct.Price;
+                        originProduct.Discount = _saleServie.GetDiscount(originProduct.Price, originProduct.Discount); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
+                    }
+                    ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
+                    if (checkProduct != null) // Если такой товар уже есть. 
+                    {
+                        checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
+                        shopingCart.Order.TotalSum += originProduct.HaveDiscount ? originProduct.Price : checkProduct.Price; // В заивисимости от того, есть ли скидка на этот продукт, выбираем цену.
                     }
                     else
                     {
@@ -86,6 +93,7 @@ namespace ProductShop.Controllers
                         newProduct.ProductCount++;
                         shopingCart.Order.VMProducts.Add(newProduct);
                     }
+
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     _order.UpdateOrder(shopingCart.Order);
                     await _db.Save();
@@ -153,7 +161,7 @@ namespace ProductShop.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> MakePurchase()
+        public async Task<IActionResult> MakePurchase() // Метод покупки.
         {
             ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)); // Метод в метод, так тоже работает, но читается ли?
             shopingCart.Order.isDone = true;

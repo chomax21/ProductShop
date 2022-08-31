@@ -30,7 +30,10 @@ namespace ProductShop.Controllers
         {
             ProductCategory product = new ProductCategory();
             var category = await _db.GetValuesInCategoryList();
-            ViewBag.Category = new SelectList(category,"Id","Category",product.Category);
+            if (category != null)
+            {
+                ViewBag.Category = new SelectList(category, "Id", "Category", product.Category);
+            }
             return View();
         }
 
@@ -43,19 +46,7 @@ namespace ProductShop.Controllers
             if (ModelState.IsValid)
             {
                 var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
-                Product product = new Product()
-                {
-                    Id = viewModelProduct.Id,
-                    Name = viewModelProduct.Name,
-                    Price = viewModelProduct.Price,
-                    Count = viewModelProduct.Count,
-                    Category = category,
-                    Description = viewModelProduct.Description,
-                    Manufacturer = viewModelProduct.Manufacturer,
-                    ProductComposition = viewModelProduct.ProductComposition
-                };
-
-                await _db.CreateProduct(product);
+                await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
                 return RedirectToAction("Index", "Home");
@@ -88,19 +79,8 @@ namespace ProductShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
-                Product product = new Product()
-                {
-                    Id = viewModelProduct.Id,
-                    Name = viewModelProduct.Name,
-                    Price = viewModelProduct.Price,
-                    Count = viewModelProduct.Count,
-                    Category = category,
-                    Description = viewModelProduct.Description,
-                    Manufacturer = viewModelProduct.Manufacturer,
-                    ProductComposition = viewModelProduct.ProductComposition
-                };
-                bool resultOperation = await _db.UpateProduct(product);
+                //var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
+                bool resultOperation = await _db.UpateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
                 if (resultOperation)
@@ -167,7 +147,7 @@ namespace ProductShop.Controllers
             {
                 return View(MapProductToViewModel(resultById));
             }
-            TempData["Error"] = "Продутка с таким идентификатором не существует!";
+            TempData["Error"] = "Продукта с таким идентификатором не существует!";
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
@@ -198,18 +178,8 @@ namespace ProductShop.Controllers
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = await _db.GetProducts();
             foreach (var item in newProducts)
-            {
-                ProductViewModel viewModel = new ProductViewModel();
-                viewModel.Id = item.Id;
-                viewModel.Name = item.Name;
-                viewModel.Price = item.Price;
-                viewModel.Category = item.Category;
-                viewModel.Description = item.Description;
-                viewModel.Manufacturer = item.Manufacturer;
-                viewModel.ProductComposition = item.ProductComposition;
-                viewModel.IsDeleted = item.IsDeleted;
-                viewModel.Count = item.Count;
-                viewProducts.Add(viewModel);
+            {               
+                viewProducts.Add(MapProductToViewModel(item));
             }
             return View(viewProducts);
         }
@@ -221,18 +191,8 @@ namespace ProductShop.Controllers
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = await _db.GetProductsIsDeleted();
             foreach (var item in newProducts)
-            {
-                ProductViewModel viewModel = new ProductViewModel();
-                viewModel.Id = item.Id;
-                viewModel.Name = item.Name;
-                viewModel.Price = item.Price;
-                viewModel.Category = item.Category;
-                viewModel.Description = item.Description;
-                viewModel.Manufacturer = item.Manufacturer;
-                viewModel.ProductComposition = item.ProductComposition;
-                viewModel.IsDeleted = item.IsDeleted;
-                viewModel.Count = item.Count;
-                viewProducts.Add(viewModel);
+            {                
+                viewProducts.Add(MapProductToViewModel(item));
             }
             return View("GetAllProducts", viewProducts);
         }
@@ -261,6 +221,9 @@ namespace ProductShop.Controllers
 
         private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
         {
+            var category = _db.GetOneValueInCategory(product.Id);
+            product.Category = category.Result;
+
             ProductViewModel model = new ProductViewModel()
             {
                 Id = product.Id,
@@ -272,6 +235,25 @@ namespace ProductShop.Controllers
                 IsDeleted = product.IsDeleted,
                 Price = product.Price,
                 Count = product.Count
+            };
+
+            return model;
+        }
+
+        private Product MapViewModelToProduct(ProductViewModel viewModelProduct) // Преобразуем класс ViewModelProduct в Product
+        {
+            
+            Product model = new Product()
+            {
+                Id = viewModelProduct.Id,
+                Name = viewModelProduct.Name,
+                Category = viewModelProduct.Category,
+                Description = viewModelProduct.Description,
+                Manufacturer = viewModelProduct.Manufacturer,
+                ProductComposition = viewModelProduct.ProductComposition,
+                IsDeleted = viewModelProduct.IsDeleted,
+                Price = viewModelProduct.Price,
+                Count = viewModelProduct.Count
             };
 
             return model;
