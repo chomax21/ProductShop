@@ -177,6 +177,10 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> GetPaymentPage()
         {
             var shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
+            if (shopingCart !=null)
+            {
+                
+            }
             return View("PaymentPage", shopingCart);
         }
     }
