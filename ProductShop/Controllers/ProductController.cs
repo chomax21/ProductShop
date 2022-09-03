@@ -234,7 +234,9 @@ namespace ProductShop.Controllers
                 ProductComposition = product.ProductComposition,
                 IsDeleted = product.IsDeleted,
                 Price = product.Price,
-                Count = product.Count
+                Count = product.Count,
+                Discount = product.Discount,
+                HaveDiscount = product.HaveDiscount                
             };
 
             return model;
@@ -253,7 +255,9 @@ namespace ProductShop.Controllers
                 ProductComposition = viewModelProduct.ProductComposition,
                 IsDeleted = viewModelProduct.IsDeleted,
                 Price = viewModelProduct.Price,
-                Count = viewModelProduct.Count
+                Count = viewModelProduct.Count,
+                Discount = viewModelProduct.Discount,
+                HaveDiscount = viewModelProduct.HaveDiscount
             };
 
             return model;

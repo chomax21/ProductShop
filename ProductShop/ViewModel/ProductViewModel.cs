@@ -26,6 +26,9 @@ namespace ProductShop.ViewModel
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Discount { get; set; }
+        public bool HaveDiscount { get; set; }
         public int Count { get; set; }
 
         public bool IsDeleted { get; set; } = false;

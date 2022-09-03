@@ -1,12 +1,8 @@
 ﻿using ProductShop.Data;
 using ProductShop.Models;
-using ProductShop.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
 
 namespace ProductShop.Services
 {
@@ -32,9 +28,9 @@ namespace ProductShop.Services
 
         public async Task<string> GetOneValueInCategory(int id)
         {
-            var category =await _db.ProductCategories.FindAsync(id);
+            var category = await _db.ProductCategories.FindAsync(id);
             var result = category.Category;
-            return result;                
+            return result;
         }
 
 
@@ -109,6 +105,7 @@ namespace ProductShop.Services
             if (item != null)
             {
                 var product = await _db.Products.FindAsync(item.Id);
+
                 if (product != null)
                 {
                     product.Name = item.Name;
@@ -119,6 +116,8 @@ namespace ProductShop.Services
                     product.Category = item.Category;
                     product.Manufacturer = item.Manufacturer;
                     product.ProductComposition = item.ProductComposition;
+                    product.Discount = item.Discount;
+                    product.HaveDiscount = item.HaveDiscount;
                     await _db.SaveChangesAsync();
                     return true;
                 }
