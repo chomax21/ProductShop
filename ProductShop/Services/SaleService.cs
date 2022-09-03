@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ProductShop.Data;
 using ProductShop.Interfaces;
+using System;
 
 namespace ProductShop.Services
 {
@@ -12,12 +13,12 @@ namespace ProductShop.Services
         {
             _db = dbContext;
         }
-        public decimal GetDiscount(decimal price, decimal discount)
+        public decimal GetDiscount(decimal price, decimal discount) // Здесь просто расчитывается общая цена относительно скидки. Первым аргументом приходит цена, вторым - размер скидки.
         {
-            return price * discount;   
+            return price * discount;   // Возвращается итоговая цена.
         }
 
-        public decimal HaveDiscountInProduct(int id)
+        public decimal HaveDiscountInProduct(int id) // Проверяем наличие скидки у продукта. Если она есть делаем перерасчет, если нет, возвращаем станадртную цену.
         {
             var product = _db.Products.Find(id);
             if (product != null)
@@ -28,7 +29,7 @@ namespace ProductShop.Services
                 }
                 return product.Price;
             }
-            return 0;   
+            return 0;   // Если вернули 0, значит что-то не так. Нужно обработать в вызывающем коде.
         }
     }
 }

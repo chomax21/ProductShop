@@ -82,7 +82,7 @@ namespace ProductShop.Controllers
                     if (checkProduct != null) // Если такой товар уже есть. 
                     {
                         checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
-                        shopingCart.Order.TotalSum += originProduct.HaveDiscount ? originProduct.Price : checkProduct.Price; // В заивисимости от того, есть ли скидка на этот продукт, выбираем цену.
+                        shopingCart.Order.TotalSum += originProduct.Price; // Увеличиваем общую цену заказа.
                     }
                     else
                     {
@@ -106,6 +106,35 @@ namespace ProductShop.Controllers
             }
             return View("GetShoppingCart", shopingCart);
         }
+
+        //private async Task<ShopingCart> CreatingAndConfiguringShoppingCart(ShopingCart shopingCart, int prodictId)
+        //{
+        //    //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
+        //    Product originProduct = await _db.GetProductById(prodictId);
+        //    if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
+        //    {
+        //        originProduct.Discount = _saleServie.GetDiscount(originProduct.Price, originProduct.Discount); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
+        //    }
+        //    ProductViewModel checkProduct = CheckingQuantityProduct(prodictId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
+        //    if (checkProduct != null) // Если такой товар уже есть. 
+        //    {
+        //        checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
+        //        shopingCart.Order.TotalSum += originProduct.Price; // Увеличиваем общую цену заказа.
+        //    }
+        //    else
+        //    {
+        //        ProductViewModel newProduct = MapProduct(originProduct);
+        //        shopingCart.Order.TotalSum += newProduct.Price;
+        //        newProduct.ShoppingCartId = shopingCart.Id;
+        //        newProduct.OrderId = shopingCart.Order.Id;
+        //        newProduct.ProductCount++;
+        //        shopingCart.Order.VMProducts.Add(newProduct);
+        //    }
+
+        //    await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+        //    _order.UpdateOrder(shopingCart.Order);
+        //    await _db.Save();
+        //}
 
         private ProductViewModel MapProduct(Product product)
         {
@@ -179,7 +208,16 @@ namespace ProductShop.Controllers
             var shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
             if (shopingCart !=null)
             {
-                
+                foreach (var product in shopingCart.Order.VMProducts) 
+                {                    
+                    if (product.Price == _saleServie.HaveDiscountInProduct(product.Id)) // Проверяем наличие скидок на продукты и их финальные цены.
+                    {
+                        continue; // Если цена этого продутка совпадает, оставляем эту цену и переходим к следующему продукту.
+                    }
+                    else
+                        product.Price = _saleServie.HaveDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                    
+                }
+               
             }
             return View("PaymentPage", shopingCart);
         }
