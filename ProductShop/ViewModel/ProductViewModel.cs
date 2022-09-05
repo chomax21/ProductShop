@@ -33,8 +33,8 @@ namespace ProductShop.ViewModel
 
         public decimal Discount { get; set; }
 
-        [Required (ErrorMessage = "Разделителем должна быть точка. Указывать цену в сотых долях, например : 9999.99")]
-        [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$")]
+        [Required (ErrorMessage = "Разделителем должна быть точка. Указывать размер скидки в сотых долях, например : .99")]
+        [RegularExpression(@"^([.][0-9]{1,2})?$")]
         public string stringDiscount { get; set; } = string.Empty;
         public bool HaveDiscount { get; set; }
         public int Count { get; set; }
