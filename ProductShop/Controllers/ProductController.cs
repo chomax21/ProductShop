@@ -43,6 +43,7 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public async Task<IActionResult> CreateProduct(ProductViewModel viewModelProduct)
         {
+
             if (ModelState.IsValid)
             {
                 var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));

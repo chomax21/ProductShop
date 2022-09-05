@@ -24,10 +24,18 @@ namespace ProductShop.ViewModel
         [Required]
         public string Manufacturer { get; set; }
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
+ 
         public decimal Price { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
+
+        [Required(ErrorMessage = "Разделителем должна быть точка. Указывать цену в сотых долях, например : 9999.99")]
+        [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$")]
+        public string stringPrice { get; set; } = string.Empty;
+
         public decimal Discount { get; set; }
+
+        [Required (ErrorMessage = "Разделителем должна быть точка. Указывать цену в сотых долях, например : 9999.99")]
+        [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$")]
+        public string stringDiscount { get; set; } = string.Empty;
         public bool HaveDiscount { get; set; }
         public int Count { get; set; }
 
