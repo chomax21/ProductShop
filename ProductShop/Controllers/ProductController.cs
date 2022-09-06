@@ -68,6 +68,13 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public async Task<IActionResult> UpdateProduct(int? id)
         {
+            ProductCategory productCategory = new ProductCategory();
+            var category = await _db.GetValuesInCategoryList();
+            if (category != null)
+            {
+                ViewBag.Category = new SelectList(category, "Id", "Category", productCategory.Category);
+            }
+
             if (id.HasValue)
             {
                 var product = await _db.GetProductById(id.Value);
@@ -82,8 +89,7 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> UpdateProduct(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
-            {
-                //var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
+            {              
                 bool resultOperation = await _db.UpateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
