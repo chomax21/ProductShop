@@ -6,7 +6,9 @@ using Microsoft.Extensions.Logging;
 using ProductShop.Models;
 using ProductShop.Services;
 using ProductShop.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,15 +45,16 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public async Task<IActionResult> CreateProduct(ProductViewModel viewModelProduct)
         {
+            
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid /*viewModelProduct != null*/)
             {
-                var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
+                //var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
                 await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
                 return RedirectToAction("Index", "Home");
-            }
+            }          
             return RedirectToAction("Error", "Home");
         }
 
@@ -225,6 +228,8 @@ namespace ProductShop.Controllers
             var category = _db.GetOneValueInCategory(product.Id);
             product.Category = category.Result;
 
+
+
             ProductViewModel model = new ProductViewModel()
             {
                 Id = product.Id,
@@ -245,7 +250,10 @@ namespace ProductShop.Controllers
 
         private Product MapViewModelToProduct(ProductViewModel viewModelProduct) // Преобразуем класс ViewModelProduct в Product
         {
-            
+            CultureInfo culture = new CultureInfo("en-US"); // Англ локализация, для использования точки в паарметрах цен и скидок.
+            var resulParsePrice = Convert.ToDecimal(viewModelProduct.stringPrice, culture); // Парсим из строки значение цены в дробное число, Decimal.
+            var resultParseDiscount = Convert.ToDecimal(viewModelProduct.stringDiscount, culture); // Парсим из строки значение скидки в дробное число, Decimal.
+
             Product model = new Product()
             {
                 Id = viewModelProduct.Id,
@@ -255,9 +263,9 @@ namespace ProductShop.Controllers
                 Manufacturer = viewModelProduct.Manufacturer,
                 ProductComposition = viewModelProduct.ProductComposition,
                 IsDeleted = viewModelProduct.IsDeleted,
-                Price = viewModelProduct.Price,
+                Price = resulParsePrice,
                 Count = viewModelProduct.Count,
-                Discount = viewModelProduct.Discount,
+                Discount = resultParseDiscount,
                 HaveDiscount = viewModelProduct.HaveDiscount
             };
 
