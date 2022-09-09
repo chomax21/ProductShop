@@ -25,7 +25,7 @@ namespace ProductShop.ViewModel
         [Required]
         public string Manufacturer { get; set; }
 
-        [NotMapped]
+       
         public decimal DiscountedPrice { get; set; }
         public decimal Price { get; set; }
 

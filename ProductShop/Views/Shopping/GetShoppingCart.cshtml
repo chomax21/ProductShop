@@ -25,7 +25,10 @@
                     <p class="card-text"><strong>Описание :</strong> @item.Description</p>
                     <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
                     <p class="card-text"><strong>Цена :</strong> @item.Price</p>
-                    <p class="card-text"><strong>Цена со скидкой :</strong> @item.DiscountedPrice</p>
+                    @if (item.HaveDiscount)
+                    {
+                        <p class="card-text"><strong>Цена со скидкой :</strong> @item.DiscountedPrice</p>
+                    }
                     <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
                     <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-primary">Добавить</a>
                 </div>

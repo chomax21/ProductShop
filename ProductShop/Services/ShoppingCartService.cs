@@ -1,11 +1,9 @@
-﻿using ProductShop.Models;
-using ProductShop.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using ProductShop.Data;
+using ProductShop.Interfaces;
+using ProductShop.Models;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace ProductShop.Services

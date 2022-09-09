@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductShop.Models
@@ -12,8 +13,12 @@ namespace ProductShop.Models
         public string ProductComposition { get; set; }
         public string Manufacturer { get; set; }
         public bool IsDeleted { get; set; }
-        public int Count { get; set; } 
+        public int Count { get; set; }
+    
         public decimal Price { get; set; }
+
+        public decimal DiscountedPrice { get; set; }
+
         public decimal Discount { get; set; }
         public bool HaveDiscount { get; set; }
     }
