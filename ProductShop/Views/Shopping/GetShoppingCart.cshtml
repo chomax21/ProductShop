@@ -6,39 +6,49 @@
 <h4>Корзина покупок</h4>
 @if (Model != null)
 {
-    @foreach (var item in Model.Order.VMProducts)
+    @if (Model.Order == null)
     {
-        <div class="card m-2">
-            <div class="card-header text-muted">
-                <small>Информация о продукте</small>
+        <p>Пусто!!!</p>
+    }
+    else
+    {
+        @foreach (var item in Model.Order.VMProducts)
+        {
+            <div class="card m-2">
+                <div class="card-header text-muted">
+                    <small>Информация о продукте</small>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title"><strong>Продукт :</strong> @item.Name</h5>
+                    <p class="card-text"><strong>Производитель :</strong> @item.Manufacturer</p>
+                    <p class="card-text"><strong>Категория :</strong> @item.Category</p>
+                    <p class="card-text"><strong>Описание :</strong> @item.Description</p>
+                    <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
+                    <p class="card-text"><strong>Цена :</strong> @item.Price</p>
+                    <p class="card-text"><strong>Цена со скидкой :</strong> @item.DiscountedPrice</p>
+                    <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+                    <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-primary">Добавить</a>
+                </div>
+                <div class="card-footer text-muted">
+                    Количество : @item.ProductCount
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title"><strong>Продукт :</strong> @item.Name</h5>
-                <p class="card-text"><strong>Производитель :</strong> @item.Manufacturer</p>
-                <p class="card-text"><strong>Категория :</strong> @item.Category</p>
-                <p class="card-text"><strong>Описание :</strong> @item.Description</p>
-                <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
-                <p class="card-text"><strong>Цена :</strong> @item.Price</p>
-                <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
-                <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-primary">Добавить</a>
-            </div>
-            <div class="card-footer text-muted">
-                Количество : @item.ProductCount
-            </div>        
+        }
+        <div class="m-2">
+            <a asp-action="GetAllProducts" asp-controller="Product" class="btn btn-primary">Вернуться к списку продуктов</a>
+        </div>
+        <div class="m-2">
+            <p>
+                Общая суммка заказа: @Model.Order.TotalSum
+            </p>
+            @if (Model.Order.VMProducts.Count > 0)
+            {
+                <a asp-action="GetPaymentPage" asp-controller="Shopping" class="btn btn-success">Купить</a>
+            }
         </div>
     }
-    <div class="m-2">
-        <a asp-action="GetAllProducts" asp-controller="Product" class="btn btn-primary">Вернуться к списку продуктов</a>
-    </div>
-    <div class="m-2">
-        <p>
-            Общая суммка заказа: @Model.Order.TotalSum
-        </p>
-        @if (Model.Order.VMProducts.Count>0)
-        {
-             <a asp-action="GetPaymentPage" asp-controller="Shopping" class="btn btn-success">Купить</a>
-        }       
-    </div>
+
+
 }
 
 

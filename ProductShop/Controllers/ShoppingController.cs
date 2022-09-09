@@ -35,6 +35,14 @@ namespace ProductShop.Controllers
             _saleServie = saleService;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetCart()
+        {
+            return View("GetShoppingCart", await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)));
+        }
+
+        [HttpPost]
         [Authorize]
         public async Task<IActionResult> GetShoppingCartAction()
         {
@@ -63,6 +71,7 @@ namespace ProductShop.Controllers
             }
             return BadRequest();
         }
+
 
         [Authorize]
         public async Task<IActionResult> AddProductInCart(int ProductId)
@@ -94,6 +103,7 @@ namespace ProductShop.Controllers
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
                     if (checkProduct != null) // Если такой товар уже есть. 
                     {
+                        checkProduct.DiscountedPrice = finalPrice;
                         checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
                         shopingCart.Order.TotalSum += finalPrice; // Увеличиваем общую цену заказа.
                     }
@@ -104,20 +114,21 @@ namespace ProductShop.Controllers
                         newProduct.ShoppingCartId = shopingCart.Id;
                         newProduct.OrderId = shopingCart.Order.Id;
                         newProduct.ProductCount++;
+                        newProduct.DiscountedPrice = finalPrice;
                         shopingCart.Order.VMProducts.Add(newProduct);
                     }
 
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     //_order.UpdateOrder(shopingCart.Order);
                     await _db.Save();
-                    return View("GetShoppingCart", shopingCart);
+                    return RedirectToAction("GetCart");
                 }
                 else
                 {
                     return RedirectToAction("Error", "Home");
                 }
             }
-            return View("GetShoppingCart", shopingCart);
+            return RedirectToAction("GetCart");
         }
 
         //private async Task<ShopingCart> CreatingAndConfiguringShoppingCart(ShopingCart shopingCart, int prodictId)
@@ -222,6 +233,7 @@ namespace ProductShop.Controllers
             if (checkProduct != null && oldProduct.ProductCount > 0)
             {
                 oldProduct.ProductCount--;
+                oldProduct.DiscountedPrice = finalPrice;
                 shopingCart.Order.TotalSum -= finalPrice;
                 await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                 await _db.Save();
@@ -236,7 +248,7 @@ namespace ProductShop.Controllers
                 await _db.Save();
             }
 
-            return View("GetShoppingCart", shopingCart);
+            return RedirectToAction("GetCart");
         }
 
         [Authorize]
