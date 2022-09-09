@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace ProductShop.Controllers
 {
@@ -18,6 +19,8 @@ namespace ProductShop.Controllers
         private readonly IOrderRepository<Order> _order;
         private readonly IShoppingCart<ShopingCart> _shoppingCart;
         private readonly ISaleService _saleServie;
+
+        private decimal finalPrice { get; set; }
 
         public ShoppingController(IProductRepository<Product> repository,
             UserManager<ApplicationUser> userManager,
@@ -74,20 +77,30 @@ namespace ProductShop.Controllers
                 {
                     //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
                     Product originProduct = await _db.GetProductById(ProductId);
+                    
                     if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
                     {
-                        originProduct.Discount = _saleServie.GetDiscount(originProduct.Price, originProduct.Discount); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
+                        var discountPrice  = _saleServie.GetDiscountInProduct(originProduct.Id); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
+                        if (discountPrice == -1)
+                        {
+                            throw new Exception("Ошибка в сервисе подсчета скидок!");
+                        }
+                        finalPrice = discountPrice;
+                    }
+                    else
+                    {
+                        finalPrice = originProduct.Price;
                     }
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
                     if (checkProduct != null) // Если такой товар уже есть. 
                     {
                         checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
-                        shopingCart.Order.TotalSum += originProduct.Price; // Увеличиваем общую цену заказа.
+                        shopingCart.Order.TotalSum += finalPrice; // Увеличиваем общую цену заказа.
                     }
                     else
                     {
                         ProductViewModel newProduct = MapProduct(originProduct);
-                        shopingCart.Order.TotalSum += newProduct.Price;
+                        shopingCart.Order.TotalSum += finalPrice;
                         newProduct.ShoppingCartId = shopingCart.Id;
                         newProduct.OrderId = shopingCart.Order.Id;
                         newProduct.ProductCount++;
@@ -95,7 +108,7 @@ namespace ProductShop.Controllers
                     }
 
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    _order.UpdateOrder(shopingCart.Order);
+                    //_order.UpdateOrder(shopingCart.Order);
                     await _db.Save();
                     return View("GetShoppingCart", shopingCart);
                 }
@@ -140,6 +153,7 @@ namespace ProductShop.Controllers
         {
             var productViewModel = new ProductViewModel
             {
+                Id = product.Id,
                 Category = product.Category,
                 Description = product.Description,
                 IsDeleted = product.IsDeleted,
@@ -147,6 +161,27 @@ namespace ProductShop.Controllers
                 Name = product.Name,
                 Price = product.Price,
                 ProductComposition = product.ProductComposition,
+                Discount = product.Discount,
+                HaveDiscount = product.HaveDiscount
+            };
+
+            return productViewModel;
+        }
+
+        private Product MapViewProduct(ProductViewModel viewProduct)
+        {
+            var productViewModel = new Product
+            {
+                Id = viewProduct.Id,
+                Category = viewProduct.Category,
+                Description = viewProduct.Description,
+                IsDeleted = viewProduct.IsDeleted,
+                Manufacturer = viewProduct.Manufacturer,
+                Name = viewProduct.Name,
+                Price = viewProduct.Price,
+                ProductComposition = viewProduct.ProductComposition,
+                Discount = viewProduct.Discount,
+                HaveDiscount = viewProduct.HaveDiscount
             };
 
             return productViewModel;
@@ -169,10 +204,25 @@ namespace ProductShop.Controllers
             ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(UserId);
             ProductViewModel checkProduct = CheckingQuantityProduct(id, shopingCart);
             ProductViewModel oldProduct = shopingCart.Order.VMProducts.Find(x => x.Id == id);
+
+            if (oldProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
+            {
+                var discountPrice = _saleServie.GetDiscountInProduct(oldProduct.Id); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
+                if (discountPrice == -1)
+                {
+                    throw new Exception("Ошибка в сервисе подсчета скидок!");
+                }
+                finalPrice = discountPrice;
+            }
+            else
+            {
+                finalPrice = oldProduct.Price;
+            }
+
             if (checkProduct != null && oldProduct.ProductCount > 0)
             {
                 oldProduct.ProductCount--;
-                shopingCart.Order.TotalSum -= oldProduct.Price;
+                shopingCart.Order.TotalSum -= finalPrice;
                 await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                 await _db.Save();
             }
@@ -195,6 +245,12 @@ namespace ProductShop.Controllers
             ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)); // Метод в метод, так тоже работает, но читается ли?
             shopingCart.Order.isDone = true;
             shopingCart.IsDone = true;
+            foreach (var product in shopingCart.Order.VMProducts)
+            {
+                var resultGetProduct = await _db.GetProductById(product.Id);
+                product.Count = resultGetProduct.Count - product.ProductCount; // Вычитаем количество этого продукта в корзине из общего количества продуктов в наличии.
+                await _db.UpateProduct(MapViewProduct(product));
+            }
             await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
             await _db.Save();
             TempData["SuccesMessage"] = $"Спасибо за покупку!";
@@ -210,12 +266,15 @@ namespace ProductShop.Controllers
             {
                 foreach (var product in shopingCart.Order.VMProducts) 
                 {                    
-                    if (product.Price == _saleServie.HaveDiscountInProduct(product.Id)) // Проверяем наличие скидок на продукты и их финальные цены.
+                    if (_saleServie.GetDiscountInProduct(product.Id) == 0) // Проверяем наличие скидок на продукты и их финальные цены.
                     {
-                        continue; // Если цена этого продутка совпадает, оставляем эту цену и переходим к следующему продукту.
+                        continue; 
                     }
                     else
-                        product.Price = _saleServie.HaveDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                    
+                    {
+                        var price = _saleServie.GetDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                    
+                        product.Price -= price;
+                    }
                 }
                
             }

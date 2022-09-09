@@ -12,7 +12,7 @@ namespace ProductShop.ViewModel
         public int ShoppingCartId { get; set; }
         public int OrderId { get; set; }
         [Required(ErrorMessage = "Введите кол-во единиц")]
-        public int ProductCount { get; set; }
+        public int ProductCount { get; set; } // Количество продуктов в корзине.
 
         [Required]
         public string Name { get; set; }
@@ -29,18 +29,18 @@ namespace ProductShop.ViewModel
         public decimal Price { get; set; }
 
         [NotMapped]
-        [RegularExpression(@"^(\d{1,})([,][0-9]{1,2})?$", ErrorMessage = "Разделителем должна быть запятая.Указывать цену в сотых долях, например: 9999,99")]
+        [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$", ErrorMessage = "Разделителем должна быть точка.Указывать цену в сотых долях, например: 9999.99")]
 
         public string stringPrice { get; set; } = string.Empty;
 
         public decimal Discount { get; set; }
 
         [NotMapped]
-        [RegularExpression(@"^([,][0-9]{1,2})?$" , ErrorMessage = "Разделителем должна быть запятая.Указывать размер скидки в сотых долях, например: ,99")]
+        [RegularExpression(@"^\d{1}([.][0-9]{1,2})?$" , ErrorMessage = "Разделителем должна быть точка.Указывать размер скидки в сотых долях, например: 0.99")]
 
         public string stringDiscount { get; set; } = string.Empty;
         public bool HaveDiscount { get; set; }
-        public int Count { get; set; }
+        public int Count { get; set; } // Общее количество продуктов в наличии.
 
         public bool IsDeleted { get; set; } = false;
 

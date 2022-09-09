@@ -13,23 +13,19 @@ namespace ProductShop.Services
         {
             _db = dbContext;
         }
-        public decimal GetDiscount(decimal price, decimal discount) // Здесь просто расчитывается общая цена относительно скидки. Первым аргументом приходит цена, вторым - размер скидки.
-        {
-            return price * discount;   // Возвращается итоговая цена.
-        }
 
-        public decimal HaveDiscountInProduct(int id) // Проверяем наличие скидки у продукта. Если она есть делаем перерасчет, если нет, возвращаем станадртную цену.
+        public decimal GetDiscountInProduct(int id) // Проверяем наличие скидки у продукта. Если она есть делаем перерасчет, если нет, возвращаем стандартную цену.
         {
             var product = _db.Products.Find(id);
             if (product != null)
             {
                 if (product.HaveDiscount)
                 {
-                    return GetDiscount(product.Price, product.Discount);
+                    return product.Price - Math.Round(product.Price * product.Discount, 2); // Происходит расчет цены исходя из учета скидки, Метод Round() класса Math округляет значения до десятичной дроби.
                 }
-                return product.Price;
+                return product.Price; // Если скидки на продукт нет, возвращем стандартную цену.                
             }
-            return 0;   // Если вернули 0, значит что-то не так. Нужно обработать в вызывающем коде.
+            return -1;   // Если вернули -1, значит что-то не так. Нужно обработать в вызывающем коде.
         }
     }
 }

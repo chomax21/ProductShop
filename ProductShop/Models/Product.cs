@@ -11,7 +11,6 @@ namespace ProductShop.Models
         public string Description { get; set; }
         public string ProductComposition { get; set; }
         public string Manufacturer { get; set; }
-
         public bool IsDeleted { get; set; }
         public int Count { get; set; } 
         public decimal Price { get; set; }

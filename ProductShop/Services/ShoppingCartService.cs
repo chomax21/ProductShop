@@ -46,7 +46,10 @@ namespace ProductShop.Services
                 var findShoppingCart = await _db.ShopingCarts.FindAsync(shopingCart.Id);
                 if (findShoppingCart != null)
                 {
-                    findShoppingCart = shopingCart;
+                    findShoppingCart.UserId = shopingCart.UserId;
+                    findShoppingCart.Order = shopingCart.Order;
+                    findShoppingCart.IsDone = shopingCart.IsDone;
+                    findShoppingCart.ProductId = shopingCart.ProductId;
                     await _db.SaveChangesAsync();
                     return true;
                 }
