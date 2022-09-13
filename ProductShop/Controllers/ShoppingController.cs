@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.Globalization;
 
 namespace ProductShop.Controllers
 {
@@ -39,7 +40,15 @@ namespace ProductShop.Controllers
         [Authorize]
         public async Task<IActionResult> GetCart()
         {
-            return View("GetShoppingCart", await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)));
+            var cart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
+            cart.Order.TotalSum = 0;
+            foreach (var product in cart.Order.VMProducts)
+            {
+                var price = _saleServie.GetDiscountInProduct(product.Id);
+                product.Price = price;
+                cart.Order.TotalSum += price * product.ProductCount;
+            }
+            return View("GetShoppingCart", cart);
         }
 
         [HttpPost]
@@ -86,7 +95,7 @@ namespace ProductShop.Controllers
                 {
                     //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
                     Product originProduct = await _db.GetProductById(ProductId);
-                    
+                    originProduct.Category = await _db.GetOneValueInCategory(ProductId);
                     if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
                     {
                         var discountPrice  = _saleServie.GetDiscountInProduct(originProduct.Id); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
@@ -114,7 +123,7 @@ namespace ProductShop.Controllers
                         newProduct.ShoppingCartId = shopingCart.Id;
                         newProduct.OrderId = shopingCart.Order.Id;
                         newProduct.ProductCount++;
-                        newProduct.DiscountedPrice = finalPrice;
+                        newProduct.DiscountedPrice = newProduct.HaveDiscount ? finalPrice : 0;
                         shopingCart.Order.VMProducts.Add(newProduct);
                     }
 
@@ -162,6 +171,11 @@ namespace ProductShop.Controllers
 
         private ProductViewModel MapProduct(Product product)
         {
+            var category = _db.GetOneValueInCategory(product.Id);
+            product.Category = category.Result;
+            string strPrice = product.Price.ToString();
+            var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+
             var productViewModel = new ProductViewModel
             {
                 Id = product.Id,
@@ -170,10 +184,12 @@ namespace ProductShop.Controllers
                 IsDeleted = product.IsDeleted,
                 Manufacturer = product.Manufacturer,
                 Name = product.Name,
-                Price = product.Price,
+                Price = rebuildStrPrice,
                 ProductComposition = product.ProductComposition,
                 Discount = product.Discount,
-                HaveDiscount = product.HaveDiscount
+                HaveDiscount = product.HaveDiscount,
+                DiscountedPrice = product.DiscountedPrice
+              
             };
 
             return productViewModel;

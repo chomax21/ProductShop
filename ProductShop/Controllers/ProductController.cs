@@ -47,7 +47,7 @@ namespace ProductShop.Controllers
         {
             
 
-            if (ModelState.IsValid /*viewModelProduct != null*/)
+            if (ModelState.IsValid)
             {
                 //var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
                 await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
@@ -122,7 +122,7 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             Product searchProdict = await _db.GetProductById(id);
-            string message = MapProductToViewModel(searchProdict).Name;
+            string message = /*MapProductToViewModel(searchProdict).Name*/ searchProdict.Name;
             bool result = await _db.DeleteProduct(id);
             await _db.Save();
             TempData["SuccesMessage"] = $"Продукт <{message}> удален!";
@@ -233,8 +233,8 @@ namespace ProductShop.Controllers
         {
             var category = _db.GetOneValueInCategory(product.Id);
             product.Category = category.Result;
-
-
+            string strPrice = product.Price.ToString();          
+            var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',','.'), CultureInfo.GetCultureInfo("en-Us")); 
 
             ProductViewModel model = new ProductViewModel()
             {
@@ -245,10 +245,12 @@ namespace ProductShop.Controllers
                 Manufacturer = product.Manufacturer,
                 ProductComposition = product.ProductComposition,
                 IsDeleted = product.IsDeleted,
-                Price = product.Price,
+                Price = rebuildStrPrice,
                 Count = product.Count,
                 Discount = product.Discount,
-                HaveDiscount = product.HaveDiscount                
+                HaveDiscount = product.HaveDiscount,
+                stringPrice = rebuildStrPrice.ToString()
+
             };
 
             return model;

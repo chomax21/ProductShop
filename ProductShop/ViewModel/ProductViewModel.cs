@@ -32,18 +32,18 @@ namespace ProductShop.ViewModel
         [NotMapped]
         [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$", ErrorMessage = "Разделителем должна быть точка.Указывать цену в сотых долях, например: 9999.99")]
 
-        public string stringPrice { get; set; } = string.Empty;
+        public string stringPrice { get; set; } 
 
         public decimal Discount { get; set; }
 
         [NotMapped]
         [RegularExpression(@"^\d{1}([.][0-9]{1,2})?$" , ErrorMessage = "Разделителем должна быть точка.Указывать размер скидки в сотых долях, например: 0.99")]
 
-        public string stringDiscount { get; set; } = string.Empty;
+        public string stringDiscount { get; set; } 
         public bool HaveDiscount { get; set; }
         public int Count { get; set; } // Общее количество продуктов в наличии.
 
-        public bool IsDeleted { get; set; } = false;
+        public bool IsDeleted { get; set; }
 
         public List<Order> Orders { get; set; } = new List<Order>();
     }

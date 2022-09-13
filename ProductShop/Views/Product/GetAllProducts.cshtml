@@ -38,6 +38,7 @@
             <p class="card-text"><strong>Цена :</strong> @item.Price</p>
             <p class="card-text"><strong>Наличие скидки :</strong> @item.HaveDiscount</p>
             <p class="card-text"><strong>Размер скидки :</strong> @item.Discount</p>
+             <p class="card-text"><strong>Цена(строка) :</strong> @item.stringPrice</p>
             @if (item.IsDeleted)
             {
                 <p class="card-text"><strong class="text-danger">Этот продукт помечен как удаленный!</strong></p>
@@ -57,3 +58,4 @@
     </div>
 
 }
+
