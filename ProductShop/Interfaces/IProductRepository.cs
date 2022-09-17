@@ -20,5 +20,6 @@ namespace ProductShop.Services
         Task SetValueInCategoryList(string value);
         Task<IEnumerable<ProductCategory>> GetValuesInCategoryList();
         Task<string> GetOneValueInCategory(int id);
+        Task<bool> DeleteValuesInCategoryList(string value);
     }
 }

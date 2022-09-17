@@ -65,7 +65,7 @@ namespace ProductShop.Controllers
                     Order nOrder = new Order(); // Если у пользователя нет заказа, создаем новый.
                     nOrder.UserId = UserId; // Присваиваем заказу ID пользователя.
                     await _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
-                    shopingCart.Order = nOrder; // Помещяем созданный заказ в корзину покупателя(пользователя).
+                    shopingCart.Order = nOrder; // Помещаем созданный заказ в корзину покупателя(пользователя).
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
                     await _db.Save(); // Сохраняем все изменения.
                     return View("GetShoppingCart", shopingCart); // Возвращаем корзину на страницу.
@@ -89,11 +89,9 @@ namespace ProductShop.Controllers
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
             var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
             if (shopingCart != null)
-            {
-                //Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
+            {              
                 if (shopingCart.Order != null)
-                {
-                    //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
+                {                   
                     Product originProduct = await _db.GetProductById(ProductId);
                     originProduct.Category = await _db.GetOneValueInCategory(ProductId);
                     if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
@@ -128,7 +126,6 @@ namespace ProductShop.Controllers
                     }
 
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    //_order.UpdateOrder(shopingCart.Order);
                     await _db.Save();
                     return RedirectToAction("GetCart");
                 }

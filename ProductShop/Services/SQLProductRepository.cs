@@ -138,5 +138,17 @@ namespace ProductShop.Services
         {
             return await Task.Run(() => _db.ProductCategories.Select(x => x));
         }
+
+        public async Task<bool> DeleteValuesInCategoryList(string value)
+        {
+            var product = _db.ProductCategories.FirstOrDefault(x => x.Category == value);
+            if (product != null)
+            {
+                await Task.Run(() => _db.ProductCategories.Remove(product));
+                return true;
+            }
+            return false;
+            
+        }
     }
 }

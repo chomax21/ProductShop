@@ -309,5 +309,17 @@ namespace ProductShop.Controllers
             }
             return View("SetValueInCategory", Enumerable.Empty<ProductCategory>());
         }
+
+        public async Task<IActionResult> DeleteProductCategory(string categoryName)
+        {
+            var result = await _db.DeleteValuesInCategoryList(categoryName);
+            await _db.Save();
+            if (result)
+            {
+                await GetValuesInCategory();
+            }
+            TempData["Error"] = $"Категория <<<{categoryName}>>> не существует!";
+            return View("Index", "Home");
+        }
     }
 }
