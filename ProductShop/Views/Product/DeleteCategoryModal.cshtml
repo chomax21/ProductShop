@@ -1,0 +1,12 @@
+﻿@model DeleteCategoryVeiwModel
+
+@{
+    ViewData["Title"] = "Удаляем категорию";
+}
+
+<div class="modal-dialog modal-dialog-centered">
+  <p>
+      <a asp-action="DeleteProductCategory" asp-controller="Product" asp-route-categoryName="@Model.category">Удалить</a>
+      <a asp-action="GetValuesInCategory" asp-controller="Product" >Назад</a>
+  </p>
+</div>

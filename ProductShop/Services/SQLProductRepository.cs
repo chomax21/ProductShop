@@ -29,7 +29,7 @@ namespace ProductShop.Services
         public async Task<string> GetOneValueInCategory(int id)
         {
             var category = await _db.ProductCategories.FindAsync(id);
-            var result = category.Category;
+            var result = category?.Category ?? "---";
             return result;
         }
 
@@ -141,7 +141,7 @@ namespace ProductShop.Services
 
         public async Task<bool> DeleteValuesInCategoryList(string value)
         {
-            var product = _db.ProductCategories.FirstOrDefault(x => x.Category == value);
+            var product = _db.ProductCategories.Single(x => x.Category == value);
             if (product != null)
             {
                 await Task.Run(() => _db.ProductCategories.Remove(product));

@@ -310,16 +310,31 @@ namespace ProductShop.Controllers
             return View("SetValueInCategory", Enumerable.Empty<ProductCategory>());
         }
 
+        //[HttpGet]
+        //[Authorize("AdminRights")]
+        //public async Task<IActionResult> DeleteProductCategory(int id)
+        //{
+        //    var categories = await _db.GetValuesInCategoryList();
+        //    DeleteCategoryVeiwModel viewModel = new();
+        //    var category = categories.FirstOrDefault(c => c.Id == id);
+        //    viewModel.category = category;
+        //    return View("DeleteCategoryModal", viewModel);
+        //}
+        
+        [Authorize("AdminRights")]
         public async Task<IActionResult> DeleteProductCategory(string categoryName)
         {
+            ProductCategoryViewModel categoryViewModel = new();
             var result = await _db.DeleteValuesInCategoryList(categoryName);
             await _db.Save();
+            var category = await _db.GetValuesInCategoryList();
+            categoryViewModel.productCategories = category.ToList();
             if (result)
             {
-                await GetValuesInCategory();
+                return View("SetValueInCategory", categoryViewModel);
             }
             TempData["Error"] = $"Категория <<<{categoryName}>>> не существует!";
-            return View("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
