@@ -231,10 +231,12 @@ namespace ProductShop.Controllers
 
         private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
         {
-            var category = _db.GetOneValueInCategory(product.Id);
-            product.Category = category.Result;
+            //var category = _db.GetOneValueInCategory(product.Id);
+            //product.Category = category.Result;
             string strPrice = product.Price.ToString();          
-            var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',','.'), CultureInfo.GetCultureInfo("en-Us")); 
+            var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',','.'), CultureInfo.GetCultureInfo("en-Us"));
+            var rebuildStrDiscount = Convert.ToDecimal(product.Discount.ToString().Replace(',','.'), CultureInfo.GetCultureInfo("en-Us"));
+            IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
 
             ProductViewModel model = new ProductViewModel()
             {
@@ -249,7 +251,8 @@ namespace ProductShop.Controllers
                 Count = product.Count,
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
-                stringPrice = rebuildStrPrice.ToString()
+                stringPrice = rebuildStrPrice.ToString(format),
+                stringDiscount = rebuildStrDiscount.ToString(format)
 
             };
 
@@ -262,11 +265,14 @@ namespace ProductShop.Controllers
             var resulParsePrice = Convert.ToDecimal(viewModelProduct.stringPrice, culture); // Парсим из строки значение цены в дробное число, Decimal.
             var resultParseDiscount = Convert.ToDecimal(viewModelProduct.stringDiscount, culture); // Парсим из строки значение скидки в дробное число, Decimal.
 
+            var category = _db.GetOneValueInCategory(Convert.ToInt32(viewModelProduct.Category));
+            var rebuildStrPrice = Convert.ToDecimal((viewModelProduct.Price).ToString().Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+
             Product model = new Product()
             {
                 Id = viewModelProduct.Id,
                 Name = viewModelProduct.Name,
-                Category = viewModelProduct.Category,
+                Category = category.Result,
                 Description = viewModelProduct.Description,
                 Manufacturer = viewModelProduct.Manufacturer,
                 ProductComposition = viewModelProduct.ProductComposition,
