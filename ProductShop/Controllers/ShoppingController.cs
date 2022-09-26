@@ -41,14 +41,20 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> GetCart()
         {
             var cart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
-            cart.Order.TotalSum = 0;
-            foreach (var product in cart.Order.VMProducts)
+            if (cart.Order != null)
             {
-                var price = _saleServie.GetDiscountInProduct(product.Id);
-                product.Price = price;
-                cart.Order.TotalSum += price * product.ProductCount;
+                cart.Order.TotalSum = 0;
+                foreach (var product in cart.Order.VMProducts)
+                {
+                    var price = _saleServie.GetDiscountInProduct(product.Id);
+                    product.Price = price;
+                    cart.Order.TotalSum += price * product.ProductCount;
+                }
+                return View("GetShoppingCart", cart);
             }
             return View("GetShoppingCart", cart);
+            
+            
         }
 
         [HttpPost]
@@ -93,7 +99,6 @@ namespace ProductShop.Controllers
                 if (shopingCart.Order != null)
                 {                   
                     Product originProduct = await _db.GetProductById(ProductId);
-                    originProduct.Category = await _db.GetOneValueInCategory(ProductId);
                     if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
                     {
                         var discountPrice  = _saleServie.GetDiscountInProduct(originProduct.Id); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
@@ -109,8 +114,9 @@ namespace ProductShop.Controllers
                     }
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
                     if (checkProduct != null) // Если такой товар уже есть. 
-                    {
-                        checkProduct.DiscountedPrice = finalPrice;
+                    {            
+                        checkProduct.Price = finalPrice;
+                        checkProduct.DiscountedPrice = checkProduct.HaveDiscount ? finalPrice : 0;
                         checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
                         shopingCart.Order.TotalSum += finalPrice; // Увеличиваем общую цену заказа.
                     }
@@ -137,78 +143,63 @@ namespace ProductShop.Controllers
             return RedirectToAction("GetCart");
         }
 
-        //private async Task<ShopingCart> CreatingAndConfiguringShoppingCart(ShopingCart shopingCart, int prodictId)
-        //{
-        //    //shopingCart.Order.Products = order.Products; // Присваиваем список продуктов из не завершенного заказа в корзину.
-        //    Product originProduct = await _db.GetProductById(prodictId);
-        //    if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
-        //    {
-        //        originProduct.Discount = _saleServie.GetDiscount(originProduct.Price, originProduct.Discount); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
-        //    }
-        //    ProductViewModel checkProduct = CheckingQuantityProduct(prodictId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
-        //    if (checkProduct != null) // Если такой товар уже есть. 
-        //    {
-        //        checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
-        //        shopingCart.Order.TotalSum += originProduct.Price; // Увеличиваем общую цену заказа.
-        //    }
-        //    else
-        //    {
-        //        ProductViewModel newProduct = MapProduct(originProduct);
-        //        shopingCart.Order.TotalSum += newProduct.Price;
-        //        newProduct.ShoppingCartId = shopingCart.Id;
-        //        newProduct.OrderId = shopingCart.Order.Id;
-        //        newProduct.ProductCount++;
-        //        shopingCart.Order.VMProducts.Add(newProduct);
-        //    }
-
-        //    await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-        //    _order.UpdateOrder(shopingCart.Order);
-        //    await _db.Save();
-        //}
+       
 
         private ProductViewModel MapProduct(Product product)
-        {
-            var category = _db.GetOneValueInCategory(product.Id);
-            product.Category = category.Result;
-            string strPrice = product.Price.ToString();
-            var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+        {            
+            IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
+            ///*string strPrice = */product.Price.ToString(format);
+            //product.DiscountedPrice.ToString(format);
+            //var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+            //var rebuildStrDiscount = Convert.ToDecimal(product.Discount.ToString().Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
 
-            var productViewModel = new ProductViewModel
+            ProductViewModel model = new ProductViewModel()
             {
                 Id = product.Id,
+                Name = product.Name,
                 Category = product.Category,
                 Description = product.Description,
-                IsDeleted = product.IsDeleted,
                 Manufacturer = product.Manufacturer,
-                Name = product.Name,
-                Price = rebuildStrPrice,
                 ProductComposition = product.ProductComposition,
+                IsDeleted = product.IsDeleted,
+                Price = product.Price,
+                DiscountedPrice = product.DiscountedPrice,
+                Count = product.Count,
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
-                DiscountedPrice = product.DiscountedPrice
-              
+                stringPrice = product.Price.ToString(format),
+                stringDiscount = product.Discount.ToString(format)
+
             };
 
-            return productViewModel;
+            return model;
         }
 
-        private Product MapViewProduct(ProductViewModel viewProduct)
+        private Product MapViewProduct(ProductViewModel viewModelProduct)
         {
-            var productViewModel = new Product
+            CultureInfo culture = new CultureInfo("en-US"); // Англ локализация, для использования точки в паарметрах цен и скидок.
+            var resulParsePrice = Convert.ToDecimal(viewModelProduct.stringPrice, culture); // Парсим из строки значение цены в дробное число, Decimal.
+            var resultParseDiscount = Convert.ToDecimal(viewModelProduct.stringDiscount, culture); // Парсим из строки значение скидки в дробное число, Decimal.
+
+            var category = _db.GetOneValueInCategory(Convert.ToInt32(viewModelProduct.Category));
+            var rebuildStrPrice = Convert.ToDecimal((viewModelProduct.Price).ToString().Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+
+            Product model = new Product()
             {
-                Id = viewProduct.Id,
-                Category = viewProduct.Category,
-                Description = viewProduct.Description,
-                IsDeleted = viewProduct.IsDeleted,
-                Manufacturer = viewProduct.Manufacturer,
-                Name = viewProduct.Name,
-                Price = viewProduct.Price,
-                ProductComposition = viewProduct.ProductComposition,
-                Discount = viewProduct.Discount,
-                HaveDiscount = viewProduct.HaveDiscount
+                Id = viewModelProduct.Id,
+                Name = viewModelProduct.Name,
+                Category = category.Result,
+                Description = viewModelProduct.Description,
+                Manufacturer = viewModelProduct.Manufacturer,
+                ProductComposition = viewModelProduct.ProductComposition,
+                IsDeleted = viewModelProduct.IsDeleted,
+                Price = resulParsePrice,
+                Count = viewModelProduct.Count,
+                Discount = resultParseDiscount,
+                HaveDiscount = viewModelProduct.HaveDiscount
             };
 
-            return productViewModel;
+            return model;
         }
         private ProductViewModel CheckingQuantityProduct(int id, ShopingCart shopingCart) // Метод проверки наличия данного товара в корзине.
         {
@@ -246,7 +237,7 @@ namespace ProductShop.Controllers
             if (checkProduct != null && oldProduct.ProductCount > 0)
             {
                 oldProduct.ProductCount--;
-                oldProduct.DiscountedPrice = finalPrice;
+                //oldProduct.DiscountedPrice = finalPrice;
                 shopingCart.Order.TotalSum -= finalPrice;
                 await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                 await _db.Save();
@@ -257,6 +248,7 @@ namespace ProductShop.Controllers
                 if (shopingCart.Order.VMProducts.Count == 0)
                 {
                     shopingCart.Order.TotalSum = default;
+                    _order.DeleteOrder(UserId);
                 }
                 await _db.Save();
             }
@@ -269,6 +261,7 @@ namespace ProductShop.Controllers
         {
             ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)); // Метод в метод, так тоже работает, но читается ли?
             shopingCart.Order.isDone = true;
+            shopingCart.Order.isPayed = true;
             shopingCart.IsDone = true;
             foreach (var product in shopingCart.Order.VMProducts)
             {
@@ -290,15 +283,15 @@ namespace ProductShop.Controllers
             if (shopingCart !=null)
             {
                 foreach (var product in shopingCart.Order.VMProducts) 
-                {                    
-                    if (_saleServie.GetDiscountInProduct(product.Id) == 0) // Проверяем наличие скидок на продукты и их финальные цены.
+                {
+                    var originProduct = _db.GetProductById(product.Id);
+                    if (_saleServie.GetDiscountInProduct(product.Id) == originProduct.Result.Price) // Проверяем наличие скидок на продукты и их финальные цены. Если цена которая пришла соответвствует оригинальной цене, оставляем этот продукт и идем дальше.
                     {
                         continue; 
                     }
                     else
                     {
-                        var price = _saleServie.GetDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                    
-                        product.Price -= price;
+                        product.DiscountedPrice = _saleServie.GetDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                     
                     }
                 }
                

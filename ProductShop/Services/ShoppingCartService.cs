@@ -58,9 +58,10 @@ namespace ProductShop.Services
         public async Task<ShopingCart> GetShoppingCart(string userId)
         {
             var oldCart = _db.ShopingCarts.Include(x => x.Order).ThenInclude(x => x.VMProducts); // В начале подгружаем ВСЕ корзины и их связанные данные.
-            var newCard = await Task<ShopingCart>.Factory.StartNew(() => oldCart.FirstOrDefault(x => x.UserId == userId && x.IsDone == false)); // Потом в списке корзин ищем корзину по Id и не законченную(т.е не закрытую).
+            var newCard = await Task.Run(() => oldCart.FirstOrDefault(x => x.UserId == userId && x.IsDone == false)); // Потом в списке корзин ищем корзину по Id и не законченную(т.е не закрытую).
             if (newCard != null)
             {
+                //var orders = _db.Orders.Include(x => x.UserId == userId && x.isDone == false).ThenInclude( y => y.);
                 return newCard;
             }
             ShopingCart newEmptyCart = new ShopingCart(userId); // Если по Id пользователя корзина не находится, создаем новую присваивая ей Id этого польхователя.

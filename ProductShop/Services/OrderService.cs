@@ -32,8 +32,13 @@ namespace ProductShop.Services
 
         public bool DeleteOrder(string id)
         {
-              var deleteOrder = _db.Orders.FirstOrDefaultAsync(x => x.UserId == id);           
-            return true;
+            var deleteOrder = _db.Orders.FirstOrDefaultAsync(x => x.UserId == id);           
+            if (deleteOrder != null)
+            {
+                _db.Orders.Remove(deleteOrder.Result);
+                return true;
+            }
+            return false;
         }
 
         public Order GetOrderForShoppingCart(string id)

@@ -4,13 +4,16 @@
     <ul>Ваш заказ на общую сумму : @Model.Order.TotalSum</ul>
     <ul>Общее количество видов товара : @Model.Order.VMProducts.Count</ul>
     <ul>
-        Списко товаров :
+        Список товаров :
         @if (Model != null)
         {
             @foreach (var item in Model.Order.VMProducts)
             {
-                <li>Наименование : @item.Name , Количество : @item.ProductCount, Цена : @{var totalPrice = item.ProductCount * item.Price;} @totalPrice </li>
+                <li>Наименование : @item.Name</li>
+                <li>Количество : @item.ProductCount</li>
+                <li>Цена : @item.DiscountedPrice</li>
             }
+            
         }
     </ul>
     <div class="m-2">
