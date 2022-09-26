@@ -66,8 +66,6 @@ namespace ProductShop.Services
         {
             var users = from x in _db.Users
                         where x.FirstName.Contains(FirstName) || x.MiddleName.Contains(MiddleName) || x.LastName.Contains(LastName)
-                        //where x.MiddleName.Contains(MiddleName)
-                        //where x.LastName.Contains(LastName)
                         select x;
 
             List<string> idUsers = new List<string>();

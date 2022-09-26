@@ -43,11 +43,15 @@ namespace ProductShop.Controllers
             var cart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
             if (cart.Order != null)
             {
+                IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
                 cart.Order.TotalSum = 0;
                 foreach (var product in cart.Order.VMProducts)
                 {
                     var price = _saleServie.GetDiscountInProduct(product.Id);
-                    product.Price = price;
+                    var havingDiscount = _db.GetProductById(product.Id);
+                    product.HaveDiscount = havingDiscount.Result.HaveDiscount;
+                    product.stringPrice = product.Price.ToString(format);
+                    product.stringDiscount = product.HaveDiscount ? price.ToString(format) : "---";
                     cart.Order.TotalSum += price * product.ProductCount;
                 }
                 return View("GetShoppingCart", cart);
@@ -115,7 +119,8 @@ namespace ProductShop.Controllers
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
                     if (checkProduct != null) // Если такой товар уже есть. 
                     {            
-                        checkProduct.Price = finalPrice;
+                        //checkProduct.Price = finalPrice;
+                        checkProduct.HaveDiscount = originProduct.HaveDiscount;
                         checkProduct.DiscountedPrice = checkProduct.HaveDiscount ? finalPrice : 0;
                         checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
                         shopingCart.Order.TotalSum += finalPrice; // Увеличиваем общую цену заказа.
@@ -123,7 +128,7 @@ namespace ProductShop.Controllers
                     else
                     {
                         ProductViewModel newProduct = MapProduct(originProduct);
-                        shopingCart.Order.TotalSum += finalPrice;
+                        shopingCart.Order.TotalSum += finalPrice;                        
                         newProduct.ShoppingCartId = shopingCart.Id;
                         newProduct.OrderId = shopingCart.Order.Id;
                         newProduct.ProductCount++;
@@ -152,6 +157,7 @@ namespace ProductShop.Controllers
             //product.DiscountedPrice.ToString(format);
             //var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
             //var rebuildStrDiscount = Convert.ToDecimal(product.Discount.ToString().Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+            var price = _saleServie.GetDiscountInProduct(product.Id);
 
             ProductViewModel model = new ProductViewModel()
             {
@@ -163,12 +169,12 @@ namespace ProductShop.Controllers
                 ProductComposition = product.ProductComposition,
                 IsDeleted = product.IsDeleted,
                 Price = product.Price,
-                DiscountedPrice = product.DiscountedPrice,
+                DiscountedPrice = price,
                 Count = product.Count,
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
                 stringPrice = product.Price.ToString(format),
-                stringDiscount = product.Discount.ToString(format)
+                stringDiscount = price.ToString(format)
 
             };
 
@@ -236,8 +242,7 @@ namespace ProductShop.Controllers
 
             if (checkProduct != null && oldProduct.ProductCount > 0)
             {
-                oldProduct.ProductCount--;
-                //oldProduct.DiscountedPrice = finalPrice;
+                oldProduct.ProductCount--; 
                 shopingCart.Order.TotalSum -= finalPrice;
                 await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                 await _db.Save();
@@ -247,8 +252,7 @@ namespace ProductShop.Controllers
                 shopingCart.Order.VMProducts.Remove(checkProduct);
                 if (shopingCart.Order.VMProducts.Count == 0)
                 {
-                    shopingCart.Order.TotalSum = default;
-                    _order.DeleteOrder(UserId);
+                    shopingCart.Order.TotalSum = default;                    
                 }
                 await _db.Save();
             }
@@ -282,6 +286,8 @@ namespace ProductShop.Controllers
             var shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
             if (shopingCart !=null)
             {
+                shopingCart.Order.TotalSum = default;
+
                 foreach (var product in shopingCart.Order.VMProducts) 
                 {
                     var originProduct = _db.GetProductById(product.Id);
@@ -292,7 +298,10 @@ namespace ProductShop.Controllers
                     else
                     {
                         product.DiscountedPrice = _saleServie.GetDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                     
+
                     }
+
+                    shopingCart.Order.TotalSum += product.HaveDiscount ? product.DiscountedPrice : product.Price;
                 }
                
             }
