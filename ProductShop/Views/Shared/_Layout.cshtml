@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Магазинчик</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />   
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ProductShop</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Магазин</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -19,15 +19,12 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Домашняя страница</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="btn-group">
-                            <button class="btn btn-toolbar dropdown-toggle" href="#" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Продукты
-                            </button>
+                            </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" asp-controller="Product" asp-action="GetAllProducts">Смотрим все</a>
                                 @if (User.HasClaim("IsAdmin", "true"))
@@ -36,21 +33,24 @@
                                     <a class="dropdown-item" asp-controller="Product" asp-action="GetValuesInCategory">Смотрим все категории продуктов</a>
                                 }
                             </div>
-                        </li>                      
+                        </li>
+                        
+                        @if (User.HasClaim("IsAdmin", "true"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Пользователи
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="User" asp-action="GetAllUsers">Все пользователи</a>
+                                    <a class="dropdown-item" asp-controller="User" asp-action="GetUserOrderByName">Ищем заказы по имени</a>
+                                    <a class="dropdown-item" asp-controller="User" asp-action="GetUserOrdersByDate">Ищем заказы по дате</a>
+                                </div>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Shopping" asp-action="GetCart">Смотрим корзину</a>
                         </li>
-                        @if (User.HasClaim("IsAdmin", "true"))
-                        {
-                            <li class="dropdown">
-                                <button  class="dropdown-toggle" data-toggle="dropdown" >Пользователи</button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="GetAllUsers">Все пользователи</a></li>
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="GetUserOrderByName">Ищем заказы по имени</a></li>
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="GetUserOrdersByDate">Ищем заказы по дате</a></li>
-                                </ul>
-                            </li>
-                        }  
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -65,7 +65,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - ProductShop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2022 - ChoShop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Конфиденциальность</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

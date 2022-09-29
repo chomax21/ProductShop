@@ -266,7 +266,6 @@ namespace ProductShop.Controllers
             var resultParseDiscount = Convert.ToDecimal(viewModelProduct.stringDiscount, culture); // Парсим из строки значение скидки в дробное число, Decimal.
 
             var category = _db.GetOneValueInCategory(Convert.ToInt32(viewModelProduct.Category));
-            var rebuildStrPrice = Convert.ToDecimal((viewModelProduct.Price).ToString().Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
 
             Product model = new Product()
             {

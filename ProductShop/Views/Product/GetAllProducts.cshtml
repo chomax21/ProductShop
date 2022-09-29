@@ -36,7 +36,7 @@
             <p class="card-text"><strong>Описание :</strong> @item.Description</p>
             <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
             <p class="card-text"><strong>Цена :</strong> @item.stringPrice</p>
-            <p class="card-text"><strong>Наличие скидки :</strong> @item.HaveDiscount</p>
+            <p class="card-text"><strong>Наличие скидки :</strong> @{ var discount = item.HaveDiscount ? "Да" : "Нет"; } @discount</p>
             <p class="card-text"><strong>Размер скидки :</strong> @item.stringDiscount</p>
             @if (item.IsDeleted)
             {

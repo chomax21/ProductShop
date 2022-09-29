@@ -48,8 +48,9 @@ namespace ProductShop.Controllers
                 foreach (var product in cart.Order.VMProducts)
                 {
                     var price = _saleServie.GetDiscountInProduct(product.Id);
-                    var havingDiscount = _db.GetProductById(product.Id);
-                    product.HaveDiscount = havingDiscount.Result.HaveDiscount;
+                    var originProduct = _db.GetProductById(product.Id);
+                    product.HaveDiscount = originProduct.Result.HaveDiscount;
+                    product.Category = originProduct.Result.Category;
                     product.stringPrice = product.Price.ToString(format);
                     product.stringDiscount = product.HaveDiscount ? price.ToString(format) : "---";
                     cart.Order.TotalSum += price * product.ProductCount;
@@ -69,9 +70,9 @@ namespace ProductShop.Controllers
             var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
             if (shopingCart != null)
             {
-                Order order = _order.GetOrderForShoppingCart(UserId); // Ищем не завершенный заказ, который будет привязан к корзине найденной ранее. Такой у юзера должен быть только ОДИН.
-                if (order == null)
-                {
+                
+                if (shopingCart.Order == null)
+                {                    
                     Order nOrder = new Order(); // Если у пользователя нет заказа, создаем новый.
                     nOrder.UserId = UserId; // Присваиваем заказу ID пользователя.
                     await _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
@@ -82,7 +83,11 @@ namespace ProductShop.Controllers
                 }
                 else
                 {
-                    shopingCart.Order = order;
+                    //shopingCart.Order = order;
+                    if (shopingCart.Order.VMProducts.Count == 0)
+                    {
+                        shopingCart.Order.OrderDateTime = DateTime.UtcNow;
+                    }
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     return View("GetShoppingCart", shopingCart);
                 }
@@ -119,7 +124,6 @@ namespace ProductShop.Controllers
                     ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
                     if (checkProduct != null) // Если такой товар уже есть. 
                     {            
-                        //checkProduct.Price = finalPrice;
                         checkProduct.HaveDiscount = originProduct.HaveDiscount;
                         checkProduct.DiscountedPrice = checkProduct.HaveDiscount ? finalPrice : 0;
                         checkProduct.ProductCount++; // То просто увеличиваем его количество на 1.
@@ -153,10 +157,7 @@ namespace ProductShop.Controllers
         private ProductViewModel MapProduct(Product product)
         {            
             IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
-            ///*string strPrice = */product.Price.ToString(format);
-            //product.DiscountedPrice.ToString(format);
-            //var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
-            //var rebuildStrDiscount = Convert.ToDecimal(product.Discount.ToString().Replace(',', '.'), CultureInfo.GetCultureInfo("en-Us"));
+            
             var price = _saleServie.GetDiscountInProduct(product.Id);
 
             ProductViewModel model = new ProductViewModel()
