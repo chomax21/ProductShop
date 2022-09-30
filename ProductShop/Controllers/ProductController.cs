@@ -49,7 +49,6 @@ namespace ProductShop.Controllers
 
             if (ModelState.IsValid)
             {
-                //var category = await GetValueInCategory(System.Convert.ToInt32(viewModelProduct.Category));
                 await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
@@ -122,7 +121,7 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             Product searchProdict = await _db.GetProductById(id);
-            string message = /*MapProductToViewModel(searchProdict).Name*/ searchProdict.Name;
+            string message = searchProdict.Name;
             bool result = await _db.DeleteProduct(id);
             await _db.Save();
             TempData["SuccesMessage"] = $"Продукт <{message}> удален!";
@@ -230,9 +229,7 @@ namespace ProductShop.Controllers
         }
 
         private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
-        {
-            //var category = _db.GetOneValueInCategory(product.Id);
-            //product.Category = category.Result;
+        {          
             string strPrice = product.Price.ToString();          
             var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',','.'), CultureInfo.GetCultureInfo("en-Us"));
             var rebuildStrDiscount = Convert.ToDecimal(product.Discount.ToString().Replace(',','.'), CultureInfo.GetCultureInfo("en-Us"));
@@ -314,17 +311,6 @@ namespace ProductShop.Controllers
             }
             return View("SetValueInCategory", Enumerable.Empty<ProductCategory>());
         }
-
-        //[HttpGet]
-        //[Authorize("AdminRights")]
-        //public async Task<IActionResult> DeleteProductCategory(int id)
-        //{
-        //    var categories = await _db.GetValuesInCategoryList();
-        //    DeleteCategoryVeiwModel viewModel = new();
-        //    var category = categories.FirstOrDefault(c => c.Id == id);
-        //    viewModel.category = category;
-        //    return View("DeleteCategoryModal", viewModel);
-        //}
         
         [Authorize("AdminRights")]
         public async Task<IActionResult> DeleteProductCategory(string categoryName)

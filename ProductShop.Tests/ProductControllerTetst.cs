@@ -28,8 +28,7 @@ namespace ProductShop.Tests
 
             var viewResult = await productController.CreateProduct() as ViewResult;
 
-
-            Assert.Equal("CreateProduct", viewResult.ViewName);
+            Assert.Equal("CreateProduct", viewResult?.ViewName);
         }
     }
 }

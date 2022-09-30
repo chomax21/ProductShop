@@ -26,7 +26,7 @@ namespace ProductShop.Tests
 
             ViewResult result = controller.Index() as ViewResult;
 
-            Assert.Equal("Терпение и труд, все перетрут!!!", result?.ViewData["Begin"]);
+            Assert.Equal("Ммм вкусные кексы...", result?.ViewData["Begin"]);
         }
 
         [Fact]

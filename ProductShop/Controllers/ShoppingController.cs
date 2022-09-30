@@ -55,6 +55,7 @@ namespace ProductShop.Controllers
                     product.stringDiscount = product.HaveDiscount ? price.ToString(format) : "---";
                     cart.Order.TotalSum += price * product.ProductCount;
                 }
+                cart.Order.TotalSumString = cart.Order.TotalSum.ToString(format);
                 return View("GetShoppingCart", cart);
             }
             return View("GetShoppingCart", cart);
@@ -138,8 +139,7 @@ namespace ProductShop.Controllers
                         newProduct.ProductCount++;
                         newProduct.DiscountedPrice = newProduct.HaveDiscount ? finalPrice : 0;
                         shopingCart.Order.VMProducts.Add(newProduct);
-                    }
-
+                    }                   
                     await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
                     await _db.Save();
                     return RedirectToAction("GetCart");
@@ -288,23 +288,30 @@ namespace ProductShop.Controllers
             if (shopingCart !=null)
             {
                 shopingCart.Order.TotalSum = default;
+                IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
 
                 foreach (var product in shopingCart.Order.VMProducts) 
                 {
                     var originProduct = _db.GetProductById(product.Id);
-                    if (_saleServie.GetDiscountInProduct(product.Id) == originProduct.Result.Price) // Проверяем наличие скидок на продукты и их финальные цены. Если цена которая пришла соответвствует оригинальной цене, оставляем этот продукт и идем дальше.
+
+                    if (!originProduct.Result.HaveDiscount) // Проверяем наличие скидок на продукты и их финальные цены. Если цена которая пришла соответвствует оригинальной цене, оставляем этот продукт и идем дальше.
                     {
-                        continue; 
+                        shopingCart.Order.TotalSum += originProduct.Result.Price;
+                        product.stringPrice = originProduct.Result.Price.ToString(format);
                     }
                     else
                     {
                         product.DiscountedPrice = _saleServie.GetDiscountInProduct(product.Id); // Если цена этого продутка отличается, заменяем значение цены, в зависимости от наличия скидок и их размеров.                     
-
+                        product.stringDiscount = product.DiscountedPrice.ToString(format);
+                        product.stringPrice = originProduct.Result.Price.ToString(format);
+                        shopingCart.Order.TotalSum += product.DiscountedPrice;
                     }
 
-                    shopingCart.Order.TotalSum += product.HaveDiscount ? product.DiscountedPrice : product.Price;
+                    //shopingCart.Order.TotalSum += product.HaveDiscount ? product.DiscountedPrice : product.Price;
                 }
-               
+                
+                shopingCart.Order.TotalSumString = shopingCart.Order.TotalSum.ToString(format); 
+
             }
             return View("PaymentPage", shopingCart);
         }

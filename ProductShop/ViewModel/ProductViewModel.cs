@@ -25,15 +25,16 @@ namespace ProductShop.ViewModel
         [Required]
         public string Manufacturer { get; set; }
 
-       
+        [Column(TypeName = "decimal(18,2)")]
         public decimal DiscountedPrice { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         [NotMapped]
         [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$", ErrorMessage = "Разделителем должна быть точка.Указывать цену в сотых долях, например: 9999.99")]
 
-        public string stringPrice { get; set; } 
-
+        public string stringPrice { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Discount { get; set; }
 
         [NotMapped]

@@ -1,7 +1,7 @@
 ﻿@model ShopingCart
 
-<div class="m-2">
-    <ul>Ваш заказ на общую сумму : @Model.Order.TotalSum</ul>
+<div class="m-2 align-content-center">
+    <ul>Ваш заказ на общую сумму : @Model.Order.TotalSumString</ul>
     <ul>Общее количество видов товара : @Model.Order.VMProducts.Count</ul>
     <ul>
         Список товаров :
@@ -11,7 +11,11 @@
             {
                 <li>Наименование : @item.Name</li>
                 <li>Количество : @item.ProductCount</li>
-                <li>Цена : @item.DiscountedPrice</li>
+                <li>Цена : @item.stringPrice</li>
+                @if (item.HaveDiscount)
+                {
+                    <li>Цена со скидкой : @item.DiscountedPrice</li>
+                }
             }
             
         }

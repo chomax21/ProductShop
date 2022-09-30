@@ -27,7 +27,7 @@ namespace ProductShop.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ViewData["Begin"] = "Терпение и труд, все перетрут!!!";
+            ViewData["Begin"] = "Ммм вкусные кексы...";
             return View("Index");           
         }
 
