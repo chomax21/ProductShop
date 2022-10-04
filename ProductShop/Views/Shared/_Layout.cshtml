@@ -55,7 +55,7 @@
                                     Поиск
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-action="SearchByName" asp-controller="Product">Поиск продукта по названию</a>
+                                    <a class="dropdown-item" asp-action="GetProductByName" asp-controller="Product">Поиск продукта по названию</a>
                                     <a class="dropdown-item" asp-action="GetProductByCategory" asp-controller="Product">Поиск продукта по Категории</a>
                                     <a class="dropdown-item" asp-action="GetProductByManufacturer" asp-controller="Product">Поиск продукта по Производителю</a>
                                     @if(User.HasClaim("IsAdmin", "true"))

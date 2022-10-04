@@ -68,7 +68,7 @@ namespace ProductShop.Services
             //var getProduct = from x in _db.Products
             //                 where x.Manufacturer.Contains(manufacturer)
             //                 select x;
-            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Category.Contains(manufacturer)));
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Manufacturer.Contains(manufacturer)));
         }
 
         public async Task<IEnumerable<Product>> GetProductByName(string name)
@@ -77,7 +77,7 @@ namespace ProductShop.Services
             //    .Where(x => x.Name.Contains(name))
             //    .Select(x => x);
 
-            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Category.Contains(name)));
+            return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Name.Contains(name)));
         }
 
         public async Task<IEnumerable<Product>> GetProducts() // Отобразить все продукты, кроме тех которые помеченны как удаленные.

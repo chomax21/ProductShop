@@ -109,13 +109,19 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> AddProductInCart(int ProductId)
         {
             await GetShoppingCartAction();
+            Product originProduct = await _db.GetProductById(ProductId);
+            if (originProduct.Count == 0)
+            {
+                TempData["Error"] = $"К сожалению товара {originProduct.Name} в данный момент нет в наличии.";
+                return RedirectToAction("Index","Home");
+            }
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
             var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
             if (shopingCart != null)
             {
                 if (shopingCart.Order != null)
                 {
-                    Product originProduct = await _db.GetProductById(ProductId);
+                    
                     if (originProduct.HaveDiscount) // Проверяем есть ли скидка у этого товара.
                     {
                         var discountPrice = _saleServie.GetDiscountInProduct(originProduct.Id); // Если она есть, то узнаем, какого она размера и пересчитываем цену на этот продукт.
@@ -285,7 +291,7 @@ namespace ProductShop.Controllers
             await _db.Save();
             var user = _userManager.GetUserAsync(User);
             //await _emailSender.SendEmailAsync(user.Result.Email,"ChoShop",$"Магазин ChoShop привествует вас.\nВы совершили покупку на сумму {shopingCart.Order.TotalSumString}.\nСпасибо, что выбрали нас! Ждем вас снова!");
-            _logger.LogInformation($"Пользователь {user.Result.MiddleName} {user.Result.FirstName} совершил покупку на сумму {shopingCart.Order.TotalSumString}.");
+            _logger.LogInformation($"Пользователь {user.Result.MiddleName} {user.Result.FirstName} совершил покупку на сумму {shopingCart.Order.TotalSum}.");
             TempData["SuccesMessage"] = $"Спасибо за покупку!";
             return RedirectToAction("Index", "Home");
         }

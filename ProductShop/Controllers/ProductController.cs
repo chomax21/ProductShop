@@ -132,8 +132,13 @@ namespace ProductShop.Controllers
             return RedirectToAction("Error", "Home");
         }
 
-
-        [Authorize("AdminRights")]
+        [HttpGet] 
+        public IActionResult GetProductByName()
+        {
+            return View();
+        }
+  
+        [HttpPost]
         public async Task<IActionResult> GetProductByName(SearchVIewModel search)
         {
             SearchVIewModel model = new SearchVIewModel();
@@ -142,10 +147,10 @@ namespace ProductShop.Controllers
         }
 
         [HttpGet]
-        [ActionName("SearchByName")]
-        public IActionResult GetProductByName()
+        [Authorize("AdminRights")]
+        public IActionResult GetProductById()
         {
-            return View("GetProductByName");
+            return View();
         }
 
         [Authorize("AdminRights")]
@@ -159,13 +164,7 @@ namespace ProductShop.Controllers
             TempData["Error"] = "Продукта с таким идентификатором не существует!";
             return RedirectToAction("Index", "Home");
         }
-        [HttpGet]
-        [Authorize("AdminRights")]
-        public IActionResult GetProductById()
-        {
-            return View();
-        }
-
+      
 
         [HttpGet]
         public IActionResult GetProductByCategory()
@@ -173,6 +172,7 @@ namespace ProductShop.Controllers
             return View();
         }
 
+        [HttpPost]
         public async Task<IActionResult> GetProductByCategory(SearchVIewModel category)
         {
             SearchVIewModel model = new SearchVIewModel();
@@ -212,6 +212,7 @@ namespace ProductShop.Controllers
             return View();
         }
 
+        [HttpPost]
         public async Task<IActionResult> GetProductByManufacturer(SearchVIewModel manufacturer)
         {
             SearchVIewModel model = new SearchVIewModel();
@@ -229,10 +230,7 @@ namespace ProductShop.Controllers
         }
 
         private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
-        {          
-            string strPrice = product.Price.ToString();          
-            var rebuildStrPrice = Convert.ToDecimal(strPrice.Replace(',','.'), CultureInfo.GetCultureInfo("en-Us"));
-            var rebuildStrDiscount = Convert.ToDecimal(product.Discount.ToString().Replace(',','.'), CultureInfo.GetCultureInfo("en-Us"));
+        {                      
             IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
 
             ProductViewModel model = new ProductViewModel()
@@ -244,12 +242,12 @@ namespace ProductShop.Controllers
                 Manufacturer = product.Manufacturer,
                 ProductComposition = product.ProductComposition,
                 IsDeleted = product.IsDeleted,
-                Price = rebuildStrPrice,
+                Price = product.Price,
                 Count = product.Count,
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
-                stringPrice = rebuildStrPrice.ToString(format),
-                stringDiscount = rebuildStrDiscount.ToString(format)
+                stringPrice = product.Price.ToString(format),
+                stringDiscount = product.Discount.ToString(format)
 
             };
 
