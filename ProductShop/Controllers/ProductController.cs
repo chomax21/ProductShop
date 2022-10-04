@@ -80,7 +80,7 @@ namespace ProductShop.Controllers
                 return View(MapProductToViewModel(product));
             }
             return View(null);
-        }
+        } 
 
 
         [HttpPost]

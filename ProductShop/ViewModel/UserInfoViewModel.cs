@@ -6,7 +6,6 @@ namespace ProductShop.ViewModel
     public class UserInfoViewModel
     {
         public List<Order> Order { get; set; } = new List<Order>();
-        public List<ShopingCart> ShopingCart { get; set; } = new List<ShopingCart>();
         public UserFullName UserFullName { get; set; } = new UserFullName();       
         public OrderDateTime OrderDateTime { get; set; } = new OrderDateTime();
     }

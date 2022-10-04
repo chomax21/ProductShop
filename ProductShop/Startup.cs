@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,8 +26,7 @@ namespace ProductShop
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => // Настройка и регистрация DbContexta EFCore.
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => { // Настройка Identity.
@@ -47,9 +48,16 @@ namespace ProductShop
             services.AddScoped<IProductRepository<Product>, SQLProductRepository>(); // Регистрируем сервис репозитория. Интерфейс для работы с Product.
             services.AddScoped<IOrderRepository<Order>, OrderService>(); // Регистрируем сервис репозитория. Интерфейс для работы с Orders.
             services.AddScoped<IShoppingCart<ShopingCart>, ShoppingCartService>(); // Регистрируем сервис репозитория. Интерфейс для работы с ShoppingCart.
+            services.AddTransient<IEmailSender, EmailService>();
             services.AddTransient<ISaleService ,SaleService>(); // Регистрируем сервис скидок.
 
             services.AddControllersWithViews();
+
+            services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+                options.LowercaseQueryStrings = true;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
