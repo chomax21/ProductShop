@@ -8,7 +8,7 @@ namespace ProductShop.Authorize
 {
     public class AdminInitializer       
     {
-        public IConfiguration _configuration { get; }
+        public static IConfiguration _configuration { get; set; }
 
         public AdminInitializer(IConfiguration configuration)
         {
@@ -22,6 +22,9 @@ namespace ProductShop.Authorize
         {
             string AdminEmail = "MainAdmin21@mail.ru";
             string AdminPassword = "_adminPass21";
+
+            //var em = _configuration;
+            //var ps = _configuration["AdminLogin:Password"];
             
             if (await userManager.FindByEmailAsync(AdminEmail) == null)
             {

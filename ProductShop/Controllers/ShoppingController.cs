@@ -290,7 +290,7 @@ namespace ProductShop.Controllers
             await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
             await _db.Save();
             var user = _userManager.GetUserAsync(User);
-            //await _emailSender.SendEmailAsync(user.Result.Email,"ChoShop",$"Магазин ChoShop привествует вас.\nВы совершили покупку на сумму {shopingCart.Order.TotalSumString}.\nСпасибо, что выбрали нас! Ждем вас снова!");
+            await _emailSender.SendEmailAsync(user.Result.Email,"ChoShop",$"Магазин ChoShop привествует вас. Вы совершили покупку на сумму {shopingCart.Order.TotalSum} рублей. Спасибо, что выбрали нас! Ждем вас снова!");
             _logger.LogInformation($"Пользователь {user.Result.MiddleName} {user.Result.FirstName} совершил покупку на сумму {shopingCart.Order.TotalSum}.");
             TempData["SuccesMessage"] = $"Спасибо за покупку!";
             return RedirectToAction("Index", "Home");
@@ -312,7 +312,8 @@ namespace ProductShop.Controllers
 
                     if (!originProduct.Result.HaveDiscount) // Проверяем наличие скидок на продукты и их финальные цены. Если цена которая пришла соответвствует оригинальной цене, оставляем этот продукт и идем дальше.
                     {
-                        shopingCart.Order.TotalSum += originProduct.Result.Price;
+                        var productCount = product.ProductCount;
+                        shopingCart.Order.TotalSum += originProduct.Result.Price * productCount;
                         product.stringPrice = originProduct.Result.Price.ToString(format);
                     }
                     else

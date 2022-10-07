@@ -20,7 +20,7 @@ namespace ProductShop.Services
             {
                 var emailMessage = new MimeMessage();
 
-                emailMessage.From.Add(new MailboxAddress("Максимка", "maximcheb21@gmail.com"));
+                emailMessage.From.Add(new MailboxAddress("Максимка","songmax21@mail.ru"));
                 emailMessage.To.Add(new MailboxAddress("", email));
                 emailMessage.Subject = subject;
                 emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -30,16 +30,14 @@ namespace ProductShop.Services
 
                 using (MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient())
                 {
-                    client.Connect("smtp.gmail.com", 465, true); //либо использум порт 465
-                    client.Authenticate("maximcheb21@gmail.com", "cho0966mM!"); //логин-пароль от аккаунта
+                    client.Connect("smtp.mail.ru", 465, true); //либо использум порт 465
+                    client.Authenticate("songmax21@mail.ru", "Q8T4txjekw2rx2eqMDMd"); //логин-пароль от аккаунта
                     client.Send(emailMessage);
 
                     client.Disconnect(true);
                     _logger.LogInformation("Сообщение отправлено успешно!");
                 }
-
                 return Task.CompletedTask;
-
             }
             catch (System.Exception ex)
             {
