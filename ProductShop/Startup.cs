@@ -34,6 +34,14 @@ namespace ProductShop
                 options.SignIn.RequireConfirmedAccount = false; // Доступ к функциональности без подтверждения почты.                
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            });
                        
             // Настраиваем авторизацию. Создаем политику по которой и будет проходить авторизация. Ищем утверждение у
             // пользователя ("IsAdmin", "true").
@@ -56,7 +64,7 @@ namespace ProductShop
             services.Configure<RouteOptions>(options =>
             {
                 options.LowercaseUrls = true;
-                options.LowercaseQueryStrings = true;
+                //options.LowercaseQueryStrings = true;
             });
         }
 
