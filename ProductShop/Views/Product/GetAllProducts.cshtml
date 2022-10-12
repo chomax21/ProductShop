@@ -19,7 +19,7 @@
                     <p class="card-text"><strong>Наличие скидки :</strong>@{var discount = item.HaveDiscount ? "Да" : "Нет";} @discount</p>
                     @if(item.HaveDiscount)
                     {
-                         <p class="card-text"><strong>Размер скидки :</strong> @item.stringDiscount</p>
+                         <p class="card-text"><strong>Размер скидки :</strong> @item.stringDiscount %</p>
                     }                   
                     @if (item.IsDeleted)
                     {

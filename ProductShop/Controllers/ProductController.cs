@@ -247,7 +247,7 @@ namespace ProductShop.Controllers
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
                 stringPrice = product.Price.ToString(format),
-                stringDiscount = product.Discount.ToString(format)
+                stringDiscount = (product.Discount * 100).ToString(format)
 
             };
 
