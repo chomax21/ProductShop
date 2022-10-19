@@ -10,8 +10,8 @@ using ProductShop.Data;
 namespace ProductShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221007143347_fixDecimalValues")]
-    partial class fixDecimalValues
+    [Migration("20221016150031_3_Migration_fixKey")]
+    partial class _3_Migration_fixKey
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -406,6 +406,9 @@ namespace ProductShop.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OriginProductId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")

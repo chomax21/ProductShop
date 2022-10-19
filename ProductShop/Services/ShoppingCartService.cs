@@ -46,9 +46,9 @@ namespace ProductShop.Services
                 {
                     findShoppingCart.UserId = shopingCart.UserId;
                     findShoppingCart.Order = shopingCart.Order;
+                    findShoppingCart.Order.TotalSumString = shopingCart.Order.TotalSumString;
                     findShoppingCart.IsDone = shopingCart.IsDone;
                     findShoppingCart.ProductId = shopingCart.ProductId;
-                    await _db.SaveChangesAsync();
                     return true;
                 }
             }

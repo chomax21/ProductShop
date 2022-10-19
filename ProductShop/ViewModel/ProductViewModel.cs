@@ -7,33 +7,36 @@ namespace ProductShop.ViewModel
 {
     public class ProductViewModel
     {
-        [Key]
         public int Id { get; set; }
+        public int OriginProductId { get; set; }
         public int ShoppingCartId { get; set; }
         public int OrderId { get; set; }
+
         [Required(ErrorMessage = "Введите кол-во единиц")]
         public int ProductCount { get; set; } // Количество продуктов в корзине.
 
         [Required]
         public string Name { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Не выбрана категория продукта")]
         public string Category { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Опишите продукт")]
         public string Description { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Опишите состав продукта")]
         public string ProductComposition { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Кто производитель?")]
         public string Manufacturer { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal DiscountedPrice { get; set; }
+        [Required(ErrorMessage = "Нужно указать цену")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         [NotMapped]
         [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$", ErrorMessage = "Разделителем должна быть точка.Указывать цену в сотых долях, например: 9999.99")]
-
         public string stringPrice { get; set; }
+
         [Column(TypeName = "decimal(18,2)")]
         public decimal Discount { get; set; }
 

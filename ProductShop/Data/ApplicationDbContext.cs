@@ -2,9 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProductShop.Models;
 using ProductShop.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProductShop.Data
 {

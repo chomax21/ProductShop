@@ -2,7 +2,7 @@
 
 namespace ProductShop.Migrations
 {
-    public partial class fixDecimalValues : Migration
+    public partial class SecondMigration_fixKey : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

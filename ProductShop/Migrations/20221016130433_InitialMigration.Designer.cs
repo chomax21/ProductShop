@@ -10,8 +10,8 @@ using ProductShop.Data;
 namespace ProductShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220909164702_AddDiscountedPrice")]
-    partial class AddDiscountedPrice
+    [Migration("20221016130433_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

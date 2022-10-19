@@ -29,8 +29,8 @@
                     {
                         <p class="card-text"><strong>Цена со скидкой :</strong>@item.stringDiscount</p>    
                     }                    
-                    <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
-                    <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-primary">Добавить</a>
+                    <a asp-action="DeleteProductInCart" asp-controller="Shopping" asp-route-id="@item.OriginProductId" class="btn btn-danger">Удалить</a>
+                    <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.OriginProductId" class="btn btn-primary">Добавить</a>
                 </div>
                 <div class="card-footer text-muted">
                     Количество : @item.ProductCount
@@ -42,7 +42,7 @@
         </div>
         <div class="m-2">
             <p>
-                Общая суммка заказа: @Model.Order.TotalSumString
+                Общая суммка заказа: @Model.Order.TotalSum
             </p>
             @if (Model.Order.VMProducts.Count > 0)
             {

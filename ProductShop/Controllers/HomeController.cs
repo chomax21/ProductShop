@@ -25,9 +25,18 @@ namespace ProductShop.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewData["Begin"] = "Ммм вкусные кексы...";
+            var userName = await _userManager.GetUserAsync(User);
+            if (userName != null)
+            {
+                ViewData["Begin"] = $"Привет {userName.FirstName} вернулся за нашими вкусными кексами...?";
+            }
+            else
+            {
+                ViewData["Begin"] = $"Привет ты еще не попробовал наши вкусные кексы...?";
+            }
+            
             return View("Index");           
         }
 
