@@ -63,8 +63,7 @@ namespace ProductShop
 
             services.Configure<RouteOptions>(options =>
             {
-                options.LowercaseUrls = true;
-                //options.LowercaseQueryStrings = true;
+                options.LowercaseUrls = true;               
             });
         }
 
@@ -80,7 +79,7 @@ namespace ProductShop
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

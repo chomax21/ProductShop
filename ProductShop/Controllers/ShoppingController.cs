@@ -26,6 +26,8 @@ namespace ProductShop.Controllers
 
         private decimal finalPrice { get; set; } // Используется для определения финальной цены продукта в корзине.
 
+        readonly IFormatProvider format = CultureInfo.GetCultureInfo("en-Us"); // Используется для корректного отображения значений decimal приведенного к строке с применением метода ToString(). Вместо запятой - точка.
+
         public ShoppingController(IProductRepository<Product> repository,
             UserManager<ApplicationUser> userManager,
             IOrderRepository<Order> orderRepository,
@@ -50,7 +52,7 @@ namespace ProductShop.Controllers
             var cart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)); // Через UserManager определяем Id пользователя, и далее по этому Id ищем корзину покупателя.
             if (cart.Order != null) // Если в корзине уже есть заказ, отображаем его. И все продукты находящиеся в нем. Если же нет, то просто пустую корзину.
             {
-                IFormatProvider format = CultureInfo.GetCultureInfo("en-Us"); // Используется для корректного отображения значений decimal приведенного к строке с применением метода ToString(). Вместо запятой - точка.
+                 
                 cart.Order.TotalSum = 0; // Тут начинается пересчет заказа на случай изменения в цене или присвоения скидки этому товару. Для этого общая цена обнуляется для дальнейшенго подсчета.
                 foreach (var product in cart.Order.VMProducts) // Проходим по всем продуктам в заказе.
                 {
@@ -76,46 +78,50 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> GetShoppingCartAction()
         {
             string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
-            var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину. 
+            var shopingCart = await ShoppingCartGiver(UserId);  
             if (shopingCart != null)
             {
-
-                if (shopingCart.Order == null)
-                {
-                    Order nOrder = new Order(); // Если у пользователя нет заказа, создаем новый.
-                    nOrder.UserId = UserId; // Присваиваем заказу ID пользователя.
-                    await _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
-                    shopingCart.Order = nOrder; // Помещаем созданный заказ в корзину покупателя(пользователя).
-                    await _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
-                    await _db.Save(); // Сохраняем все изменения.
-                    return View("GetShoppingCart", shopingCart); // Возвращаем корзину на страницу.
-                }
-                else
-                {
-                    if (shopingCart.Order.VMProducts.Count == 0) // Если из корзины были удалены все продукты, то фактически она обновлется.
-                    {
-                        shopingCart.Order.OrderDateTime = DateTime.UtcNow; // Поэтому при предоставлении корзины изменяем дату создания заказа.
-                    }
-                    await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
-                    return View("GetShoppingCart", shopingCart);
-                }
-
+                return View("GetShoppingCart", shopingCart); // Возвращаем корзину на страницу.
             }
             return BadRequest();
+        }
+
+        private async Task<ShopingCart> ShoppingCartGiver(string userId)
+        {
+            var shopingCart = await _shoppingCart.GetShoppingCart(userId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
+            if (shopingCart.Order == null)
+            {
+                Order nOrder = new Order(); // Если у пользователя нет заказа, создаем новый.
+                nOrder.UserId = userId; // Присваиваем заказу ID пользователя.
+                await _order.CreateOrder(nOrder); // Создаем сам заказ в базе данных для сохранения.
+                shopingCart.Order = nOrder; // Помещаем созданный заказ в корзину покупателя(пользователя).
+                await _shoppingCart.UpdateShoppingCartInDb(shopingCart); // Обновляем корзину покупателя в базе данных.
+                await _db.Save(); // Сохраняем все изменения.
+                return shopingCart; // Возвращаем корзину на страницу.
+            }
+            else
+            {
+                if (shopingCart.Order.VMProducts.Count == 0) // Если из корзины были удалены все продукты, то фактически она обновлется.
+                {
+                    shopingCart.Order.OrderDateTime = DateTime.UtcNow; // Поэтому при предоставлении корзины изменяем дату создания заказа.
+                }
+                await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
+                return shopingCart;
+            }
         }
 
 
         [Authorize]
         public async Task<IActionResult> AddProductInCart(int ProductId)
         {
-            await GetShoppingCartAction();
+            string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
+            await ShoppingCartGiver(UserId);
             Product originProduct = await _db.GetProductById(ProductId);
             if (originProduct.Count == 0)
             {
                 TempData["Error"] = $"К сожалению товара {originProduct.Name} в данный момент нет в наличии.";
                 return RedirectToAction("Index","Home");
             }
-            string UserId = _userManager.GetUserId(User); // Ищем идентифиатор юзера выполнившего запрос.
             var shopingCart = await _shoppingCart.GetShoppingCart(UserId); // Ищем не оконченную корзину, если такая есть выводим ее, если нет выводим Новую корзину.
             if (shopingCart != null)
             {
@@ -170,8 +176,6 @@ namespace ProductShop.Controllers
 
         private ProductViewModel MapProduct(Product product)
         {
-            IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
-
             var price = _saleServie.GetDiscountInProduct(product.Id);
 
             ProductViewModel model = new ProductViewModel()
@@ -277,11 +281,9 @@ namespace ProductShop.Controllers
             shopingCart.IsDone = true;
             foreach (var product in shopingCart.Order.VMProducts)
             {
-                var resultGetProduct = await _db.GetProductById(product.OriginProductId);
-                product.Count = resultGetProduct.Count - product.ProductCount; // Вычитаем количество этого продукта в корзине из общего количества продуктов в наличии.
-                await _db.UpateProduct(MapViewProduct(product));
+                var resultGetProduct = await _db.GetProductById(product.OriginProductId);                
+                resultGetProduct.Count -= product.ProductCount; // Вычитаем количество этого продукта в корзине из общего количества продуктов в наличии.                
             }
-            await _shoppingCart.UpdateShoppingCartInDb(shopingCart);
             await _db.Save();
             var user = _userManager.GetUserAsync(User);
             await _emailSender.SendEmailAsync(user.Result.Email,"ChoShop",$"Магазин ChoShop привествует вас. Вы совершили покупку на сумму {shopingCart.Order.TotalSum} рублей. Спасибо, что выбрали нас! Ждем вас снова!");
@@ -297,9 +299,7 @@ namespace ProductShop.Controllers
             var shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User));
             if (shopingCart != null)
             {
-                shopingCart.Order.TotalSum = default;
-                IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
-
+                shopingCart.Order.TotalSum = default;                
                 foreach (var product in shopingCart.Order.VMProducts)
                 {
                     var originProduct = _db.GetProductById(product.OriginProductId);
@@ -317,11 +317,8 @@ namespace ProductShop.Controllers
                         product.stringPrice = originProduct.Result.Price.ToString(format);
                         shopingCart.Order.TotalSum += product.DiscountedPrice;
                     }
-
                 }
-
                 shopingCart.Order.TotalSumString = shopingCart.Order.TotalSum.ToString(format);
-
             }
             return View("PaymentPage", shopingCart);
         }

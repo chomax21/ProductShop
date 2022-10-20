@@ -118,8 +118,8 @@ namespace ProductShop.Services
                     product.ProductComposition = item.ProductComposition;
                     product.Discount = item.Discount;
                     product.HaveDiscount = item.HaveDiscount;
-                    await Task.Run(() => _db.Products.Update(product));
-                    await _db.SaveChangesAsync();
+                    _db.Products.Update(product);
+                    //await _db.SaveChangesAsync();
                     return true;
                 }
                 return false;
