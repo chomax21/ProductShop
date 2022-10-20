@@ -21,5 +21,6 @@ namespace ProductShop.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Discount { get; set; }
         public bool HaveDiscount { get; set; }
+        public string PhotoPath { get; set; }
     }
 }

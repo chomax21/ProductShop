@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,6 +11,7 @@ using ProductShop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,12 +20,14 @@ namespace ProductShop.Controllers
     public class ProductController : Controller
     {
         private readonly ILogger<ProductController> _logger;
-        private readonly SQLProductRepository _db;
+        private readonly IProductRepository<Product> _db;
+        private readonly IWebHostEnvironment _webHostEnvirement;
 
-        public ProductController(ILogger<ProductController> logger, IProductRepository<Product> repository)
+        public ProductController(ILogger<ProductController> logger, IProductRepository<Product> repository, IWebHostEnvironment webHostEnvirement)
         {
             _logger = logger;
-            _db = (SQLProductRepository)repository;
+            _db = repository;
+            _webHostEnvirement = webHostEnvirement;
         }
 
 
@@ -44,17 +49,48 @@ namespace ProductShop.Controllers
         [HttpPost]
         [Authorize("AdminRights")]
         public async Task<IActionResult> CreateProduct(ProductViewModel viewModelProduct)
-        {
-            
-
+        {            
             if (ModelState.IsValid)
             {
+                if (viewModelProduct.Photo != null)
+                {
+                    if (viewModelProduct.PhotoPath != null)
+                    {
+                        string filePath = Path.Combine(_webHostEnvirement.WebRootPath, "keks_images", viewModelProduct.PhotoPath);
+                        System.IO.File.Delete(filePath);
+                    }                    
+                    viewModelProduct.PhotoPath = UploaderPhotoFile(viewModelProduct.Photo).Result;
+                }
+                else
+                {
+                    viewModelProduct.PhotoPath = Path.Combine(_webHostEnvirement.WebRootPath, "keks_images/default.png");
+                }
+
                 await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
                 return RedirectToAction("Index", "Home");
             }          
             return RedirectToAction("Error", "Home");
+        }
+
+        private async Task<string> UploaderPhotoFile(IFormFile file)
+        {
+            string uniqueFileName = null;
+
+            if (file != null)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvirement.WebRootPath, "keks_images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fs = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fs);
+                }
+                return Path.Combine(filePath,uniqueFileName);
+            } 
+            return null;
         }
 
         private async Task<string> GetValueInCategory(int id)
@@ -274,7 +310,8 @@ namespace ProductShop.Controllers
                 Price = resulParsePrice,
                 Count = viewModelProduct.Count,
                 Discount = resultParseDiscount,
-                HaveDiscount = viewModelProduct.HaveDiscount
+                HaveDiscount = viewModelProduct.HaveDiscount,
+                PhotoPath = viewModelProduct.PhotoPath
             };
 
             return model;

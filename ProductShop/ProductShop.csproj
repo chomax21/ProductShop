@@ -23,8 +23,4 @@
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Keks_images\" />
-  </ItemGroup>
-
 </Project>

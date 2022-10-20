@@ -52,6 +52,8 @@ namespace ProductShop.ViewModel
 
         public List<Order> Orders { get; set; } = new List<Order>();
 
-        IFormFile PhotoPath { get; set; }
+        [NotMapped]
+        public IFormFile Photo { get; set; }
+        public string PhotoPath { get; set; }
     }
 }

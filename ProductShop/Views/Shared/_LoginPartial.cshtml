@@ -5,8 +5,12 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" href="#">Привет @User.Identity.Name!</a>
+        <li class="nav-item">
+            @{
+                var name = UserManager.GetUserAsync(User);
+                var finalName = name.Result.FirstName;
+            }
+            <a class="nav-link text-dark" href="#">Привет <strong>@finalName</strong>!</a>
         @*<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Привет @User.Identity.Name!</a>*@
     </li>
     <li class="nav-item">

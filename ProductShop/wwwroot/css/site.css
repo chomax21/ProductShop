@@ -62,6 +62,12 @@ body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
 }
+
+.imageThumbnail {
+    height: 150px;
+    max-width: 150px;
+}
+
 .footer {
   position: absolute;
   bottom: 0;

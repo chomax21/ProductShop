@@ -1,9 +1,10 @@
 ﻿@model ProductViewModel
 @{
-    ViewData["Title"] = "Создаем продукт.";
+    ViewData["Title"] = "Создаем продукт";
 }
+<input type="hidden" asp-for="PhotoPath"/>
 
-<form asp-action="CreateProduct" asp-controller="Product">
+<form method="post" enctype="multipart/form-data" asp-action="CreateProduct" asp-controller="Product">
     <div class="validation" asp-validation-summary="All"></div>
     <div class="form-group">
         <label>Категория продукта</label>
@@ -46,8 +47,17 @@
         <input type="text" asp-for="stringDiscount" class="form-control">
         <span asp-validation-for="stringDiscount"></span>
     </div>
+    <div class="col col-lg-3">
+        <div>
+            <img class="card-img-top imageThumbnail border border-primary" src="~/Keks_images/default.png" asp-append-version="true"/>
+            <div class="custom-file">
+                <input asp-for="Photo" class="custom-file-input form-control"/>
+                <label class="custom-file-label text-left">Загрузить...</label>
+            </div>
+        </div>
+    </div>
     
-    <button type="submit" class="btn btn-primary">Создать продукт</button>
+    <button type="submit" class="btn btn-primary m-2">Создать продукт</button>
 </form>
 
 @section Scripts {
