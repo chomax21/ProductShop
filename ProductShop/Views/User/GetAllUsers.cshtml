@@ -1,23 +1,32 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model List<ApplicationUser>
-<div class="container m-2">
-    @if (Model != null)
-    {
-        <div class="border-dark m-2">
+
+@if (Model != null)
+{
+    <table class="table table-hover">
+        <thread>
+            <tr>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Отчество</th>
+                <th scope="col">Email</th>
+                <th scope="col">Id</th>
+                <th scope="col">Действие</th>
+            </tr>
+        </thread>
+        <tbody>
             @foreach (var item in Model)
             {
-                <div class="card card-body">
-
-                    <h5>@item.MiddleName</h5>
-                    <h5>@item.FirstName</h5>
-                    <h5>@item.LastName</h5>
-                    <h5>@item.UserName</h5>
-                    <h5>@item.Id</h5>
-                    <a class="btn btn-primary" asp-action="GetUserInfo" asp-controller="User" asp-route-UserId="@item.Id">Информация</a>
-                    <span class="border"></span>
-                </div>
-
+                <tr>
+                    <td>@item.MiddleName</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>@item.UserName</td>
+                    <td>@item.Id</td>
+                    <td><a asp-action="GetUserInfo" asp-controller="User" asp-route-UserId="@item.Id">Информация</a></td>
+                </tr>
             }
-        </div>
-    }
-</div>
+        </tbody>
+    </table>
+
+}

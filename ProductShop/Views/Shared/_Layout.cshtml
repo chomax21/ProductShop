@@ -30,9 +30,8 @@
                                 <a class="dropdown-item" asp-controller="Product" asp-action="GetAllProducts">Смотрим все</a>
                                 @if (User.HasClaim("IsAdmin", "true"))
                                 {
-
-                                    <a class="dropdown-item" asp-controller="Product" asp-action="GetAllProductsIsDeleted">Смотрим все, и удаленные</a>
                                     <a class="dropdown-item" asp-controller="Product" asp-action="CreateProduct">Создаем продукт</a>
+                                    <a class="dropdown-item" asp-controller="Product" asp-action="GetAllProductsIsDeleted">Смотрим все, и удаленные</a>
                                     <a class="dropdown-item" asp-controller="Product" asp-action="GetValuesInCategory">Смотрим все категории продуктов</a>
                                 }
                             </div>

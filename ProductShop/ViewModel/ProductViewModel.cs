@@ -1,4 +1,5 @@
-﻿using ProductShop.Models;
+﻿using Microsoft.AspNetCore.Http;
+using ProductShop.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -50,5 +51,7 @@ namespace ProductShop.ViewModel
         public bool IsDeleted { get; set; }
 
         public List<Order> Orders { get; set; } = new List<Order>();
+
+        IFormFile PhotoPath { get; set; }
     }
 }

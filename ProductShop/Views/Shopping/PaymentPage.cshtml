@@ -1,30 +1,32 @@
 ﻿@model ShopingCart
 
-<div class="m-2 align-content-center">
-    <ul>Ваш заказ на общую сумму : @Model.Order.TotalSumString</ul>
-    <ul>Общее количество видов товара : @Model.Order.VMProducts.Count</ul>
-    <ul>
-        Список товаров :
-        @if (Model != null)
+<table class="table table-hover">
+    <thread>
+        <tr>
+            <th csope="col">Имя продукта</th>
+            <th csope="col">Количество</th>
+            <th csope="col">Цена</th>
+        </tr>
+    </thread>
+    <tbody>
+        @foreach (var item in Model.Order.VMProducts)
         {
-            @foreach (var item in Model.Order.VMProducts)
-            {
-                <li>Наименование : @item.Name</li>
-                <li>Количество : @item.ProductCount</li>
-                <li>Цена : @item.stringPrice</li>
-                @if (item.HaveDiscount)
-                {
-                    <li>Цена со скидкой : @item.DiscountedPrice</li>
-                }
-            }
-            
+            <tr>
+                <th scope="row">@item.Name</th>
+                <td>@item.ProductCount</td>
+                <td>@item.stringPrice</td>
+            </tr>
         }
-    </ul>
+    </tbody>
+</table>
+<div class="m-2 align-content-center">
+    <p><strong>Всего разновидностей товара :</strong> @Model.Order.VMProducts.Count</p>
+    <p><strong>Ваш заказ на общую сумму :</strong> @Model.Order.TotalSumString</p>
     <div class="m-2">
         <form method="post">
-@*            <input type="number" placeholder="Введите номер карты">
-            <input type="number" placeholder="Срок действия карты">
-            <input type="number" placeholder="CVT">*@
+            @*            <input type="number" placeholder="Введите номер карты">
+                <input type="number" placeholder="Срок действия карты">
+                <input type="number" placeholder="CVT">*@
             <a class="btn btn-primary" asp-action="MakePurchase" asp-controller="Shopping">Совершить покупку</a>
         </form>
     </div>

@@ -2,27 +2,25 @@
 @{
     ViewData["Title"] = $"Все заказы ";
 }
-<h5>@User.Identity.Name</h5>
+
 <div class="container">
-
-
     @if (Model is not null)
-    {
+    {       
         @foreach (var order in Model)
         {
-
             <div class="card card-body m-2">
-                <p>Дата создания заказа : @order?.OrderDateTime</p>
-                <p>Закончен ли заказа : @order?.isDone</p>
-                <p>Оплачен ли заказа : @order?.isPayed</p>          
-                <p>Количество товаров : @order?.VMProducts.Count</p>
+                <h7>@order.FirstName @order.LastName</h7>
+                <p><strong>Дата создания заказа : </strong>@order?.OrderDateTime</p>
+                <p><strong>Закончен ли заказа :</strong> @{var isDone = order.isDone ? "Да" : "Нет";} @isDone</p>
+                <p><strong>Оплачен ли заказа :</strong> @{var isPayed = order.isDone ? "Да" : "Нет";} @isPayed</p>          
+                <p><strong>Количество товаров :</strong> @order?.VMProducts.Count</p>
                 @foreach(var product in order.VMProducts)
                 {
-                    <p>@product.Name</p>
-                    <p>@product.Price</p>
-                    <p>@product.ProductCount</p>
+                    <hr/>
+                    <p><strong>Имя :</strong> @product.Name</p>
+                    <p><strong>Цена :</strong> @product.Price</p>
+                    <p><strong>Штук :</strong> @product.ProductCount</p>
                 }
-
             </div>           
         }
     }

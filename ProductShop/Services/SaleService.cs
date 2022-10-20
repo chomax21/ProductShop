@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using ProductShop.Data;
+﻿using ProductShop.Data;
 using ProductShop.Interfaces;
 using System;
 
 namespace ProductShop.Services
 {
-    public class SaleService : ISaleService 
+    public class SaleService : ISaleService
     {
         private readonly ApplicationDbContext _db;
 

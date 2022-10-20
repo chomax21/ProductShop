@@ -4,9 +4,9 @@
 }
 <form asp-action="GetUserOrderByName" asp-controller="User">
     <div class="container m-2">
-        <div class="m2"><input asp-for="UserFullName.FirstName" type="text">Введите имя</div>
-        <div class="m2"><input asp-for="UserFullName.MiddleName" type="text">Введите Фамилию</div>
-        <div class="m2"><input asp-for="UserFullName.LastName" type="text">Введите Отчество</div>
+        <div class="m2"><input asp-for="UserFullName.FirstName" type="text"> Введите имя</div>
+        <div class="m2"><input asp-for="UserFullName.MiddleName" type="text"> Введите Фамилию</div>
+        <div class="m2"><input asp-for="UserFullName.LastName" type="text"> Введите Отчество</div>
         <button type="submit" class="btn btn-primary">Найти</button>
     </div>
 </form>
@@ -21,14 +21,15 @@
             <p><strong>Отчество: </strong>@Model.UserFullName.LastName</p>
 
             <p>Дата создания заказа : @order?.OrderDateTime</p>
-            <p>Закончен ли заказа : @order?.isDone</p>
-            <p>Оплачен ли заказа : @order?.isPayed</p>
+            <p>Закончен ли заказа : @{var isDone = order.isDone ? "Да" : "Нет";} @isDone</p>
+            <p>Оплачен ли заказа : @{var isPayed = order.isDone ? "Да" : "Нет";} @isPayed</p>
             <p>Количество товаров : @order?.VMProducts.Count</p>
             @foreach (var product in order.VMProducts)
             {
-                <p>@product.Name</p>
-                <p>@product.Price</p>
-                <p>@product.ProductCount</p>
+                <hr/>
+                    <p><strong>Имя :</strong> @product.Name</p>
+                    <p><strong>Цена :</strong> @product.Price</p>
+                    <p><strong>Штук :</strong> @product.ProductCount</p>
             }
         }
     }

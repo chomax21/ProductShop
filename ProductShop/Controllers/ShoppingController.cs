@@ -141,7 +141,7 @@ namespace ProductShop.Controllers
                     {
                         finalPrice = originProduct.Price;
                     }
-                    ProductViewModel checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
+                    var checkProduct = CheckingQuantityProduct(ProductId, shopingCart); // Проверяем есть ли в корзине покупок товар с таким Id.
                     if (checkProduct != null) // Если такой товар уже есть. 
                     {
                         checkProduct.HaveDiscount = originProduct.HaveDiscount;
@@ -151,7 +151,7 @@ namespace ProductShop.Controllers
                     }
                     else
                     {
-                        ProductViewModel newProduct = MapProduct(originProduct);
+                        var newProduct = MapProduct(originProduct);
                         newProduct.ShoppingCartId = shopingCart.Id;
                         newProduct.OrderId = shopingCart.Order.Id;
                         newProduct.ProductCount++;
