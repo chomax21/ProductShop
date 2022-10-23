@@ -64,8 +64,8 @@ body {
 }
 
 .imageThumbnail {
-    height: 150px;
-    max-width: 150px;
+    height: 240px;
+    max-width: 280px;
 }
 
 .footer {

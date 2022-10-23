@@ -54,18 +54,8 @@ namespace ProductShop.Controllers
             {
                 if (viewModelProduct.Photo != null)
                 {
-                    if (viewModelProduct.PhotoPath != null)
-                    {
-                        string filePath = Path.Combine(_webHostEnvirement.WebRootPath, "keks_images", viewModelProduct.PhotoPath);
-                        System.IO.File.Delete(filePath);
-                    }                    
                     viewModelProduct.PhotoPath = UploaderPhotoFile(viewModelProduct.Photo).Result;
                 }
-                else
-                {
-                    viewModelProduct.PhotoPath = Path.Combine(_webHostEnvirement.WebRootPath, "keks_images/default.png");
-                }
-
                 await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
@@ -80,7 +70,7 @@ namespace ProductShop.Controllers
 
             if (file != null)
             {
-                string uploadsFolder = Path.Combine(_webHostEnvirement.WebRootPath, "keks_images");
+                string uploadsFolder = Path.Combine(_webHostEnvirement.WebRootPath, "images");
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
@@ -88,7 +78,7 @@ namespace ProductShop.Controllers
                 {
                     await file.CopyToAsync(fs);
                 }
-                return Path.Combine(filePath,uniqueFileName);
+                return uniqueFileName;
             } 
             return null;
         }
@@ -124,7 +114,18 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> UpdateProduct(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
-            {              
+            {
+                if (viewModelProduct.PhotoPath != null)
+                {
+                    string filePath = Path.Combine(_webHostEnvirement.WebRootPath, "images", viewModelProduct.PhotoPath);
+                    System.IO.File.Delete(filePath);
+                }
+                if (viewModelProduct.Photo != null)
+                {
+                    var path = UploaderPhotoFile(viewModelProduct.Photo).Result;
+                    viewModelProduct.PhotoPath = path;
+                }
+
                 bool resultOperation = await _db.UpateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
                 TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
@@ -283,7 +284,8 @@ namespace ProductShop.Controllers
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
                 stringPrice = product.Price.ToString(format),
-                stringDiscount = (product.Discount * 100).ToString(format)
+                stringDiscount = (product.Discount * 100).ToString(format),
+                PhotoPath = product.PhotoPath
 
             };
 

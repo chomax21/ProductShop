@@ -4,7 +4,13 @@
     ViewData["Title"] = "Редактируем продукт";
 }
 
-<form asp-action="UpdateProduct" asp-controller="Product">
+<form method="post" enctype="multipart/form-data" asp-action="UpdateProduct" asp-controller="Product">
+    <div class="form-group">
+        <label>Категория продукта</label>
+        <select class="custom-select mr-2" asp-for="Category" asp-items="ViewBag.Category">
+            <option selected="selected" disabled="disabled">@Model.Category</option>
+        </select>
+    </div>
     <div class="form-group">
         <label>Название продукта</label>
         <input type="text" asp-for="Name" class="form-control" placeholder="@Model.Name">
@@ -41,15 +47,21 @@
         <input type="text" asp-for="stringDiscount" class="form-control" placeholder="@Model.stringDiscount">
         <span asp-validation-for="stringDiscount"></span>
     </div>
-    <div class="form-group">
-        <label>Категория продукта</label>
-        <select class="custom-select mr-2" asp-for="Category" asp-items="ViewBag.Category">
-            <option selected="selected" disabled="disabled">@Model.Category</option>
-        </select>
+    <div class="col col-lg-3">
+        <div>
+            @*<img class="card-img-top imageThumbnail border border-primary" src="~/Keks_images/default.png" asp-append-version="true"/>*@
+            <div class="custom-file">
+                <input asp-for="Photo" class="custom-file-input form-control" />
+                <label class="custom-file-label text-left">Загрузить...</label>
+            </div>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Отредактировать продукт</button>
+
+    <button type="submit" class="btn btn-primary m-2">Отредактировать продукт</button>
 </form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

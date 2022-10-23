@@ -118,6 +118,7 @@ namespace ProductShop.Services
                     product.ProductComposition = item.ProductComposition;
                     product.Discount = item.Discount;
                     product.HaveDiscount = item.HaveDiscount;
+                    product.PhotoPath = item.PhotoPath;
                     _db.Products.Update(product);
                     //await _db.SaveChangesAsync();
                     return true;

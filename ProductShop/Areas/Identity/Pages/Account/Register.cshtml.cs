@@ -55,15 +55,15 @@ namespace ProductShop.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Нужно ввести имя")]
             [Display(Name = "Имя")]
             public string FirstName { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Нужно ввести фамилию")]
             [Display(Name = "Фамилия")]
             public string MiddleName { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Нужно ввести отчество")]
             [Display(Name = "Отчество")]
             public string LastName { get; set; }
 

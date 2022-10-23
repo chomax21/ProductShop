@@ -36,7 +36,7 @@
         <label>Количество</label>
         <input type="number" asp-for="Count" class="form-control">
     </div>
-    <div class="form-check">
+    <div class="form-check-inline">
         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
         <label class="form-check-label" asp-for="HaveDiscount">
             Наличие скидки
@@ -49,7 +49,7 @@
     </div>
     <div class="col col-lg-3">
         <div>
-            <img class="card-img-top imageThumbnail border border-primary" src="~/Keks_images/default.png" asp-append-version="true"/>
+           @* <img class="card-img-top imageThumbnail border border-primary" src="~/Keks_images/default.png" asp-append-version="true"/>*@
             <div class="custom-file">
                 <input asp-for="Photo" class="custom-file-input form-control"/>
                 <label class="custom-file-label text-left">Загрузить...</label>
