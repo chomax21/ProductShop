@@ -1,5 +1,6 @@
 ﻿using ProductShop.Data;
 using ProductShop.Models;
+using ProductShop.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,6 +70,7 @@ namespace ProductShop.Services
             //                 where x.Manufacturer.Contains(manufacturer)
             //                 select x;
             return await Task<IEnumerable<Product>>.Factory.StartNew(() => _db.Products.Where(x => x.Manufacturer.Contains(manufacturer)));
+
         }
 
         public async Task<IEnumerable<Product>> GetProductByName(string name)

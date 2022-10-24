@@ -5,7 +5,7 @@ namespace ProductShop.ViewModel
 {
     public class SearchVIewModel
     {
-        public IEnumerable<Product> Products { get; set; }
+        public List<ProductViewModel> Products { get; set; }
         public string SearchString { get; set; } = "Empty";
         public int Id { get; set; }
     }

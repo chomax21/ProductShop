@@ -1,0 +1,49 @@
+﻿@model SearchVIewModel
+
+<div class="row">
+    @foreach (var item in Model.Products)
+    {
+        var photoPath = $"/images/{item.PhotoPath ?? "default.png"}";
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card-deck">
+                <div class="text-center">
+                   <img class="card-img-top border border-dark imageThumbnail" src="@photoPath"/>
+                </div>
+                <div class="m-3">
+                    <div class="card-body">                        
+                        <h5 class="card-title"><strong>Продукт :</strong> @item.Name</h5>
+                        <p class="card-text"><strong>Производитель :</strong> @item.Manufacturer</p>
+                        <p class="card-text"><strong>Категория :</strong> @item.Category</p>
+                        <p class="card-text"><strong>Описание :</strong> @item.Description</p>
+                        <p class="card-text"><strong>Состав :</strong> @item.ProductComposition</p>
+                        <p class="card-text"><strong>Цена :</strong> @item.stringPrice</p>
+                        <p class="card-text">
+                            <strong>Наличие скидки :</strong>@{
+                                var discount = item.HaveDiscount ? "Да" : "Нет";
+                            } @discount
+                        </p>
+                        @if (item.HaveDiscount)
+                        {
+                            <p class="card-text"><strong>Размер скидки :</strong> @item.stringDiscount %</p>
+                        }
+                        @if (item.IsDeleted)
+                        {
+                            <p class="card-text"><strong class="text-danger">Этот продукт помечен как удаленный!</strong></p>
+                            <a asp-action="RestoreProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-success">Восстановить</a>
+                        }
+                        @if (User.HasClaim("IsAdmin", "true"))
+                        {
+                            <a asp-action="UpdateProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-warning m-1">Редактировать</a>
+                            <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@item.Id" class="btn btn-danger m-1">Удалить</a>
+                        }
+                        <a asp-action="AddProductInCart" asp-controller="Shopping" asp-route-ProductId="@item.Id" class="btn btn-warning m-1">Купить</a>
+
+                    </div>
+                    <div class="card-footer text-muted">
+                        <strong class="text-warning">Количество :</strong> @item.Count
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -179,7 +179,11 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> GetProductByName(SearchVIewModel search)
         {
             SearchVIewModel model = new SearchVIewModel();
-            model.Products = await _db.GetProductByName(search.SearchString);
+            var searchResult  = await _db.GetProductByName(search.SearchString);
+            foreach (var originProduct in searchResult)
+            {
+                model.Products.Add(MapProductToViewModel(originProduct));
+            }
             return View(model);
         }
 
@@ -212,8 +216,12 @@ namespace ProductShop.Controllers
         [HttpPost]
         public async Task<IActionResult> GetProductByCategory(SearchVIewModel category)
         {
-            SearchVIewModel model = new SearchVIewModel();
-            model.Products = await _db.GetProductByCategory(category.SearchString);
+            SearchVIewModel model = new();
+            var searchResult = await _db.GetProductByCategory(category.SearchString);
+            foreach (var originProduct in searchResult)
+            {
+                model.Products.Add(MapProductToViewModel(originProduct));
+            }
             return View(model);
         }
 
@@ -253,7 +261,12 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> GetProductByManufacturer(SearchVIewModel manufacturer)
         {
             SearchVIewModel model = new SearchVIewModel();
-            model.Products = await _db.GetProductByManufacturer(manufacturer.SearchString);
+            var searchResult = await _db.GetProductByManufacturer(manufacturer.SearchString);
+            foreach (var originProduct in searchResult)
+            {
+                model.Products.Add(MapProductToViewModel(originProduct));
+            }
+
             return View(model);
         }
 
