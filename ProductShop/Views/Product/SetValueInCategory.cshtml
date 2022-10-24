@@ -1,43 +1,59 @@
 ﻿@model ProductCategoryViewModel
 
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["Error"]
+    </div>
+}
+
 <div class="col-12 container m-2">
     <form asp-action="SetValueInCategory" asp-controller="Product">
-        <input asp-for="setValue" type="text" />
-        <button type="submit" class="btn btn-outline-primary">Введите новую категорию</button>
+        <div class="validation" asp-validation-summary="All"></div>
+        <input asp-for="setValue" type="text" placeholder="Введите категорию продуктов" />
+        <button type="submit" class="btn btn-outline-primary">Создать новую категорию</button>
     </form>
 </div>
-<div class="container col-12 m-2">
-    <ul>
-        @foreach (var item in @Model.productCategories)
-        {
-            <li>
 
-                <p>@item.Category
-                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal-@item.Id">
-                    Удалить
-                </button>
-                </p>               
-                <div class="modal fade" id="myModal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                <h4 class="modal-title" id="myModalLabel"></h4>
-                            </div>
-                            <div class="modal-body">
-                                Вы уверенны что хотите удалить категорию : @item.Category?
-                            </div>
-                            <div class="modal-footer">     
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <a asp-action="DeleteProductCategory" asp-controller="Product" asp-route-categoryName="@item.Category" class="text-danger">Удалить</a>
+@if (Model.productCategories != null)
+{
+    <div class="container col-12 m-2">
+        <ul>
+            @foreach (var item in @Model.productCategories)
+            {
+                <li>
+
+                    <p>
+                        @item.Category
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal-@item.Id">
+                            Удалить
+                        </button>
+                    </p>
+                    <div class="modal fade" id="myModal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel"></h4>
+                                </div>
+                                <div class="modal-body">
+                                    Вы уверенны что хотите удалить категорию : @item.Category?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                    <a asp-action="DeleteProductCategory" asp-controller="Product" asp-route-categoryName="@item.Category" class="text-danger">Удалить</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        }
-    </ul>
-</div>
+                </li>
+            }
+        </ul>
+    </div>
+
+}
+
 

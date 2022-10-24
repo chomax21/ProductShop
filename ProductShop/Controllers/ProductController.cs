@@ -235,32 +235,32 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> GetAllProducts()
         {
 
-            List<ProductViewModel> viewProducts = new List<ProductViewModel>();
+            SearchVIewModel model = new();
             var newProducts = await _db.GetProducts();
             if (newProducts != null)
             {
                 foreach (var item in newProducts)
                 {
-                    viewProducts.Add(MapProductToViewModel(item));
+                    model.Products.Add(MapProductToViewModel(item));
                 }
             }
-            return View(viewProducts);
+            return View(model);
         }
 
         [HttpGet]
         [Authorize("AdminRights")]
         public async Task<IActionResult> GetAllProductsIsDeleted()
         {
-            List<ProductViewModel> viewProducts = new List<ProductViewModel>();
+            SearchVIewModel model = new();
             var newProducts = await _db.GetProductsIsDeleted();
             if (newProducts != null)
             {
                 foreach (var item in newProducts)
                 {
-                    viewProducts.Add(MapProductToViewModel(item));
+                    model.Products.Add(MapProductToViewModel(item));
                 }
             }           
-            return View("GetAllProducts", viewProducts);
+            return View("GetAllProducts", model);
         }
 
         [HttpGet]
@@ -350,16 +350,23 @@ namespace ProductShop.Controllers
         [Authorize("AdminRights")]
         public async Task<IActionResult> SetValueInCategory(string setValue)
         {
+            ProductCategoryViewModel categoryViewModel = new();
+            var category = await _db.GetValuesInCategoryList();
+            if(category == null)
+            {
+                TempData["Error"] = "Ошибка отсутсвуют какие-либо категории!";
+                return View("SetValueInCategory", categoryViewModel);
+            }
+            categoryViewModel.productCategories = category.ToList();
+
             if (!string.IsNullOrEmpty(setValue))
             {
                 await _db.SetValueInCategoryList(setValue);
                 await _db.Save();
-                ProductCategoryViewModel categoryViewModel = new();
-                var category = await _db.GetValuesInCategoryList();
-                categoryViewModel.productCategories = category.ToList();
-                return View("SetValueInCategory", categoryViewModel);
+                return RedirectToAction("GetValuesInCategory", "Product");
             }
-            return View("Error","Home");
+            TempData["Error"] = "Нужно ввести категорию продуктов!";
+            return RedirectToAction("GetValuesInCategory", "Product");
         }
 
         [HttpGet]
