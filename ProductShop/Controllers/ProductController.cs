@@ -180,9 +180,12 @@ namespace ProductShop.Controllers
         {
             SearchVIewModel model = new SearchVIewModel();
             var searchResult  = await _db.GetProductByName(search.SearchString);
-            foreach (var originProduct in searchResult)
+            if (searchResult != null)
             {
-                model.Products.Add(MapProductToViewModel(originProduct));
+                foreach (var originProduct in searchResult)
+                {
+                    model.Products.Add(MapProductToViewModel(originProduct));
+                }
             }
             return View(model);
         }
@@ -218,10 +221,13 @@ namespace ProductShop.Controllers
         {
             SearchVIewModel model = new();
             var searchResult = await _db.GetProductByCategory(category.SearchString);
-            foreach (var originProduct in searchResult)
+            if (searchResult != null)
             {
-                model.Products.Add(MapProductToViewModel(originProduct));
-            }
+                foreach (var originProduct in searchResult)
+                {
+                    model.Products.Add(MapProductToViewModel(originProduct));
+                }
+            }           
             return View(model);
         }
 
@@ -231,9 +237,12 @@ namespace ProductShop.Controllers
 
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = await _db.GetProducts();
-            foreach (var item in newProducts)
-            {               
-                viewProducts.Add(MapProductToViewModel(item));
+            if (newProducts != null)
+            {
+                foreach (var item in newProducts)
+                {
+                    viewProducts.Add(MapProductToViewModel(item));
+                }
             }
             return View(viewProducts);
         }
@@ -244,10 +253,13 @@ namespace ProductShop.Controllers
         {
             List<ProductViewModel> viewProducts = new List<ProductViewModel>();
             var newProducts = await _db.GetProductsIsDeleted();
-            foreach (var item in newProducts)
-            {                
-                viewProducts.Add(MapProductToViewModel(item));
-            }
+            if (newProducts != null)
+            {
+                foreach (var item in newProducts)
+                {
+                    viewProducts.Add(MapProductToViewModel(item));
+                }
+            }           
             return View("GetAllProducts", viewProducts);
         }
 
@@ -262,11 +274,13 @@ namespace ProductShop.Controllers
         {
             SearchVIewModel model = new SearchVIewModel();
             var searchResult = await _db.GetProductByManufacturer(manufacturer.SearchString);
-            foreach (var originProduct in searchResult)
+            if (searchResult != null)
             {
-                model.Products.Add(MapProductToViewModel(originProduct));
-            }
-
+                foreach (var originProduct in searchResult)
+                {
+                    model.Products.Add(MapProductToViewModel(originProduct));
+                }
+            }           
             return View(model);
         }
 
