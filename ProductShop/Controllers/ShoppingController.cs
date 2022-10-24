@@ -193,10 +193,9 @@ namespace ProductShop.Controllers
                 Discount = product.Discount,
                 HaveDiscount = product.HaveDiscount,
                 stringPrice = product.Price.ToString(format),
-                stringDiscount = price.ToString(format)
-
+                stringDiscount = price.ToString(format),
+                PhotoPath = product.PhotoPath
             };
-
             return model;
         }
 

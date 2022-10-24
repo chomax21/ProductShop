@@ -3,21 +3,23 @@
 @{
     ViewData["Title"] = $"Корзина {User.Identity.Name}";
 }
-<h4>Корзина покупок</h4>
 @if (Model != null)
 {
     @if (Model.Order == null || Model.Order.VMProducts.Count == 0)
     {
-        <p>Пусто!!!</p>
+        <h2 class="text-center">Тут пусто!</h2>
     }
     else
     {
         @foreach (var item in Model.Order.VMProducts)
         {
+            var photoPath = $"/images/{item.PhotoPath ?? "default.png"}";
+
             <div class="card m-2">
                 <div class="card-header text-muted">
                     <small>Информация о продукте</small>
                 </div>
+                <img class="card-img-top border border-dark imageThumbnail" src="@photoPath" alt="@item.Name" />
                 <div class="card-body">
                     <h5 class="card-title"><strong>Продукт :</strong> @item.Name</h5>
                     <p class="card-text"><strong>Производитель :</strong> @item.Manufacturer</p>

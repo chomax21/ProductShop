@@ -66,6 +66,12 @@ body {
 .imageThumbnail {
     height: 240px;
     max-width: 280px;
+    position: center;   
+}
+
+.imageLogo {
+    height: 150px;
+    max-width: 150px;
 }
 
 .footer {
