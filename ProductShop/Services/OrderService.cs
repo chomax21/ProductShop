@@ -53,40 +53,64 @@ namespace ProductShop.Services
 
         public UserInfoViewModel GetOrdersByDateOfPurchase(string start, string end)
         {
-            var result = _db.Orders.Where(x => x.OrderDateTime >= Convert.ToDateTime(start) && x.OrderDateTime <= Convert.ToDateTime(end));
-            UserInfoViewModel userInfo = new UserInfoViewModel();
-            foreach (var order in result)
+            var orderSearchResult = _db.Orders.Where(x => x.OrderDateTime >= Convert.ToDateTime(start) && x.OrderDateTime <= Convert.ToDateTime(end));
+            List<string> idUsers = new();
+            UserInfoViewModel userInfo = new();
+            foreach (var order in orderSearchResult)
             {
-                userInfo.Order.Add(order);
+                idUsers.Add(order.UserId);
             }
-            return userInfo;
+            var resultOrderInfo = OrderInfoGiver(idUsers, userInfo);
+            if (resultOrderInfo != null)
+            {
+               return resultOrderInfo;
+            }
+            return null;
         }
 
-        public UserInfoViewModel GetOrderByCustomerName(string FirstName, string MiddleName, string LastName)
+        public UserInfoViewModel GetOrderByCustomerName(string FirstName, string MiddleName, string LastName) // Вот это я дал. 
         {
             var users = from x in _db.Users
                         where x.FirstName.Contains(FirstName) || x.MiddleName.Contains(MiddleName) || x.LastName.Contains(LastName)
                         select x;
-
+            
             List<string> idUsers = new List<string>();
             UserInfoViewModel userInfoView = new();
             foreach (var user in users.Distinct())
             {
                 idUsers.Add(user.Id);
             }
-            for (int i = 0; i <= idUsers.Count - 1; i++)
+            var resultOrderInfo = OrderInfoGiver(idUsers,userInfoView);
+            if (resultOrderInfo != null)
             {
-                var searchOrders = _db.Orders.Where(x => x.UserId == idUsers[i]).Include(x=> x.VMProducts);
-                var fullNameUser = _db.Users.FirstOrDefault(x => x.Id == idUsers[i]);
-                foreach (var item in searchOrders)
-                {
-                    userInfoView.Order.Add(item);                    
-                }
-                userInfoView.UserFullName.FirstName = fullNameUser.FirstName;
-                userInfoView.UserFullName.MiddleName = fullNameUser.MiddleName;
-                userInfoView.UserFullName.LastName = fullNameUser.LastName;
+                return userInfoView;
             }
-                return userInfoView;        
+            return null;     
+        }
+
+        private UserInfoViewModel OrderInfoGiver(List<string> idUsers, UserInfoViewModel userInfoView)
+        {
+            if(idUsers != null && userInfoView != null)
+            {
+                for (int i = 0; i <= idUsers.Count - 1; i++)
+                {
+                    var searchOrders = _db.Orders.Where(x => x.UserId == idUsers[i]).Include(x => x.VMProducts);
+                    var fullNameUser = _db.Users.FirstOrDefault(x => x.Id == idUsers[i]);
+                    foreach (var item in searchOrders)
+                    {
+                        item.FirstName = fullNameUser.FirstName;
+                        item.LastName = fullNameUser.LastName;
+                        item.MiddleName = fullNameUser.MiddleName;
+                        userInfoView.Order.Add(item);
+                    }
+                    userInfoView.Order.Distinct();
+                    userInfoView.UserFullName.FirstName = fullNameUser.FirstName;
+                    userInfoView.UserFullName.MiddleName = fullNameUser.MiddleName;
+                    userInfoView.UserFullName.LastName = fullNameUser.LastName;
+                }
+                return userInfoView;
+            }
+            return null;
         }
 
         public bool UpdateOrder(Order t)

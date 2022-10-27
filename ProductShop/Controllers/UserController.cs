@@ -60,7 +60,7 @@ namespace ProductShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var orders = await Task.Run(() => _order.GetOrdersByDateOfPurchase(userInfoView.OrderDateTime.DateStart, userInfoView.OrderDateTime.DateEnd));
+                var orders = await Task.Run(() => _order.GetOrdersByDateOfPurchase(userInfoView.OrderDateTime.DateStart, userInfoView.OrderDateTime.DateEnd));                
                 if (orders != null)
                 {
                     return View(orders);
