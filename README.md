@@ -28,7 +28,9 @@
 ## Используемые технологии :
  - ___ASP.Net Core 5.0,___    
  - ___MSSql,___    
- - ___EntityFramework 5.0.___    
+ - ___EntityFramework 5.0.___ 
+ - ___IdentityServer___
+ - ___Boostrap___ 
 ## Цель :
   1. Закрепить и получить знания необходимые для создания приложений используя ASP.NET Core 5.0.    
   2. Научиться работать в связке ASP.Net Core & EntityFramework.     
