@@ -58,6 +58,7 @@ namespace ProductShop
             services.AddScoped<IShoppingCart<ShopingCart>, ShoppingCartService>(); // Регистрируем сервис репозитория. Интерфейс для работы с ShoppingCart.
             services.AddTransient<IEmailSender, EmailService>();
             services.AddTransient<ISaleService ,SaleService>(); // Регистрируем сервис скидок.
+            services.AddSingleton<PayService>();
 
             services.AddControllersWithViews();
 

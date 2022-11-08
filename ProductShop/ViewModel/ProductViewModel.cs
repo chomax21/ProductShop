@@ -23,8 +23,10 @@ namespace ProductShop.ViewModel
         public string Category { get; set; }
         [Required(ErrorMessage = "Опишите продукт")]
         public string Description { get; set; }
+
         [Required(ErrorMessage = "Опишите состав продукта")]
         public string ProductComposition { get; set; }
+
         [Required(ErrorMessage = "Кто производитель?")]
         public string Manufacturer { get; set; }
 
@@ -35,14 +37,16 @@ namespace ProductShop.ViewModel
         public decimal Price { get; set; }
 
         [NotMapped]
-        [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$", ErrorMessage = "Разделителем должна быть точка.Указывать цену в сотых долях, например: 9999.99")]
+        [Required(ErrorMessage = "Разделителем должна быть точка. Указывать цену в сотых долях, например: 9999.99")]
+        [RegularExpression(@"^(\d{1,})([.][0-9]{1,2})?$")]
         public string stringPrice { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Discount { get; set; }
 
         [NotMapped]
-        [RegularExpression(@"^\d{1}([.][0-9]{1,2})?$" , ErrorMessage = "Разделителем должна быть точка.Указывать размер скидки в сотых долях, например: 0.99")]
+        [Required(ErrorMessage = "Разделителем должна быть точка. Указывать размер скидки в сотых долях, например: 0.99")]
+        [RegularExpression(@"^\d{1}([.][0-9]{1,2})?$")]
 
         public string stringDiscount { get; set; } 
         public bool HaveDiscount { get; set; }

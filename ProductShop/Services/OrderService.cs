@@ -68,7 +68,7 @@ namespace ProductShop.Services
             return null;
         }
 
-        public UserInfoViewModel GetOrderByCustomerName(string FirstName, string MiddleName, string LastName) // Вот это я дал. 
+        public UserInfoViewModel GetOrderByCustomerName(string FirstName, string MiddleName, string LastName)
         {
             var users = from x in _db.Users
                         where x.FirstName.Contains(FirstName) || x.MiddleName.Contains(MiddleName) || x.LastName.Contains(LastName)

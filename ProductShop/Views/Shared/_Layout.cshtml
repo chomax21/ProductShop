@@ -38,7 +38,7 @@
                                 }
                             </div>
                         </li>
-                        
+
                         @if (User.HasClaim("IsAdmin", "true"))
                         {
                             <li class="nav-item dropdown">
@@ -53,20 +53,31 @@
                             </li>
                         }
                         <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Поиск
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-action="GetProductByName" asp-controller="Product">Поиск продукта по названию</a>
-                                    <a class="dropdown-item" asp-action="GetProductByCategory" asp-controller="Product">Поиск продукта по Категории</a>
-                                    <a class="dropdown-item" asp-action="GetProductByManufacturer" asp-controller="Product">Поиск продукта по Производителю</a>
-                                    @if(User.HasClaim("IsAdmin", "true"))
-                                    {
-                                        <a class="dropdown-item" asp-action="GetProductById" asp-controller="Product">Поиск продукта по Идентификатору</a>
-                                    }                                    
-                                </div>
-                            </li>
-
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Поиск
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-action="GetProductByName" asp-controller="Product">Поиск продукта по названию</a>
+                                <a class="dropdown-item" asp-action="GetProductByCategory" asp-controller="Product">Поиск продукта по Категории</a>
+                                <a class="dropdown-item" asp-action="GetProductByManufacturer" asp-controller="Product">Поиск продукта по Производителю</a>
+                                @if (User.HasClaim("IsAdmin", "true"))
+                                {
+                                    <a class="dropdown-item" asp-action="GetProductById" asp-controller="Product">Поиск продукта по Идентификатору</a>
+                                }
+                            </div>
+                        </li>
+                       @* <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Категории
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @foreach(var item in ViewBag.Category)
+                                {                                   
+                                    <a class="dropdown-item" asp-action="GetAllProductsInCategory" asp-controller="Product" asp-route-category="@item.Category">@item.Category</a>
+                                }                                                              
+                            </div>
+                        </li>
+*@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Shopping" asp-action="GetCart">Корзина</a>
                         </li>

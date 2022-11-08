@@ -20,7 +20,7 @@
         @foreach (var order in Model.Order)
         {
             <hr />
-            <p><strong class="text-warning">Дата создания заказа : @order?.OrderDateTime</strong></p
+            <p><strong class="text-warning">Дата создания заказа : @order?.OrderDateTime</strong></p>
             <p>
                 Закончен ли заказа : @{
                     var isDone = order.isDone ? "Да" : "Нет";

@@ -23,6 +23,7 @@ namespace ProductShop.Controllers
         private readonly ISaleService _saleServie;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ShoppingController> _logger;
+        private readonly PayService _payService;
 
         private decimal finalPrice { get; set; } // Используется для определения финальной цены продукта в корзине.
 
@@ -34,7 +35,8 @@ namespace ProductShop.Controllers
             IShoppingCart<ShopingCart> shoppingCartService,
             ISaleService saleService,
             IEmailSender emailSender,
-            ILogger<ShoppingController> logger)
+            ILogger<ShoppingController> logger,
+            PayService payService)
         {            
             _db = (SQLProductRepository)repository;
             _userManager = userManager;
@@ -43,6 +45,7 @@ namespace ProductShop.Controllers
             _saleServie = saleService;
             _emailSender = emailSender;
             _logger = logger;
+            _payService = payService;
         }
 
         [HttpGet]
@@ -275,6 +278,9 @@ namespace ProductShop.Controllers
         public async Task<IActionResult> MakePurchase() // Метод покупки.
         {
             ShopingCart shopingCart = await _shoppingCart.GetShoppingCart(_userManager.GetUserId(User)); // Метод в метод, так тоже работает, но читается ли?
+
+            //_payService.Pay(shopingCart.Order.TotalSum);            
+
             shopingCart.Order.isDone = true;
             shopingCart.Order.isPayed = true;
             shopingCart.IsDone = true;

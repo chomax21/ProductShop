@@ -58,23 +58,23 @@ namespace ProductShop.Controllers
                 }
                 await _db.CreateProduct(MapViewModelToProduct(viewModelProduct));
                 await _db.Save();
-                TempData["SuccesMessage"] = $"Продукт {viewModelProduct.Name} добавлен!";
+                TempData["SuccesMessage"] = ("Продукт {0} добавлен!", viewModelProduct.Name);
                 return RedirectToAction("Index", "Home");
             }          
             return RedirectToAction("Error", "Home");
         }
 
-        private async Task<string> UploaderPhotoFile(IFormFile file)
+        private async Task<string> UploaderPhotoFile(IFormFile file) // Метод отвечающий за сохранений изображений.
         {
             string uniqueFileName = null;
 
             if (file != null)
             {
-                string uploadsFolder = Path.Combine(_webHostEnvirement.WebRootPath, "images");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                string uploadsFolder = Path.Combine(_webHostEnvirement.WebRootPath, "images"); // Определяем дирректорию/папку места нахождения изображений.
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName; // Генерируем уникальное имя файла.
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName); // Собираем все вместе, и опрделеяем полный путь к файлу.
 
-                using (var fs = new FileStream(filePath, FileMode.Create))
+                using (var fs = new FileStream(filePath, FileMode.Create)) // Используем using для последующего заркытия FileStream.
                 {
                     await file.CopyToAsync(fs);
                 }
@@ -147,9 +147,8 @@ namespace ProductShop.Controllers
                 Product searchProdict = await _db.GetProductById(id.Value);
 
                 return View(MapProductToViewModel(searchProdict));
-            }
+            }            
             return RedirectToAction("Error", "Home");
-
         }
 
 
@@ -246,6 +245,24 @@ namespace ProductShop.Controllers
             }
             return View(model);
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllProductsInCategory(string category)
+        //{
+
+        //    SearchVIewModel model = new();
+        //    var newProducts = await _db.GetProductByCategory(category);
+        //    if (newProducts != null)
+        //    {
+        //        foreach (var item in newProducts)
+        //        {
+        //            model.Products.Add(MapProductToViewModel(item));
+        //        }
+        //    }
+        //    var categories = _db.GetValuesInCategoryList();
+        //    ViewBag.Category = categories.Result;
+        //    return View("GetAllProducts",model);
+        //}
 
         [HttpGet]
         [Authorize("AdminRights")]

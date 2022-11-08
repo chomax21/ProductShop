@@ -1,43 +1,45 @@
-﻿using ProductShop.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProductShop.Controllers;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ProductShop.Tests
 {
     public class HomeControllerTests
     {
-        [Fact]
-        public void IndexViewDataMessage()
-        {
-            //ILogger<HomeController> logger;
-            //UserManager<ApplicationUser> userManager;
-            //ApplicationDbContext db;
+        //[Fact]
+        //public void IndexViewDataMessage()
+        //{
 
-            HomeController controller = new(null, null, null);
+        //    HomeController controller = new(null, null, null);
 
-            //ViewResult result = controller.Index() as ViewResult;
+        //    var result = controller.Index();
+        //    var anotherResult = result.Result as ViewResult;
 
-            //Assert.Equal("Ммм вкусные кексы...", result?.ViewData["Begin"]);
-        }
+        //    Assert.Equal("Привет ты еще не попробовал наши вкусные кексы...?", anotherResult?.ViewData["Begin"]);
+        //}
 
-        [Fact]
-        public void IndexViewResultNotNull()
-        {
-            HomeController controller = new(null, null, null);
+        //[Fact]
+        //public void IndexViewResultNotNull()
+        //{
+        //    HomeController controller = new(null, null, null);
 
-            //ViewResult result = controller.Index() as ViewResult;
+        //    var result = controller.Index();
+        //    var anotherResult = result.Result as ViewResult;
 
-            //Assert.NotNull(result);
-        }
+        //    Assert.NotNull(anotherResult);
+        //}
 
-        [Fact]
-        public void IndexViewNameEqualIndex()
-        {
-            HomeController controller = new(null, null, null);
+        //[Fact]
+        //public void IndexViewNameEqualIndex()
+        //{
+        //    HomeController controller = new(null, null, null);
 
-            //var result = controller.Index() as Task<ViewResult>;
+        //    var result = controller.Index();
+        //    var anotherResult = result.Result as ViewResult;
 
-            //Assert.Equal("Index", result?.ViewName);
-        }
+        //    Assert.Equal("Index", anotherResult?.ViewName);
+        //}
     }
 
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProductShop.Data;
 using ProductShop.Models;
+using ProductShop.Services;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
@@ -15,18 +16,22 @@ namespace ProductShop.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _db;
+        private readonly ApplicationDbContext _originDataBase;
+        private readonly IProductRepository<Product> _db;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext db)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext dataBase, IProductRepository<Product> db)
         {
             _logger = logger;
             _userManager = userManager;
+            _originDataBase = dataBase;
             _db = db;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var categories = _db.GetValuesInCategoryList();
+            ViewBag.Category = categories.Result;
             var userName = await _userManager.GetUserAsync(User);
             if (userName != null)
             {

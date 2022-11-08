@@ -1,5 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Castle.Core.Logging;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
+using Moq;
 using ProductShop.Controllers;
+using ProductShop.Models;
+using ProductShop.Services;
+using ProductShop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,21 +22,79 @@ namespace ProductShop.Tests
         [Fact]
         public void CreateProductTest()
         {
-            //ProductController productController = new ProductController(null,null);
+            var mock = new Mock<IProductRepository<Product>>();
+            var mockLogger = new Mock<ILogger<ProductController>>();
+            var mockWebHostEnv = new Mock<IWebHostEnvironment>();
+            var productController = new ProductController(mockLogger.Object, mock.Object, mockWebHostEnv.Object);
 
-            //Task<IActionResult> viewResult = productController.CreateProduct();
+            var result = productController.CreateProduct();            
 
-            //Assert.NotNull(viewResult);
+            Assert.NotNull(result);
         }
 
-        //[Fact]
-        //public async Task CreateProductReturnViewTest()
-        //{
-        //    ProductController productController = new ProductController(null, null);
+        [Fact]
+        public void CreateProductTestWithArgument_AndHaveError_InModelState()
+        {
+            var mock = new Mock<IProductRepository<Product>>();            
+            var mockLogger = new Mock<ILogger<ProductController>>();
+            var mockWebHostEnv = new Mock<IWebHostEnvironment>();
+            var productController = new ProductController(mockLogger.Object, mock.Object, mockWebHostEnv.Object);
+            var viewModel = TestCreateProduct();
 
-        //    var viewResult = await productController.CreateProduct();
+            productController.ModelState.AddModelError("Invalid","InvalidInput");
+            var result = productController.CreateProduct(viewModel);
 
-        //    Assert.IsType<IActionResult>(viewResult);
-        //}
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result.Result);
+            Assert.Equal("Error", redirectToActionResult.ActionName);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void CreateProductTestWithArgumentHas_NoErrors_InModelState()
+        {
+            var mock = new Mock<IProductRepository<Product>>();
+            var mockLogger = new Mock<ILogger<ProductController>>();
+            var mockWebHostEnv = new Mock<IWebHostEnvironment>();
+            var productController = new ProductController(mockLogger.Object, mock.Object, mockWebHostEnv.Object);
+            var viewModel = TestCreateProduct();
+
+
+            var result = productController.CreateProduct(viewModel);
+
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result.Result);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+            Assert.NotNull(result);
+        }
+
+
+
+        private ProductViewModel TestCreateProduct()
+        {
+            ProductViewModel viewModel = new ProductViewModel()
+            {
+                Name = "Кекс",
+                Category = "1",
+                Count = 10,
+                Description = "Вкусно",
+                Discount = 1M,
+                HaveDiscount = false,
+                Id = 1,
+                IsDeleted = false,
+                DiscountedPrice = 1M,
+                Manufacturer = "Хлебозавод",
+                OrderId = 1,
+                Orders = null,
+                OriginProductId = 1,
+                Photo = null,
+                PhotoPath = null,
+                Price = 0M,
+                stringDiscount = "0,01",
+                ProductComposition = string.Empty,
+                ProductCount = 10,
+                ShoppingCartId = 1,
+                stringPrice = "100,99"
+            };
+            return viewModel;
+        }
     }
 }
