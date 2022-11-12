@@ -1,5 +1,6 @@
 ﻿using Castle.Core.Logging;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
@@ -52,12 +53,15 @@ namespace ProductShop.Tests
         [Fact]
         public void CreateProductTestWithArgumentHas_NoErrors_InModelState()
         {
+            ITempDataProvider tempDataProvider = Mock.Of<ITempDataProvider>();
+            TempDataDictionaryFactory tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
+            ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
             var mock = new Mock<IProductRepository<Product>>();
-            var mockLogger = new Mock<ILogger<ProductController>>();
-            var mockWebHostEnv = new Mock<IWebHostEnvironment>();
-            var productController = new ProductController(mockLogger.Object, mock.Object, mockWebHostEnv.Object);
+            //var mockLogger = new Mock<ILogger<ProductController>>();
+            //var mockWebHostEnv = new Mock<IWebHostEnvironment>();
+            var productController = new ProductController(null, mock.Object, null);
             var viewModel = TestCreateProduct();
-
+            productController.TempData = tempData;            
 
             var result = productController.CreateProduct(viewModel);
 
@@ -83,7 +87,7 @@ namespace ProductShop.Tests
                 DiscountedPrice = 1M,
                 Manufacturer = "Хлебозавод",
                 OrderId = 1,
-                Orders = null,
+                Orders = new List<Order>(),
                 OriginProductId = 1,
                 Photo = null,
                 PhotoPath = null,
