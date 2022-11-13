@@ -74,7 +74,7 @@ namespace ProductShop.Controllers
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName; // Генерируем уникальное имя файла.
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName); // Собираем все вместе, и опрделеяем полный путь к файлу.
 
-                using (var fs = new FileStream(filePath, FileMode.Create)) // Используем using для последующего заркытия FileStream.
+                using (var fs = new FileStream(filePath, FileMode.Create)) // Используем using для последующего закрытия FileStream.
                 {
                     await file.CopyToAsync(fs);
                 }
@@ -99,7 +99,6 @@ namespace ProductShop.Controllers
             {
                 ViewBag.Category = new SelectList(category, "Id", "Category", productCategory.Category);
             }
-
             if (id.HasValue)
             {
                 var product = await _db.GetProductById(id.Value);
@@ -115,6 +114,7 @@ namespace ProductShop.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Проверяем указан ли путь для файла. Если да, значит мы его хотим обновить. Создаем путь на основании пришедших данных и местоположения приложения, удаляем файл.
                 if (viewModelProduct.PhotoPath != null)
                 {
                     string filePath = Path.Combine(_webHostEnvirement.WebRootPath, "images", viewModelProduct.PhotoPath);
