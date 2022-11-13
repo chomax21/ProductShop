@@ -6,10 +6,12 @@
 
 <form method="post" enctype="multipart/form-data" asp-action="UpdateProductPost" asp-controller="Product">
     <div class="form-group">
+        <input asp-for="Id" type="hidden" placeholder="@Model.Id"/>
         <label>Категория продукта</label>
         <select class="custom-select mr-2" asp-for="Category" asp-items="ViewBag.Category">
             <option selected="selected" disabled="disabled">@Model.Category</option>
         </select>
+        <span class="text-danger" asp-validation-for="Category"></span>
     </div>
     <div class="form-group">
         <label>Название продукта</label>
