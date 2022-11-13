@@ -4,7 +4,7 @@
     ViewData["Title"] = "Редактируем продукт";
 }
 
-<form method="post" enctype="multipart/form-data" asp-action="UpdateProduct" asp-controller="Product">
+<form method="post" enctype="multipart/form-data" asp-action="UpdateProductPost" asp-controller="Product">
     <div class="form-group">
         <label>Категория продукта</label>
         <select class="custom-select mr-2" asp-for="Category" asp-items="ViewBag.Category">

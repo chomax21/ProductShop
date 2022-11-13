@@ -64,7 +64,7 @@ namespace ProductShop.Tests
         }
 
         [Fact]
-        public void UpdateProductTest_Success() // Тест определяющий возвращается ли на страницу модель со значением null.
+        public void UpdateProductTest_Success_Get() // Тест определяющий возвращается ли на страницу модель со значением null.
         {
             var mock = new Mock<IProductRepository<Product>>();
             var productController = new ProductController(null, mock.Object, null);
@@ -76,14 +76,25 @@ namespace ProductShop.Tests
             Assert.Null(viewResult.Model);
         }
 
+        [Fact]
+        public void UpdateProductTest_ViewModelInArgument_Post()
+        {
+            var mock = new Mock<IProductRepository<Product>>();
+            var productController = new ProductController(null, mock.Object, null);
 
+            var result = productController.UpdateProductPost(TestCreateProductForUpdateMethod());
+
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result.Result);
+            Assert.Equal("Error", redirectToActionResult.ActionName);
+            Assert.NotNull(result);
+        }
 
         private ProductViewModel TestCreateProductForUpdateMethod()
         {
             ProductViewModel viewModel = new ProductViewModel()
             {
                 Name = "Кекс",
-                Category = "1",
+                Category = "99999",
                 Count = 10,
                 Description = "Вкусно",
                 Discount = 1M,

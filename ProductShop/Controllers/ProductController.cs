@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,6 @@ using ProductShop.Models;
 using ProductShop.Services;
 using ProductShop.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -49,7 +47,7 @@ namespace ProductShop.Controllers
         [HttpPost]
         [Authorize("AdminRights")]
         public async Task<IActionResult> CreateProduct(ProductViewModel viewModelProduct)
-        {            
+        {
             if (ModelState.IsValid)
             {
                 if (viewModelProduct.Photo != null)
@@ -60,7 +58,7 @@ namespace ProductShop.Controllers
                 await _db.Save();
                 TempData["SuccesMessage"] = ("Продукт {0} добавлен!", viewModelProduct.Name);
                 return RedirectToAction("Index", "Home");
-            }          
+            }
             return RedirectToAction("Error", "Home");
         }
 
@@ -79,7 +77,7 @@ namespace ProductShop.Controllers
                     await file.CopyToAsync(fs);
                 }
                 return uniqueFileName;
-            } 
+            }
             return null;
         }
 
@@ -105,12 +103,12 @@ namespace ProductShop.Controllers
                 return View(MapProductToViewModel(product));
             }
             return View(null);
-        } 
+        }
 
 
         [HttpPost]
         [Authorize("AdminRights")]
-        public async Task<IActionResult> UpdateProduct(ProductViewModel viewModelProduct)
+        public async Task<IActionResult> UpdateProductPost(ProductViewModel viewModelProduct)
         {
             if (ModelState.IsValid)
             {
@@ -120,6 +118,7 @@ namespace ProductShop.Controllers
                     string filePath = Path.Combine(_webHostEnvirement.WebRootPath, "images", viewModelProduct.PhotoPath);
                     System.IO.File.Delete(filePath);
                 }
+                // Тут если пришел файл(картинка) создаем этот файл в директории приложения, и создаем новый путь к этому файлу.
                 if (viewModelProduct.Photo != null)
                 {
                     var path = UploaderPhotoFile(viewModelProduct.Photo).Result;
@@ -127,12 +126,14 @@ namespace ProductShop.Controllers
                 }
 
                 bool resultOperation = await _db.UpateProduct(MapViewModelToProduct(viewModelProduct));
-                await _db.Save();
-                TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
+                
                 if (resultOperation)
                 {
+                    await _db.Save();
+                    TempData["SuccesMessage"] = $"Продукт <{viewModelProduct.Name}> отредактирован!";
                     return RedirectToAction("Index", "Home");
                 }
+                return RedirectToAction("Error", "Home");
             }
             return RedirectToAction("Error", "Home");
         }
@@ -147,7 +148,7 @@ namespace ProductShop.Controllers
                 Product searchProdict = await _db.GetProductById(id.Value);
 
                 return View(MapProductToViewModel(searchProdict));
-            }            
+            }
             return RedirectToAction("Error", "Home");
         }
 
@@ -168,17 +169,17 @@ namespace ProductShop.Controllers
             return RedirectToAction("Error", "Home");
         }
 
-        [HttpGet] 
+        [HttpGet]
         public IActionResult GetProductByName()
         {
             return View();
         }
-  
+
         [HttpPost]
         public async Task<IActionResult> GetProductByName(SearchVIewModel search)
         {
             SearchVIewModel model = new SearchVIewModel();
-            var searchResult  = await _db.GetProductByName(search.SearchString);
+            var searchResult = await _db.GetProductByName(search.SearchString);
             if (searchResult != null)
             {
                 foreach (var originProduct in searchResult)
@@ -207,7 +208,7 @@ namespace ProductShop.Controllers
             TempData["Error"] = "Продукта с таким идентификатором не существует!";
             return RedirectToAction("Index", "Home");
         }
-      
+
 
         [HttpGet]
         public IActionResult GetProductByCategory()
@@ -226,7 +227,7 @@ namespace ProductShop.Controllers
                 {
                     model.Products.Add(MapProductToViewModel(originProduct));
                 }
-            }           
+            }
             return View(model);
         }
 
@@ -276,7 +277,7 @@ namespace ProductShop.Controllers
                 {
                     model.Products.Add(MapProductToViewModel(item));
                 }
-            }           
+            }
             return View("GetAllProducts", model);
         }
 
@@ -297,7 +298,7 @@ namespace ProductShop.Controllers
                 {
                     model.Products.Add(MapProductToViewModel(originProduct));
                 }
-            }           
+            }
             return View(model);
         }
 
@@ -311,7 +312,7 @@ namespace ProductShop.Controllers
         }
 
         private ProductViewModel MapProductToViewModel(Product product) // Преобразуем класс Product в ViewModelProduct
-        {                      
+        {
             IFormatProvider format = CultureInfo.GetCultureInfo("en-Us");
 
             ProductViewModel model = new ProductViewModel()
@@ -369,7 +370,7 @@ namespace ProductShop.Controllers
         {
             ProductCategoryViewModel categoryViewModel = new();
             var category = await _db.GetValuesInCategoryList();
-            if(category == null)
+            if (category == null)
             {
                 TempData["Error"] = "Ошибка отсутсвуют какие-либо категории!";
                 return View("SetValueInCategory", categoryViewModel);
@@ -399,7 +400,7 @@ namespace ProductShop.Controllers
             }
             return View("SetValueInCategory", Enumerable.Empty<ProductCategory>());
         }
-        
+
         [Authorize("AdminRights")]
         public async Task<IActionResult> DeleteProductCategory(string categoryName)
         {

@@ -32,6 +32,8 @@ namespace ProductShop.ViewModel
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal DiscountedPrice { get; set; }
+
+
         [Required(ErrorMessage = "Нужно указать цену")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }

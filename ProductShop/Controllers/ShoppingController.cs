@@ -16,7 +16,7 @@ namespace ProductShop.Controllers
 {
     public class ShoppingController : Controller
     {
-        private readonly SQLProductRepository _db;
+        private readonly IProductRepository<Product> _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOrderRepository<Order> _order;
         private readonly IShoppingCart<ShopingCart> _shoppingCart;
@@ -38,7 +38,7 @@ namespace ProductShop.Controllers
             ILogger<ShoppingController> logger,
             PayService payService)
         {            
-            _db = (SQLProductRepository)repository;
+            _db = repository;
             _userManager = userManager;
             _order = orderRepository;
             _shoppingCart = shoppingCartService;
@@ -86,7 +86,7 @@ namespace ProductShop.Controllers
             {
                 return View("GetShoppingCart", shopingCart); // Возвращаем корзину на страницу.
             }
-            return BadRequest();
+            return RedirectToAction("Error","Home");
         }
 
         private async Task<ShopingCart> ShoppingCartGiver(string userId)
